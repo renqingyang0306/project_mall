@@ -71,7 +71,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, key, name, type, size, url, add_time, update_time, deleted
+    id, `key`, `name`, `type`, `size`, url, add_time, update_time, deleted
   </sql>
   <select id="selectByExample" parameterType="com.cskaoyan.project.mall.domain.StorageExample" resultMap="BaseResultMap">
     select
@@ -104,8 +104,8 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.cskaoyan.project.mall.domain.Storage">
-    insert into storage (id, key, name, 
-      type, size, url, add_time, 
+    insert into storage (id, `key`, `name`,
+      `type`, `size`, url, add_time,
       update_time, deleted)
     values (#{id,jdbcType=INTEGER}, #{key,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
       #{type,jdbcType=VARCHAR}, #{size,jdbcType=INTEGER}, #{url,jdbcType=VARCHAR}, #{addTime,jdbcType=TIMESTAMP}, 
@@ -118,16 +118,16 @@
         id,
       </if>
       <if test="key != null">
-        key,
+        `key`,
       </if>
       <if test="name != null">
-        name,
+        `name`,
       </if>
       <if test="type != null">
-        type,
+        `type`,
       </if>
       <if test="size != null">
-        size,
+        `size`,
       </if>
       <if test="url != null">
         url,
@@ -185,16 +185,16 @@
         id = #{record.id,jdbcType=INTEGER},
       </if>
       <if test="record.key != null">
-        key = #{record.key,jdbcType=VARCHAR},
+        `key` = #{record.key,jdbcType=VARCHAR},
       </if>
       <if test="record.name != null">
-        name = #{record.name,jdbcType=VARCHAR},
+        `name` = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.type != null">
-        type = #{record.type,jdbcType=VARCHAR},
+        `type` = #{record.type,jdbcType=VARCHAR},
       </if>
       <if test="record.size != null">
-        size = #{record.size,jdbcType=INTEGER},
+        `size` = #{record.size,jdbcType=INTEGER},
       </if>
       <if test="record.url != null">
         url = #{record.url,jdbcType=VARCHAR},
@@ -216,10 +216,10 @@
   <update id="updateByExample" parameterType="map">
     update storage
     set id = #{record.id,jdbcType=INTEGER},
-      key = #{record.key,jdbcType=VARCHAR},
-      name = #{record.name,jdbcType=VARCHAR},
-      type = #{record.type,jdbcType=VARCHAR},
-      size = #{record.size,jdbcType=INTEGER},
+      `key` = #{record.key,jdbcType=VARCHAR},
+      `name` = #{record.name,jdbcType=VARCHAR},
+      `type` = #{record.type,jdbcType=VARCHAR},
+      `size` = #{record.size,jdbcType=INTEGER},
       url = #{record.url,jdbcType=VARCHAR},
       add_time = #{record.addTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
@@ -232,16 +232,16 @@
     update storage
     <set>
       <if test="key != null">
-        key = #{key,jdbcType=VARCHAR},
+        `key` = #{key,jdbcType=VARCHAR},
       </if>
       <if test="name != null">
-        name = #{name,jdbcType=VARCHAR},
+        `name` = #{name,jdbcType=VARCHAR},
       </if>
       <if test="type != null">
-        type = #{type,jdbcType=VARCHAR},
+        `type` = #{type,jdbcType=VARCHAR},
       </if>
       <if test="size != null">
-        size = #{size,jdbcType=INTEGER},
+        `size` = #{size,jdbcType=INTEGER},
       </if>
       <if test="url != null">
         url = #{url,jdbcType=VARCHAR},
@@ -260,10 +260,10 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.cskaoyan.project.mall.domain.Storage">
     update storage
-    set key = #{key,jdbcType=VARCHAR},
-      name = #{name,jdbcType=VARCHAR},
-      type = #{type,jdbcType=VARCHAR},
-      size = #{size,jdbcType=INTEGER},
+    set `key` = #{key,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      `type` = #{type,jdbcType=VARCHAR},
+      `size` = #{size,jdbcType=INTEGER},
       url = #{url,jdbcType=VARCHAR},
       add_time = #{addTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
