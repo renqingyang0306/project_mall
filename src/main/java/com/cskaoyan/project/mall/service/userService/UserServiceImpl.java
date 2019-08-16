@@ -1,20 +1,16 @@
-package com.cskaoyan.project.mall.service;
+package com.cskaoyan.project.mall.service.userService;
 
 import com.cskaoyan.project.mall.domain.User;
 import com.cskaoyan.project.mall.domain.UserExample;
 import com.cskaoyan.project.mall.mapper.UserMapper;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-/**
- * @author 任清阳
- * @Email 1277409109@qq.com
- * @date 2019/8/15 22:16
- */
 @Component
-public class UserServiceImpl implements  UserService {
+public class UserServiceImpl implements UserService {
     @Autowired
     UserMapper userMapper;
     @Override
@@ -39,6 +35,7 @@ public class UserServiceImpl implements  UserService {
 
     @Override
     public List<User> selectByExample(UserExample example) {
+
         return userMapper.selectByExample(example);
     }
 
@@ -55,5 +52,27 @@ public class UserServiceImpl implements  UserService {
     @Override
     public int updateByPrimaryKey(User record) {
         return userMapper.updateByPrimaryKey(record);
+    }
+
+    @Override
+    public List<User> findAllUser(int page, int limit,String username,String mobile) {
+        PageHelper.startPage(page, limit);
+        UserExample userExample = new UserExample();
+        List<User> users = null;
+        if(username == null && mobile ==null) {
+            users = userMapper.selectByExample(userExample);
+        } else if(username != null && mobile == null){
+            userExample.createCriteria().andUsernameLike("%" + username + "%");
+            users = userMapper.selectByExample(userExample);
+        } else if(username == null && mobile != null){
+            userExample.createCriteria().andMobileLike("%" + mobile + "%");
+            users = userMapper.selectByExample(userExample);
+        } else {
+            userExample.createCriteria()
+                    .andUsernameLike("%" + username + "%")
+                    .andMobileLike("%" + mobile + "%");
+            users = userMapper.selectByExample(userExample);
+        }
+        return users;
     }
 }
