@@ -1,6 +1,7 @@
 package com.cskaoyan.project.mall.domain;
 
 import java.util.Date;
+import java.util.List;
 
 public class Admin {
     private Integer id;
@@ -21,7 +22,8 @@ public class Admin {
 
     private Boolean deleted;
 
-    private String roleIds;
+    private int[] roleIds;
+
 
     public Integer getId() {
         return id;
@@ -95,11 +97,27 @@ public class Admin {
         this.deleted = deleted;
     }
 
-    public String getRoleIds() {
+    public int[] getRoleIds() {
         return roleIds;
     }
 
-    public void setRoleIds(String roleIds) {
-        this.roleIds = roleIds == null ? null : roleIds.trim();
+    public void setRoleIds(int[] roleIds) {
+        this.roleIds = roleIds;
+    }
+
+    @Override
+    public String toString() {
+        return "Admin{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", lastLoginIp='" + lastLoginIp + '\'' +
+                ", lastLoginTime=" + lastLoginTime +
+                ", avatar='" + avatar + '\'' +
+                ", addTime=" + addTime +
+                ", updateTime=" + updateTime +
+                ", deleted=" + deleted +
+                ", roleIds='" + roleIds + '\'' +
+                '}';
     }
 }

@@ -1,16 +1,10 @@
-package com.cskaoyan.project.mall.service;
+package com.cskaoyan.project.mall.service.userService;
 
 import com.cskaoyan.project.mall.domain.User;
 import com.cskaoyan.project.mall.domain.UserExample;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-/**
- * @author 任清阳
- * @Email 1277409109@qq.com
- * @date 2019/8/15 22:14
- */
 public interface UserService {
     int deleteByExample(UserExample example);
 
@@ -27,4 +21,6 @@ public interface UserService {
     int updateByPrimaryKeySelective(User record);
 
     int updateByPrimaryKey(User record);
+
+    List<User> findAllUser(int page,int limit,String username,String mobile);
 }
