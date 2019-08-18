@@ -13,4 +13,6 @@ pagehelper:
   reasonable: true
   supportMethodsArguments: true
   params: count=countSql
-
+ #类型转换，下面写的是转换的配置文件的路径包
+mybatis:
+  type-handlers-package: com.cskaoyan.project.mall.utils
