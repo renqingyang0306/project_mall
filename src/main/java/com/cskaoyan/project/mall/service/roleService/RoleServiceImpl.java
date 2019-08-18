@@ -4,11 +4,11 @@ import com.cskaoyan.project.mall.domain.Role;
 import com.cskaoyan.project.mall.domain.RoleExample;
 import com.cskaoyan.project.mall.mapper.RoleMapper;
 import com.cskaoyan.project.mall.utils.RoleBean;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author 任清阳
@@ -66,4 +66,51 @@ public class RoleServiceImpl implements  RoleService {
         }
         return list;
     }
+    @Override
+    public List<Role> findAllList(int page, int limit, String username) {
+        RoleExample roleExample = new RoleExample();
+        PageHelper.startPage(page,limit);
+
+        List<Role> listAdmin=null;
+        //模糊查询
+        if (username!=null && !("").equals(username)){
+            roleExample.createCriteria().andNameLike("%"+username+"%");
+            listAdmin=roleMapper.selectByExample(roleExample);
+        }else {
+            //正常查询
+            listAdmin=roleMapper.selectByExample(roleExample);
+        }
+        return listAdmin;
+    }
+
+    @Override
+    public int insertSelective(Role role) {
+        role.setAddTime(new Date());
+        role.setUpdateTime(new Date());
+        /*int i=roleMapper.insertSelective(role);
+        if (i==1){
+            return role;
+        }*/
+        return roleMapper.insertSelective(role);
+    }
+
+    @Override
+    public Set<String> queryByIds(Integer[] roleIds) {
+        Set<String> roles = new HashSet<String>();
+        if(roleIds.length == 0){
+            return roles;
+        }
+       RoleExample example = new RoleExample();
+        example.or().andIdIn(Arrays.asList(roleIds)).andEnabledEqualTo(true).andDeletedEqualTo(false);
+        List<Role> roleList = roleMapper.selectByExample(example);
+        //只返回角色名，set集合
+        for(Role role : roleList){
+            roles.add(role.getName());
+        }
+
+        return roles;
+    }
+
+
+
 }

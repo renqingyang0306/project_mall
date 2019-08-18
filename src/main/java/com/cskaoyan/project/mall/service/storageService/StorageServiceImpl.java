@@ -32,20 +32,18 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public Storage insertSelective(MultipartFile file) {
+    public Storage insertSelective(MultipartFile file,String newname) {
         String filename = file.getOriginalFilename();
         Storage storage=new Storage();
         storage.setAddTime(new Date());
         storage.setUpdateTime(new Date());
         storage.setSize((int) file.getSize());
-        //重命名文件名
-        String substring = filename.substring(filename.lastIndexOf('.'), filename.length());
-        //拼接后缀
-        String newname=UUIDUtils.getId()+substring;
+        //新名字
         storage.setKey(newname);
+        //原始文件名
         storage.setName(file.getOriginalFilename());
         storage.setType(file.getContentType());
-        storage.setUrl("localhost/static/pic/admin/"+newname);
+        storage.setUrl("http://localhost/static/pic/admin/"+newname);
 
         //插入数据
         int i = storageMapper.insertSelective(storage);

@@ -6,6 +6,7 @@ import com.cskaoyan.project.mall.utils.RoleBean;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author 任清阳
@@ -28,4 +29,10 @@ public interface RoleService {
     int updateByPrimaryKey(Role record);
 
     List<RoleBean> finaAllList();
+    //根据roleIds,查询角色信息
+    public Set<String> queryByIds(Integer[] roleIds);
+
+    List<Role> findAllList(int page, int limit, String name);
+
+    int insertSelective(Role role);
 }

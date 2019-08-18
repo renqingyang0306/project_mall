@@ -6,6 +6,7 @@ import com.cskaoyan.project.mall.utils.PageBean;
 import com.cskaoyan.project.mall.utils.ResponseUtils;
 import com.github.pagehelper.PageInfo;
 import javafx.beans.binding.ObjectBinding;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

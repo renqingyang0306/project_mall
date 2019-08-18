@@ -16,7 +16,7 @@ public interface StorageService {
     int deleteByPrimaryKey(Integer id);
 
     int insertSelective(Storage record);
-    Storage insertSelective( MultipartFile file);
+    Storage insertSelective(MultipartFile file, String newname);
 
     List<Storage> selectByExample(StorageExample example);
 
