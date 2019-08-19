@@ -8,6 +8,6 @@ import java.util.Set;
  * @date 2019/8/17 21:29
  */
 public interface PermissionService {
-    public Set<String> queryByRoleIds(Integer[] roleIds);
-    public Set<String> queryByRoleId(Integer roleId);
+    public Set<String> queryByRoleIds(int[] roleIds);
+    public Set<String> queryByRoleId(int roleId);
 }

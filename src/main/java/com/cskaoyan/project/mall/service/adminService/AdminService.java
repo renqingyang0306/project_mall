@@ -30,4 +30,5 @@ public interface AdminService {
 
     int updateByPrimaryKey(Admin record);
 
+    List<Admin> findAdminByUsername(String username);
 }

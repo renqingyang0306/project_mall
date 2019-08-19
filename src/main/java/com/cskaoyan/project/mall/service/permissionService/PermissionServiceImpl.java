@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author 任清阳
@@ -21,14 +22,19 @@ public class PermissionServiceImpl implements  PermissionService {
     @Autowired
     PermissionMapper permissionMapper;
     @Override
-    public Set<String> queryByRoleIds(Integer[] roleIds) {
+    public Set<String> queryByRoleIds(int[] roleIds) {
         Set<String> permissions = new HashSet<String>();
         if(roleIds.length == 0){
             return permissions;
         }
-
+        // int[] 转 List<Integer>
+       List<Integer> list1 = Arrays.stream(roleIds).boxed().collect(Collectors.toList());
+        // 1.使用Arrays.stream将int[]转换成IntStream。
+        // 2.使用IntStream中的boxed()装箱。将IntStream转换成Stream<Integer>。
+        // 3.使用Stream的collect()，将Stream<T>转换成List<T>，因此正是List<Integer>。
         PermissionExample example = new PermissionExample();
-        example.or().andRoleIdIn(Arrays.asList(roleIds)).andDeletedEqualTo(false);
+
+        example.or().andRoleIdIn(list1).andDeletedEqualTo(false);
         List<Permission> permissionList = permissionMapper.selectByExample(example);
 
         for(Permission permission : permissionList){
@@ -39,11 +45,8 @@ public class PermissionServiceImpl implements  PermissionService {
     }
 
     @Override
-    public Set<String> queryByRoleId(Integer roleId) {
+    public Set<String> queryByRoleId(int roleId) {
         Set<String> permissions = new HashSet<String>();
-        if(roleId == null){
-            return permissions;
-        }
 
         PermissionExample example = new PermissionExample();
         example.or().andRoleIdEqualTo(roleId).andDeletedEqualTo(false);
