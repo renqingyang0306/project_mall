@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cskaoyan.project.mall.mapper.CartAndBrandMapper">
+    <resultMap id="Item" type="com.cskaoyan.project.mall.domain.Item">
+        <result column="id" property="value"/>
+        <result column="name" property="label"/>
+    </resultMap>
+    <resultMap id="CategoryList" type="com.cskaoyan.project.mall.domain.Categorylist">
+        <result column="id" property="value"/>
+        <result column="name" property="label"/>
+    </resultMap>
+
+    <!--回显brand，list类型-->
+    <select id="queryBrandList" resultMap="Item">
+      select
+      id,
+      `name`
+      from brand
+    </select>
+
+    <!--回显category pid = 0，list类型-->
+    <select id="queryCartList" resultMap="CategoryList">
+    select
+    id ,
+    `name`
+    from category
+    where pid = 0;
+    </select>
+
+    <!--回显category pid = ，list类型-->
+    <select id="queryCartListByPid" resultMap="Item">
+    select
+    id ,
+    `name`
+    from category
+    where pid = #{id};
+    </select>
+</mapper>
