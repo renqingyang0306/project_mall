@@ -71,7 +71,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, desc, pic_url, sort_order, floor_price, add_time, update_time, deleted
+    id, brand.name, brand.desc, pic_url, sort_order, floor_price, add_time, update_time, deleted
   </sql>
   <select id="selectByExample" parameterType="com.cskaoyan.project.mall.domain.BrandExample" resultMap="BaseResultMap">
     select
@@ -104,7 +104,7 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.cskaoyan.project.mall.domain.Brand">
-    insert into brand (id, name, desc, 
+    insert into brand (id, brand.name, brand.desc,
       pic_url, sort_order, floor_price, 
       add_time, update_time, deleted
       )
@@ -120,10 +120,10 @@
         id,
       </if>
       <if test="name != null">
-        name,
+        brand.name,
       </if>
       <if test="desc != null">
-        desc,
+        brand.desc,
       </if>
       <if test="picUrl != null">
         pic_url,
@@ -187,10 +187,10 @@
         id = #{record.id,jdbcType=INTEGER},
       </if>
       <if test="record.name != null">
-        name = #{record.name,jdbcType=VARCHAR},
+        brand.name = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.desc != null">
-        desc = #{record.desc,jdbcType=VARCHAR},
+        brand.desc = #{record.desc,jdbcType=VARCHAR},
       </if>
       <if test="record.picUrl != null">
         pic_url = #{record.picUrl,jdbcType=VARCHAR},
@@ -218,8 +218,8 @@
   <update id="updateByExample" parameterType="map">
     update brand
     set id = #{record.id,jdbcType=INTEGER},
-      name = #{record.name,jdbcType=VARCHAR},
-      desc = #{record.desc,jdbcType=VARCHAR},
+      brand.name = #{record.name,jdbcType=VARCHAR},
+      brand.desc = #{record.desc,jdbcType=VARCHAR},
       pic_url = #{record.picUrl,jdbcType=VARCHAR},
       sort_order = #{record.sortOrder,jdbcType=TINYINT},
       floor_price = #{record.floorPrice,jdbcType=DECIMAL},
@@ -234,10 +234,10 @@
     update brand
     <set>
       <if test="name != null">
-        name = #{name,jdbcType=VARCHAR},
+        brand.name = #{name,jdbcType=VARCHAR},
       </if>
       <if test="desc != null">
-        desc = #{desc,jdbcType=VARCHAR},
+        brand.desc = #{desc,jdbcType=VARCHAR},
       </if>
       <if test="picUrl != null">
         pic_url = #{picUrl,jdbcType=VARCHAR},
@@ -262,8 +262,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.cskaoyan.project.mall.domain.Brand">
     update brand
-    set name = #{name,jdbcType=VARCHAR},
-      desc = #{desc,jdbcType=VARCHAR},
+    set brand.name = #{name,jdbcType=VARCHAR},
+      brand.desc = #{desc,jdbcType=VARCHAR},
       pic_url = #{picUrl,jdbcType=VARCHAR},
       sort_order = #{sortOrder,jdbcType=TINYINT},
       floor_price = #{floorPrice,jdbcType=DECIMAL},

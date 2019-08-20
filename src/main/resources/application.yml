@@ -7,23 +7,17 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
-  mvc:
-    static-path-pattern: /static/**
-  resources:
-    static-locations: classpath:/static/
-#redis配置
-  redis:
-    database: 0
-    host: 106.15.200.96
-    port: 6379
-    password: 8956230/
-    timeout: 3000
-#pagehelper配置
+#pageHelper配置
 pagehelper:
   helperDialect: mysql
   reasonable: true
   supportMethodsArguments: true
   params: count=countSql
-#类型转换
+ #类型转换，下面写的是转换的配置文件的路径包
 mybatis:
   type-handlers-package: com.cskaoyan.project.mall.utils
+myoss:
+  bucket: projectmall
+  endpoint: oss-cn-beijing.aliyuncs.com
+  access-key: LTAIEMSP2GXEIDZV
+  secret: lLDimhx0A9Bqa3RKgQIFLc2kOEXBns

@@ -1,5 +1,8 @@
 package com.cskaoyan.project.mall.utils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author 任清阳
  * @Email 1277409109@qq.com
@@ -51,7 +54,44 @@ public class ResponseUtils<T> {
         this.errno = errno;
         this.errmsg = errmsg;
     }
+    public static Object ok() {
+        Map<String, Object> obj = new HashMap<String, Object>();
+        obj.put("errno", 0);
+        obj.put("errmsg", "成功");
+        return obj;
+    }
 
+    public static Object ok(Object data) {
+        Map<String, Object> obj = new HashMap<String, Object>();
+        obj.put("errno", 0);
+        obj.put("errmsg", "成功");
+        obj.put("data", data);
+        return obj;
+    }
+
+    public static Object fail() {
+        Map<String, Object> obj = new HashMap<String, Object>();
+        obj.put("errno", 1);
+        obj.put("errmsg", "错误");
+        return obj;
+    }
+
+    public static Object fail(int errno, String errmsg) {
+        Map<String, Object> obj = new HashMap<String, Object>();
+        obj.put("errno", errno);
+        obj.put("errmsg", errmsg);
+        return obj;
+    }
+    public static Object unlogin() {
+        return fail(501, "请登录");
+    }
+
+    public static Object unauthz() {
+        return fail(506, "无操作权限");
+    }
+    public static Object badArgument() {
+        return fail(401, "参数不对");
+    }
     @Override
     public String toString() {
         return "ResponseJsonUtils{" +

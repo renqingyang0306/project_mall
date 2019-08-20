@@ -4,11 +4,12 @@ import com.cskaoyan.project.mall.domain.Role;
 import com.cskaoyan.project.mall.domain.RoleExample;
 import com.cskaoyan.project.mall.mapper.RoleMapper;
 import com.cskaoyan.project.mall.utils.RoleBean;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author 任清阳
@@ -66,4 +67,56 @@ public class RoleServiceImpl implements  RoleService {
         }
         return list;
     }
+    @Override
+    public List<Role> findAllList(int page, int limit, String username) {
+        RoleExample roleExample = new RoleExample();
+        PageHelper.startPage(page,limit);
+
+        List<Role> listAdmin=null;
+        //模糊查询
+        if (username!=null && !("").equals(username)){
+            roleExample.createCriteria().andNameLike("%"+username+"%");
+            listAdmin=roleMapper.selectByExample(roleExample);
+        }else {
+            //正常查询
+            listAdmin=roleMapper.selectByExample(roleExample);
+        }
+        return listAdmin;
+    }
+
+    @Override
+    public int insertSelective(Role role) {
+        role.setAddTime(new Date());
+        role.setUpdateTime(new Date());
+        /*int i=roleMapper.insertSelective(role);
+        if (i==1){
+            return role;
+        }*/
+        return roleMapper.insertSelective(role);
+    }
+
+    @Override
+    public Set<String> queryByIds(int[] roleIds) {
+        Set<String> roles = new HashSet<String>();
+        if(roleIds.length == 0){
+            return roles;
+        }
+        // int[] 转 List<Integer>
+        List<Integer> list1 = Arrays.stream(roleIds).boxed().collect(Collectors.toList());
+        // 1.使用Arrays.stream将int[]转换成IntStream。
+        // 2.使用IntStream中的boxed()装箱。将IntStream转换成Stream<Integer>。
+        // 3.使用Stream的collect()，将Stream<T>转换成List<T>，因此正是List<Integer>。
+       RoleExample example = new RoleExample();
+        example.or().andIdIn(list1).andEnabledEqualTo(true).andDeletedEqualTo(false);
+        List<Role> roleList = roleMapper.selectByExample(example);
+        //只返回角色名，set集合
+        for(Role role : roleList){
+            roles.add(role.getName());
+        }
+
+        return roles;
+    }
+
+
+
 }

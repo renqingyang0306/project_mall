@@ -101,7 +101,11 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.cskaoyan.project.mall.domain.Issue">
-    insert into issue (id, question, answer, 
+    <selectKey keyProperty="id" order="AFTER"
+               resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into issue (id, question, answer,
       add_time, update_time, deleted
       )
     values (#{id,jdbcType=INTEGER}, #{question,jdbcType=VARCHAR}, #{answer,jdbcType=VARCHAR}, 
@@ -109,6 +113,10 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.cskaoyan.project.mall.domain.Issue">
+    <selectKey keyProperty="id" order="AFTER"
+               resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into issue
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
