@@ -1,4 +1,4 @@
-/*package com.cskaoyan.project.mall.service.goods;
+package com.cskaoyan.project.mall.service.goods;
 
 import com.cskaoyan.project.mall.domain.Categorylist;
 import com.cskaoyan.project.mall.domain.Item;
@@ -9,15 +9,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-*//**
+/**
  * Created by IntelliJ IDEA
  *
  * @auther XXX
- * @date 2019/8/16
- * @time 19:28
- *//*
+ * @date 2019/8/20
+ * @time 15:54
+ */
 @Service
-public class CategoryServiceImpl implements CategoryService{
+public class CartAndBrandServiceImpl implements CartAndBrandService {
+
     @Autowired
     CartAndBrandMapper cartAndBrandMapper;
     @Autowired
@@ -44,4 +45,10 @@ public class CategoryServiceImpl implements CategoryService{
         int pid = categoryMapper.queryPidById(id);
         return pid;
     }
-}*/
+
+    @Override
+    public List<Item> queryBrandList() {
+        List<Item> brands = cartAndBrandMapper.queryBrandList();
+        return brands;
+    }
+}

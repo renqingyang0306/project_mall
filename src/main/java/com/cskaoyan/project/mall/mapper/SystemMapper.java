@@ -2,7 +2,7 @@ package com.cskaoyan.project.mall.mapper;
 
 import com.cskaoyan.project.mall.domain.SystemExample;
 import org.apache.ibatis.annotations.Param;
-
+import com.cskaoyan.project.mall.domain.System;
 import java.util.List;
 
 public interface SystemMapper {

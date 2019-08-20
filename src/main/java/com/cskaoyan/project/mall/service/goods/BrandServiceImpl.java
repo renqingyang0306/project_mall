@@ -1,3 +1,4 @@
+/*
 package com.cskaoyan.project.mall.service.goods;
 
 import com.cskaoyan.project.mall.domain.Brand;
@@ -10,13 +11,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+*/
 /**
  * Created by IntelliJ IDEA
  *
  * @auther XXX
  * @date 2019/8/16
  * @time 19:28
- */
+ *//*
+
 @Service
 public class BrandServiceImpl implements BrandService{
     @Autowired
@@ -27,3 +30,4 @@ public class BrandServiceImpl implements BrandService{
         return brands;
     }
 }
+*/

@@ -1,20 +1,19 @@
 package com.cskaoyan.project.mall.controller.goods;
 
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.JSONPObject;
 import com.cskaoyan.project.mall.controller.goods.vo.CreatVO;
 import com.cskaoyan.project.mall.controller.goods.vo.PageVO;
 import com.cskaoyan.project.mall.controller.goods.vo.ResponseVO;
 import com.cskaoyan.project.mall.domain.*;
 import com.cskaoyan.project.mall.service.goods.*;
-//import io.swagger.annotations.Api;
+import com.cskaoyan.project.mall.service.mall.BrandService;
+import com.cskaoyan.project.mall.service.mall.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.lang.System;
 import java.util.Date;
 import java.util.List;
 
@@ -38,10 +37,13 @@ public class GoodsController {
     GoodsProductService goodsProductService;
     @Autowired
     GoodsSpecificationService goodsSpecificationService;
+
     @Autowired
+    CartAndBrandService cartAndBrandService;
+    /*@Autowired
     CategoryService categoryService;
     @Autowired
-    BrandService brandService;
+    BrandService brandService;*/
 
     /*
      * description: list
@@ -72,22 +74,6 @@ public class GoodsController {
         }
 
     }
-    /* @RequestMapping("goods/list")
-    @ResponseBody
-    public ResponseVO getGoodsList(int page, int limit,String goodsSn,String name,String sort, String order) {
-        if (goodsSn == null && name == null) {
-            ResponseVO<PageVO<Goods>> responseVO = goodsService.queryAll(page, limit);
-            return responseVO;
-        } else {
-            if (goodsSn == null) {
-                goodsSn = "";
-            } else if (name == null) {
-                name = "";
-            }
-            ResponseVO<PageVO<Goods>> responseVO = goodsService.fuzzyQuery(page, limit, goodsSn, name);
-            return responseVO;
-        }
-    }*/
     /*商品列表界面的添加功能*/
     /*
      * description: catAndBrand
@@ -103,8 +89,8 @@ public class GoodsController {
     @ResponseBody
     public ResponseVO catAndBrand(){
 
-        List<Item> brands = brandService.queryBrandList();
-        List<Categorylist> categories = categoryService.queryCartList();
+        List<Item> brands = cartAndBrandService.queryBrandList();
+        List<Categorylist> categories = cartAndBrandService.queryCartList();
         CartAndBrand cartAndBrand = new CartAndBrand(brands,categories);
         ResponseVO<CartAndBrand> responseVO = new ResponseVO<>(cartAndBrand, "成功", 0);
         return responseVO;
@@ -176,7 +162,7 @@ public class GoodsController {
         //get对应的种类id
         int categoryId1 = goods.getCategoryId();
         //查出category表的pid
-        int categoryId2 = categoryService.queryPidById(categoryId1);
+        int categoryId2 = cartAndBrandService.queryPidById(categoryId1);
         //把得到的小分类id和大分类id放到一个数组里
         int[] categoryIds = new int[]{categoryId1,categoryId2};
         //根据id查出对应的goodsAttribute信息
@@ -243,6 +229,5 @@ public class GoodsController {
         }
         return creatVO;
     }
-
 
 }
