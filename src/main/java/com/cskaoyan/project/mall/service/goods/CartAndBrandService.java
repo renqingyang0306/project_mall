@@ -9,9 +9,13 @@ import java.util.List;
  * Created by IntelliJ IDEA
  *
  * @auther XXX
- * @date 2019/8/16
- * @time 19:27
+ * @date 2019/8/20
+ * @time 15:53
  */
-public interface BrandService {
+public interface CartAndBrandService {
+    List<Categorylist> queryCartList();
+
+    int queryPidById(int categoryId1);
+
     List<Item> queryBrandList();
 }

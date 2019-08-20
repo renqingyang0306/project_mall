@@ -39,9 +39,7 @@ public class GoodsController {
     @Autowired
     GoodsSpecificationService goodsSpecificationService;
     @Autowired
-    CategoryService categoryService;
-    @Autowired
-    BrandService brandService;
+    CartAndBrandService cartAndBrandService;
 
     /*
      * description: list
@@ -103,8 +101,8 @@ public class GoodsController {
     @ResponseBody
     public ResponseVO catAndBrand(){
 
-        List<Item> brands = brandService.queryBrandList();
-        List<Categorylist> categories = categoryService.queryCartList();
+        List<Item> brands = cartAndBrandService.queryBrandList();
+        List<Categorylist> categories = cartAndBrandService.queryCartList();
         CartAndBrand cartAndBrand = new CartAndBrand(brands,categories);
         ResponseVO<CartAndBrand> responseVO = new ResponseVO<>(cartAndBrand, "成功", 0);
         return responseVO;
@@ -176,7 +174,7 @@ public class GoodsController {
         //get对应的种类id
         int categoryId1 = goods.getCategoryId();
         //查出category表的pid
-        int categoryId2 = categoryService.queryPidById(categoryId1);
+        int categoryId2 = cartAndBrandService.queryPidById(categoryId1);
         //把得到的小分类id和大分类id放到一个数组里
         int[] categoryIds = new int[]{categoryId1,categoryId2};
         //根据id查出对应的goodsAttribute信息

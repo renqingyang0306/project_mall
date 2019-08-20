@@ -12,6 +12,7 @@ import java.util.List;
  * @time 17:52
  */
 public interface GoodsAttributeService {
+
     int insert(GoodsAttribute goodsAttribute);
 
     List<GoodsAttribute> queryByGoodsId(int id);

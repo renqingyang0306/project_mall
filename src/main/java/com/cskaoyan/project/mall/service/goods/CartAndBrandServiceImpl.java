@@ -13,11 +13,12 @@ import java.util.List;
  * Created by IntelliJ IDEA
  *
  * @auther XXX
- * @date 2019/8/16
- * @time 19:28
+ * @date 2019/8/20
+ * @time 15:54
  */
 @Service
-public class CategoryServiceImpl implements CategoryService{
+public class CartAndBrandServiceImpl implements CartAndBrandService {
+
     @Autowired
     CartAndBrandMapper cartAndBrandMapper;
     @Autowired
@@ -43,5 +44,11 @@ public class CategoryServiceImpl implements CategoryService{
     public int queryPidById(int id) {
         int pid = categoryMapper.queryPidById(id);
         return pid;
+    }
+
+    @Override
+    public List<Item> queryBrandList() {
+        List<Item> brands = cartAndBrandMapper.queryBrandList();
+        return brands;
     }
 }
