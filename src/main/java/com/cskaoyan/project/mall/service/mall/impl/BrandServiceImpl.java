@@ -20,6 +20,14 @@ public class BrandServiceImpl implements BrandService {
     BrandMapper brandMapper;
 
     @Override
+    public List<Brand> queryAllBrand() {
+        BrandExample brandExample = new BrandExample();
+        brandExample.createCriteria().andDeletedEqualTo(false);
+        List<Brand> brands = brandMapper.selectByExample(brandExample);
+        return brands;
+    }
+
+    @Override
     public List<Brand> queryPageBrands(int page, int limit,String sort,String order) {
         PageHelper.startPage(page,limit);
         BrandExample brandExample = new BrandExample();
@@ -106,5 +114,10 @@ public class BrandServiceImpl implements BrandService {
         brand.setDeleted(true);
         int update = brandMapper.updateByPrimaryKey(brand);
         return update;
+    }
+
+    @Override
+    public List<Brand> selectByExample(BrandExample example) {
+        return brandMapper.selectByExample(example);
     }
 }
