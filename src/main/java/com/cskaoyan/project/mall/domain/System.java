@@ -1,5 +1,7 @@
 package com.cskaoyan.project.mall.domain;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Date;
 
 public class System {

@@ -3,13 +3,21 @@ server:
 #数据库配置
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/cskaoyanmall?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT
+    url: jdbc:mysql://localhost:3306/cskaoyanmall?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT&useSSL=false
     username: root
     password: 123456
-    driver-class-name: com.mysql.cj.jdbc.Driver
-#pagehelper配置
+    driver-class-name: com.mysql.jdbc.Driver
+#pageHelper配置
 pagehelper:
   helperDialect: mysql
   reasonable: true
   supportMethodsArguments: true
   params: count=countSql
+ #类型转换，下面写的是转换的配置文件的路径包
+mybatis:
+  type-handlers-package: com.cskaoyan.project.mall.utils
+myoss:
+  bucket: projectmall
+  endpoint: oss-cn-beijing.aliyuncs.com
+  access-key: LTAIEMSP2GXEIDZV
+  secret: lLDimhx0A9Bqa3RKgQIFLc2kOEXBns
