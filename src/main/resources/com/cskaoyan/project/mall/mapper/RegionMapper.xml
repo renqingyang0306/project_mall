@@ -67,7 +67,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, pid, name, type, code
+    id, pid, region.name, region.type, code
   </sql>
   <select id="selectByExample" parameterType="com.cskaoyan.project.mall.domain.RegionExample" resultMap="BaseResultMap">
     select
@@ -116,12 +116,20 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.cskaoyan.project.mall.domain.Region">
-    insert into region (id, pid, name, 
-      type, code)
+    <selectKey keyProperty="id" order="AFTER"
+               resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into region (id, pid, region.name,
+    region.type, code)
     values (#{id,jdbcType=INTEGER}, #{pid,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
       #{type,jdbcType=TINYINT}, #{code,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.cskaoyan.project.mall.domain.Region">
+    <selectKey keyProperty="id" order="AFTER"
+               resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into region
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -131,10 +139,10 @@
         pid,
       </if>
       <if test="name != null">
-        name,
+        region.name,
       </if>
       <if test="type != null">
-        type,
+        region.type,
       </if>
       <if test="code != null">
         code,
@@ -174,10 +182,10 @@
         pid = #{record.pid,jdbcType=INTEGER},
       </if>
       <if test="record.name != null">
-        name = #{record.name,jdbcType=VARCHAR},
+        region.name = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.type != null">
-        type = #{record.type,jdbcType=TINYINT},
+        region.type = #{record.type,jdbcType=TINYINT},
       </if>
       <if test="record.code != null">
         code = #{record.code,jdbcType=INTEGER},
@@ -191,8 +199,8 @@
     update region
     set id = #{record.id,jdbcType=INTEGER},
       pid = #{record.pid,jdbcType=INTEGER},
-      name = #{record.name,jdbcType=VARCHAR},
-      type = #{record.type,jdbcType=TINYINT},
+    region.name = #{record.name,jdbcType=VARCHAR},
+    region.type = #{record.type,jdbcType=TINYINT},
       code = #{record.code,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -205,10 +213,10 @@
         pid = #{pid,jdbcType=INTEGER},
       </if>
       <if test="name != null">
-        name = #{name,jdbcType=VARCHAR},
+        region.name = #{name,jdbcType=VARCHAR},
       </if>
       <if test="type != null">
-        type = #{type,jdbcType=TINYINT},
+        region.type = #{type,jdbcType=TINYINT},
       </if>
       <if test="code != null">
         code = #{code,jdbcType=INTEGER},
@@ -219,9 +227,9 @@
   <update id="updateByPrimaryKey" parameterType="com.cskaoyan.project.mall.domain.Region">
     update region
     set pid = #{pid,jdbcType=INTEGER},
-      name = #{name,jdbcType=VARCHAR},
+      region.name = #{name,jdbcType=VARCHAR},
       type = #{type,jdbcType=TINYINT},
-      code = #{code,jdbcType=INTEGER}
+      region.code = #{code,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>
