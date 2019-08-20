@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -64,5 +65,11 @@ public class MallApplicationTests {
 	public void queryAllCategoryTest() {
 		ResponseUtils responseUtils = categoryController.queryAllCategory();
 		System.out.println("responseUtils = " + responseUtils);
+	}
+
+	@Test
+	public void mytest() {
+		String[] strings = new String[] {"1","2"};
+		System.out.println("strings = " + Arrays.toString(strings));
 	}
 }

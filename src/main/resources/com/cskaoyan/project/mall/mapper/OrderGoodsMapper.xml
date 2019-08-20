@@ -110,7 +110,11 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.cskaoyan.project.mall.domain.OrderGoods">
-    insert into order_goods (id, order_id, goods_id, 
+    <selectKey keyProperty="id" order="AFTER"
+               resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into order_goods (id, order_id, goods_id,
       goods_name, goods_sn, product_id, 
       number, price, specifications, 
       pic_url, comment, add_time, 
@@ -122,6 +126,10 @@
       #{updateTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="com.cskaoyan.project.mall.domain.OrderGoods">
+    <selectKey keyProperty="id" order="AFTER"
+               resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into order_goods
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">

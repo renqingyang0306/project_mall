@@ -64,6 +64,20 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<Order> queryAllOrder() {
+        OrderExample orderExample = new OrderExample();
+        OrderExample.Criteria criteria = orderExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        List<Order> orders = orderMapper.selectByExample(orderExample);
+        return orders;
+    }
+
+    @Override
+    public List<Order> selectByExample(OrderExample example) {
+        return orderMapper.selectByExample(example);
+    }
+
+    @Override
     public int insertOrder(Order order) {
         int insert = orderMapper.insert(order);
         return insert;

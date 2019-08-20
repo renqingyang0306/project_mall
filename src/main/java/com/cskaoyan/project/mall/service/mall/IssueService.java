@@ -1,6 +1,7 @@
 package com.cskaoyan.project.mall.service.mall;
 
 import com.cskaoyan.project.mall.domain.Issue;
+import com.cskaoyan.project.mall.domain.IssueExample;
 
 import java.util.List;
 
@@ -10,6 +11,10 @@ import java.util.List;
  */
 public interface IssueService {
     List<Issue> queryPageIssues(int page,int limit,String question,String sort,String order);
+    List<Issue> queryAllIssue();
+
+    List<Issue> selectByExample(IssueExample example);
+
     Issue queryIssue(Integer id);
     int insertIssue(Issue issue);
     int updateIssueById(Issue issue);

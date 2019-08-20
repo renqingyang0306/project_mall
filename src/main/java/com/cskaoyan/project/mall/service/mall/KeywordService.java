@@ -1,6 +1,7 @@
 package com.cskaoyan.project.mall.service.mall;
 
 import com.cskaoyan.project.mall.domain.Keyword;
+import com.cskaoyan.project.mall.domain.KeywordExample;
 
 import java.util.List;
 
@@ -11,6 +12,9 @@ import java.util.List;
 public interface KeywordService {
     List<Keyword> queryPageKeyword(int page, int limit, String keyword, String url, String sort, String order);
     Keyword queryKeyword(Integer id);
+
+    List<Keyword> queryAllKeyword();
+    List<Keyword> selectByExample(KeywordExample example);
 
     int insertKeyword(Keyword keyword);
     int updateKeyword(Keyword keyword);

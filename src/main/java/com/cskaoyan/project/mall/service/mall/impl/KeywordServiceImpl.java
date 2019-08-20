@@ -48,6 +48,20 @@ public class KeywordServiceImpl implements KeywordService {
     }
 
     @Override
+    public List<Keyword> queryAllKeyword() {
+        KeywordExample keywordExample = new KeywordExample();
+        KeywordExample.Criteria criteria = keywordExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        List<Keyword> keywords = keywordMapper.selectByExample(keywordExample);
+        return keywords;
+    }
+
+    @Override
+    public List<Keyword> selectByExample(KeywordExample example) {
+        return keywordMapper.selectByExample(example);
+    }
+
+    @Override
     public int insertKeyword(Keyword keyword) {
         int insert = keywordMapper.insert(keyword);
         return insert;

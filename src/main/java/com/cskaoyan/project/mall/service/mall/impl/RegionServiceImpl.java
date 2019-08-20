@@ -57,6 +57,11 @@ public class RegionServiceImpl implements RegionService {
         return regions;
     }
 
+    @Override
+    public List<Region> selectByExample(RegionExample example) {
+        return regionMapper.selectByExample(example);
+    }
+
 
     @Override
     public int updateByPrimaryKey(Region record) {
