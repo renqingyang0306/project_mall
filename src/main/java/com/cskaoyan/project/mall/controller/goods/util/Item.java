@@ -1,4 +1,4 @@
-package com.cskaoyan.project.mall.domain;
+package com.cskaoyan.project.mall.controller.goods.util;
 
 /**
  * Created by IntelliJ IDEA

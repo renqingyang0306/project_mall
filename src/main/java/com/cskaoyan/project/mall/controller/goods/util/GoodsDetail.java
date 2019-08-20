@@ -1,4 +1,9 @@
-package com.cskaoyan.project.mall.domain;
+package com.cskaoyan.project.mall.controller.goods.util;
+
+import com.cskaoyan.project.mall.domain.Goods;
+import com.cskaoyan.project.mall.domain.GoodsAttribute;
+import com.cskaoyan.project.mall.domain.GoodsProduct;
+import com.cskaoyan.project.mall.domain.GoodsSpecification;
 
 import java.util.Arrays;
 import java.util.List;

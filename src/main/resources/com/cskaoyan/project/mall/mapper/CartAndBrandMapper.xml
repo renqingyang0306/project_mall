@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cskaoyan.project.mall.mapper.CartAndBrandMapper">
-    <resultMap id="Item" type="com.cskaoyan.project.mall.domain.Item">
+    <resultMap id="Item" type="com.cskaoyan.project.mall.controller.goods.util.Item">
         <result column="id" property="value"/>
         <result column="name" property="label"/>
     </resultMap>
-    <resultMap id="CategoryList" type="com.cskaoyan.project.mall.domain.Categorylist">
+    <resultMap id="CategoryList" type="com.cskaoyan.project.mall.controller.goods.util.Categorylist">
         <result column="id" property="value"/>
         <result column="name" property="label"/>
     </resultMap>

@@ -1,4 +1,5 @@
-package com.cskaoyan.project.mall.domain;
+package com.cskaoyan.project.mall.controller.goods.util;
+
 
 import java.util.List;
 
