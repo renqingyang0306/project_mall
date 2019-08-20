@@ -72,6 +72,13 @@
   <sql id="Base_Column_List">
     id, goods_id, specification, value, pic_url, add_time, update_time, deleted
   </sql>
+  <!--根据goodsid查出对应的list集合形式的specification-->
+  <select id="queryByGoodsId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from goods_specification
+    where goods_id = #{id}
+  </select>
   <select id="selectByExample" parameterType="com.cskaoyan.project.mall.domain.GoodsSpecificationExample" resultMap="BaseResultMap">
     select
     <if test="distinct">

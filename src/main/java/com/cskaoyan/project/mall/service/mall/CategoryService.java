@@ -1,6 +1,7 @@
 package com.cskaoyan.project.mall.service.mall;
 
 import com.cskaoyan.project.mall.domain.Category;
+import com.cskaoyan.project.mall.domain.CategoryExample;
 
 import java.util.Date;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  */
 public interface CategoryService {
     List<Category> queryAllCategory();
+
     List<Category> queryAllCategoryLevel1();
     List<Category> queryAllCategoryByPid(Integer pid);
 
@@ -19,5 +21,6 @@ public interface CategoryService {
     int updateCategoryById(Category category);
     int deleteCategoryById(Category category);
     int deleteCategoryByDeleted(Category category);
+    List<Category> selectByExample(CategoryExample example);
 
 }

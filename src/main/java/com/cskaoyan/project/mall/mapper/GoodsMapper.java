@@ -14,7 +14,7 @@ public interface GoodsMapper {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(Goods record);
+    int insert(Goods goods);
 
     int insertSelective(Goods record);
 
@@ -35,4 +35,12 @@ public interface GoodsMapper {
     int updateByPrimaryKeyWithBLOBs(Goods record);
 
     int updateByPrimaryKey(Goods record);
+    /*分页查询*/
+    List<Goods> queryAll();
+
+    Goods queryById(int id);
+
+    int update(@Param("goods") Goods goods);
+
+    List<Goods> fuzzyQuery(@Param("goodsSn") String goodsSn, @Param("name") String name);
 }

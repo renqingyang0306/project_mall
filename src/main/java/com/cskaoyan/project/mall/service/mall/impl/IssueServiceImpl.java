@@ -35,6 +35,22 @@ public class IssueServiceImpl implements IssueService {
     }
 
     @Override
+    public List<Issue> queryAllIssue() {
+        IssueExample issueExample = new IssueExample();
+        IssueExample.Criteria criteria = issueExample.createCriteria();
+        //查询所有没有逻辑删除的数据
+        criteria.andDeletedEqualTo(false);
+        List<Issue> issues = issueMapper.selectByExample(issueExample);
+        return issues;
+    }
+
+    @Override
+    public List<Issue> selectByExample(IssueExample example) {
+
+        return issueMapper.selectByExample(example);
+    }
+
+    @Override
     public Issue queryIssue(Integer id) {
         Issue issue = issueMapper.selectByPrimaryKey(id);
         return issue;

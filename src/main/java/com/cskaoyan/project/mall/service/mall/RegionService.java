@@ -1,6 +1,7 @@
 package com.cskaoyan.project.mall.service.mall;
 
 import com.cskaoyan.project.mall.domain.Region;
+import com.cskaoyan.project.mall.domain.RegionExample;
 
 import java.util.List;
 
@@ -20,6 +21,8 @@ public interface RegionService {
     List<Region> selectByPid(Integer pid);
 
     List<Region> selectLikeCode(String code);
+
+    List<Region> selectByExample(RegionExample example);
 
     int updateByPrimaryKey(Region record);
 }

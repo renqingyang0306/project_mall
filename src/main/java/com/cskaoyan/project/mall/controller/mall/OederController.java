@@ -1,7 +1,11 @@
 package com.cskaoyan.project.mall.controller.mall;
 
 import com.cskaoyan.project.mall.domain.Order;
+import com.cskaoyan.project.mall.domain.OrderGoods;
+import com.cskaoyan.project.mall.domain.User;
+import com.cskaoyan.project.mall.service.mall.OrderGoodsService;
 import com.cskaoyan.project.mall.service.mall.OrderService;
+import com.cskaoyan.project.mall.service.userService.UserService;
 import com.cskaoyan.project.mall.utils.PageBean;
 import com.cskaoyan.project.mall.utils.ResponseUtils;
 import com.github.pagehelper.PageInfo;
@@ -10,7 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author 申涛涛
@@ -20,6 +26,10 @@ import java.util.List;
 public class OederController {
     @Autowired
     OrderService orderService;
+    @Autowired
+    OrderGoodsService orderGoodsService;
+    @Autowired
+    UserService userService;
 
     @RequestMapping("/admin/order/list")
     @ResponseBody
@@ -44,7 +54,17 @@ public class OederController {
     @RequestMapping("/admin/order/detail")
     @ResponseBody
     public ResponseUtils queryOrderDetail(Integer id) {
+
         Order order = orderService.queryOrderById(id);
+        List<OrderGoods> orderGoods = orderGoodsService.queryAllOrderGoodsByOrderId(order.getId());
+        User user = null;
+        if (order.getUserId() != null) {
+            user = userService.selectByPrimaryKey(order.getUserId());
+        }
+        Map map = new HashMap();
+        map.put("order",order);
+        map.put("orderGoods",orderGoods);
+        map.put("user",user);
 
         ResponseUtils responseUtils = new ResponseUtils();
         if (order == null) {
@@ -53,7 +73,7 @@ public class OederController {
         } else {
             responseUtils.setErrno(0);
             responseUtils.setErrmsg("成功！");
-            responseUtils.setData(order);
+            responseUtils.setData(map);
         }
         return responseUtils;
     }

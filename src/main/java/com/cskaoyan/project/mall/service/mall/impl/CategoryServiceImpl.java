@@ -81,4 +81,9 @@ public class CategoryServiceImpl implements CategoryService {
         int update = categoryMapper.updateByPrimaryKey(category);
         return update;
     }
+
+    @Override
+    public List<Category> selectByExample(CategoryExample example) {
+        return categoryMapper.selectByExample(example);
+    }
 }
