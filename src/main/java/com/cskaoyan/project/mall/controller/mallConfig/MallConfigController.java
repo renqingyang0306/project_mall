@@ -4,6 +4,7 @@ import com.cskaoyan.project.mall.domain.SystemExample;
 import com.cskaoyan.project.mall.domain.System;
 import com.cskaoyan.project.mall.service.mallConfig.MallConfigService;
 import com.cskaoyan.project.mall.utils.ResponseUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,7 +17,7 @@ import java.util.Map;
 @RequestMapping("admin/config")
 public class MallConfigController
 {
-    @Resource
+    @Autowired
     MallConfigService mallConfigService;
 
     @RequestMapping("mall")

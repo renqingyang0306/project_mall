@@ -43,7 +43,8 @@ public class StorageServiceImpl implements StorageService {
         //原始文件名
         storage.setName(file.getOriginalFilename());
         storage.setType(file.getContentType());
-        storage.setUrl("http://localhost/static/pic/admin/"+newname);
+
+        storage.setUrl("https://projectmall.oss-cn-beijing.aliyuncs.com/"+newname);
 
         //插入数据
         int i = storageMapper.insertSelective(storage);

@@ -3,10 +3,11 @@ package com.cskaoyan.project.mall.service.mallConfig;
 import com.cskaoyan.project.mall.domain.System;
 import com.cskaoyan.project.mall.domain.SystemExample;
 import com.cskaoyan.project.mall.mapper.SystemMapper;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-
+@Service
 public class MallConfigServiceImpl implements MallConfigService
 {
     @Resource
