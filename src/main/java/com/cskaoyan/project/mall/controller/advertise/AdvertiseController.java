@@ -85,6 +85,7 @@ RedisUtil redisUtil;
      SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
      ad.setAddTime(CreateDate.createDate());
      advertiseService.insert(ad);
+
         ResponseUtils<Ad> pageBeanResponseUtils = new ResponseUtils<Ad>();
         pageBeanResponseUtils.setData(ad);
         pageBeanResponseUtils.setErrno(0);

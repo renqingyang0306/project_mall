@@ -106,6 +106,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.cskaoyan.project.mall.domain.GrouponRules">
+    <selectKey keyProperty="id" order="AFTER"
+               resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into groupon_rules (id, goods_id, goods_name, 
       pic_url, discount, discount_member, 
       add_time, update_time, expire_time, 

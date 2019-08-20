@@ -116,6 +116,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.cskaoyan.project.mall.domain.Coupon">
+    <selectKey keyProperty="id" order="AFTER"
+               resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into coupon (id, coupon.name, coupon.desc,
       tag, total, discount, 
       min, coupon.limit, type,
