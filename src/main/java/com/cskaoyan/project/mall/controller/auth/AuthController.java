@@ -25,6 +25,7 @@ public class AuthController {
         return  stringResponseJsonUtils;
 
     }
+
     @RequestMapping("auth/info")
     public ResponseUtils<RolesBean<String>> info(){
 
