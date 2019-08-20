@@ -18,6 +18,8 @@ public interface RegionMapper {
     int insertSelective(Region record);
 
     List<Region> selectByExample(RegionExample example);
+    List<Region> selectByLikeCode(String code);
+    List<Region> selectByPid(Integer pid);
 
     Region selectByPrimaryKey(Integer id);
 

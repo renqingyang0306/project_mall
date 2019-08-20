@@ -83,6 +83,22 @@
       order by ${orderByClause}
     </if>
   </select>
+
+  <select id="selectByLikeCode" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from region
+    where cast(code as char) like #{code}
+  </select>
+
+  <select id="selectByPid" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from region
+    where pid = #{pid}
+  </select>
+
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

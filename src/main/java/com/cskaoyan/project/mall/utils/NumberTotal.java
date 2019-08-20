@@ -1,20 +1,26 @@
 package com.cskaoyan.project.mall.utils;
 
+import com.cskaoyan.project.mall.service.NumberTotalService;
+import com.cskaoyan.project.mall.service.NumberTotalServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+
 /**
  * @author 任清阳
  * @Email 1277409109@qq.com
  * @date 2019/8/16 9:50
  */
 public class NumberTotal {
-    private int goodsTotal;
 
-    private int orderTotal;
 
-    private int productTotal;
+    private long goodsTotal;
 
-    private int userTotal;
+    private long orderTotal;
 
-    public NumberTotal(int goodsTotal, int orderTotal, int productTotal, int userTotal) {
+    private long productTotal;
+
+    private long userTotal;
+
+    public NumberTotal(long goodsTotal, long orderTotal, long productTotal, long userTotal) {
         this.goodsTotal = goodsTotal;
         this.orderTotal = orderTotal;
         this.productTotal = productTotal;
@@ -24,35 +30,53 @@ public class NumberTotal {
     public NumberTotal() {
     }
 
-    public int getGoodsTotal() {
+   /* public  NumberTotal getNumberTotal(){
+        System.out.println( numberTotalService.goodsTotal());
+        NumberTotal total=new NumberTotal(
+                numberTotalService.goodsTotal(),numberTotalService.orderTotal(),numberTotalService.productTotal(),numberTotalService.userTotal());
+        System.out.println(total);
+        return  total;
+    }
+*/
+    public long getGoodsTotal() {
         return goodsTotal;
     }
 
-    public void setGoodsTotal(int goodsTotal) {
+    public void setGoodsTotal(long goodsTotal) {
         this.goodsTotal = goodsTotal;
     }
 
-    public int getOrderTotal() {
+    public long getOrderTotal() {
         return orderTotal;
     }
 
-    public void setOrderTotal(int orderTotal) {
+    public void setOrderTotal(long orderTotal) {
         this.orderTotal = orderTotal;
     }
 
-    public int getProductTotal() {
+    public long getProductTotal() {
         return productTotal;
     }
 
-    public void setProductTotal(int productTotal) {
+    public void setProductTotal(long productTotal) {
         this.productTotal = productTotal;
     }
 
-    public int getUserTotal() {
+    public long getUserTotal() {
         return userTotal;
     }
 
-    public void setUserTotal(int userTotal) {
+    public void setUserTotal(long userTotal) {
         this.userTotal = userTotal;
+    }
+
+    @Override
+    public String toString() {
+        return "NumberTotal{" +
+                ", goodsTotal=" + goodsTotal +
+                ", orderTotal=" + orderTotal +
+                ", productTotal=" + productTotal +
+                ", userTotal=" + userTotal +
+                '}';
     }
 }
