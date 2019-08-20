@@ -11,6 +11,13 @@ spring:
     static-path-pattern: /static/**
   resources:
     static-locations: classpath:/static/
+#redis配置
+  redis:
+    database: 0
+    host: 106.15.200.96
+    port: 6379
+    password: 8956230/
+    timeout: 3000
 #pagehelper配置
 pagehelper:
   helperDialect: mysql
