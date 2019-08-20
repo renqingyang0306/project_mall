@@ -1,10 +1,10 @@
 package com.cskaoyan.project.mall.controller.goods;
 
+import com.cskaoyan.project.mall.controller.goods.util.CommentReply;
 import com.cskaoyan.project.mall.controller.goods.vo.CreatVO;
 import com.cskaoyan.project.mall.controller.goods.vo.PageVO;
 import com.cskaoyan.project.mall.controller.goods.vo.ResponseVO;
 import com.cskaoyan.project.mall.domain.Comment;
-import com.cskaoyan.project.mall.domain.CommentReply;
 import com.cskaoyan.project.mall.service.goods.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

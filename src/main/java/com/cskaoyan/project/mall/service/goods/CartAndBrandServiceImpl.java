@@ -1,7 +1,7 @@
 package com.cskaoyan.project.mall.service.goods;
 
-import com.cskaoyan.project.mall.domain.Categorylist;
-import com.cskaoyan.project.mall.domain.Item;
+import com.cskaoyan.project.mall.controller.goods.util.Categorylist;
+import com.cskaoyan.project.mall.controller.goods.util.Item;
 import com.cskaoyan.project.mall.mapper.CartAndBrandMapper;
 import com.cskaoyan.project.mall.mapper.CategoryMapper;
 import org.springframework.beans.factory.annotation.Autowired;
