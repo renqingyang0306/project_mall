@@ -1,5 +1,6 @@
 package com.cskaoyan.project.mall.controller.storage;
 
+import com.cskaoyan.project.mall.config.MyOssClient;
 import com.cskaoyan.project.mall.domain.Storage;
 import com.cskaoyan.project.mall.service.storageService.StorageService;
 import com.cskaoyan.project.mall.utils.PageBean;
@@ -29,25 +30,19 @@ public class StorageController {
     StorageService storageService;
     @Autowired
     ServletContext context;
+    @Autowired
+    MyOssClient myOssClient;
     @RequestMapping("create")
     public ResponseUtils<Storage> insert(MultipartFile file){
         //获取本项目的资源路径
-        //String realPath = context.getRealPath("/static/pic/admin");
-        String realPath = ClassUtils.getDefaultClassLoader().getResource("").getPath()+"static/pic/admin/";
-        //重命名文件名
-        String filename = file.getOriginalFilename();
-        String substring = filename.substring(filename.lastIndexOf('.'), filename.length());
+        //String realPath = ClassUtils.getDefaultClassLoader().getResource("").getPath()+"static/pic/admin/";
         //拼接后缀
-        String newname= UUIDUtils.getId()+substring;
-        File receive=new File(realPath,newname);
-        if (!receive.getParentFile().exists()) {
-            receive.getParentFile().mkdirs();
-        }
+        String uuid=UUIDUtils.getId();
         ResponseUtils<Storage> responseUtils=null;
         //io上传
         try {
-            file.transferTo(receive);
-            Storage storage = storageService.insertSelective(file,newname);
+            myOssClient.ossFileUpload(file,uuid);
+            Storage storage = storageService.insertSelective(file,uuid);
             responseUtils=new ResponseUtils<>(0,storage,"成功");
         } catch (IOException e) {
             e.printStackTrace();

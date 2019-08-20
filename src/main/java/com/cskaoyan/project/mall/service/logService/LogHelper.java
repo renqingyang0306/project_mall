@@ -112,5 +112,4 @@ public class LogHelper {
         log.setUpdateTime(new Date());
         logService.insertSelective(log);
     }
-
 }

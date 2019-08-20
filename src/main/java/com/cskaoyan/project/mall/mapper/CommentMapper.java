@@ -29,8 +29,4 @@ public interface CommentMapper {
     int updateByPrimaryKeySelective(Comment record);
 
     int updateByPrimaryKey(Comment record);
-
-    List<Comment> queryAll();
-
-    List<Comment> fuzzyQuery(@Param("userId") String userId,@Param("valueId") String valueId);
 }
