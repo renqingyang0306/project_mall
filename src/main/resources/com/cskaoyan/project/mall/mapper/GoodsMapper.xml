@@ -153,6 +153,15 @@
         where id = #{goods.id}
     </delete>
 
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List" />
+        ,
+        <include refid="Blob_Column_List" />
+        from goods
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
     <select id="getGoodsNum" resultType="int">
         select count(*) from goods
     </select>
