@@ -79,4 +79,11 @@ public class AdminServiceImpl implements  AdminService {
     public int updateByPrimaryKey(Admin record) {
         return adminMapper.updateByPrimaryKey(record);
     }
+
+    @Override
+    public List<Admin> findAdminByUsername(String username) {
+        AdminExample adminExample=new AdminExample();
+        adminExample.createCriteria().andUsernameEqualTo(username);
+        return adminMapper.selectByExample(adminExample);
+    }
 }

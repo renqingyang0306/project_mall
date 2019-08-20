@@ -75,10 +75,29 @@
 			<version>1.1.3</version>
 		</dependency>
         <!--权限的包-->
+		<!--shiro-->
 		<dependency>
 			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-core</artifactId>
+			<artifactId>shiro-spring</artifactId>
 			<version>1.4.0</version>
+		</dependency>
+		<!--aop,用于声明注解权限，在Controller方法名上-->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>1.9.4</version>
+		</dependency>
+		<!-- shiro缓存依赖 -->
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-ehcache</artifactId>
+			<version>1.2.3</version>
+		</dependency>
+		<!-- 缓存ehcache -->
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			<version>2.8.1</version>
 		</dependency>
 	</dependencies>
 

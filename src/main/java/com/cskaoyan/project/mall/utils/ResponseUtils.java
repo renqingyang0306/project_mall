@@ -82,6 +82,16 @@ public class ResponseUtils<T> {
         obj.put("errmsg", errmsg);
         return obj;
     }
+    public static Object unlogin() {
+        return fail(501, "请登录");
+    }
+
+    public static Object unauthz() {
+        return fail(506, "无操作权限");
+    }
+    public static Object badArgument() {
+        return fail(401, "参数不对");
+    }
     @Override
     public String toString() {
         return "ResponseJsonUtils{" +
