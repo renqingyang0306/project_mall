@@ -24,6 +24,7 @@ public class CartAndBrandServiceImpl implements CartAndBrandService {
     @Autowired
     CategoryMapper categoryMapper;
 
+
     @Override
     public List<Categorylist> queryCartList() {
         //得到pid=0的大分类

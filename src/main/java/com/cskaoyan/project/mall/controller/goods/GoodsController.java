@@ -2,10 +2,15 @@ package com.cskaoyan.project.mall.controller.goods;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPObject;
+import com.cskaoyan.project.mall.controller.goods.util.InsertGoods;
 import com.cskaoyan.project.mall.controller.goods.vo.CreatVO;
 import com.cskaoyan.project.mall.controller.goods.vo.PageVO;
 import com.cskaoyan.project.mall.controller.goods.vo.ResponseVO;
 import com.cskaoyan.project.mall.domain.*;
+import com.cskaoyan.project.mall.domain.CartAndBrand;
+import com.cskaoyan.project.mall.domain.Categorylist;
+import com.cskaoyan.project.mall.domain.GoodsDetail;
+import com.cskaoyan.project.mall.domain.Item;
 import com.cskaoyan.project.mall.service.goods.*;
 //import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;

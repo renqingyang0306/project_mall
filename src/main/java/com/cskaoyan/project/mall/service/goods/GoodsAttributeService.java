@@ -13,6 +13,7 @@ import java.util.List;
  */
 public interface GoodsAttributeService {
 
+
     int insert(GoodsAttribute goodsAttribute);
 
     List<GoodsAttribute> queryByGoodsId(int id);

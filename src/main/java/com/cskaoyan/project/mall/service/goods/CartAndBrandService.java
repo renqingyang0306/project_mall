@@ -13,6 +13,7 @@ import java.util.List;
  * @time 15:53
  */
 public interface CartAndBrandService {
+
     List<Categorylist> queryCartList();
 
     int queryPidById(int categoryId1);
