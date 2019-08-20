@@ -124,7 +124,6 @@ public class AuthController {
     public Object page401() {
         return ResponseUtils.unlogin();
     }
-
     @RequestMapping("auth/403")
     public Object page403() {
         return ResponseUtils.unauthz();

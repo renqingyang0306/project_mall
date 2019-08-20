@@ -71,13 +71,6 @@
   <sql id="Base_Column_List">
     id, goods_id, attribute, value, add_time, update_time, deleted
   </sql>
-  <!--根据GoodsId查出对应的goods_attribute的list信息-->
-  <select id="queryByGoodsId" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from goods_attribute
-    where goods_id = #{id}
-  </select>
   <select id="selectByExample" parameterType="com.cskaoyan.project.mall.domain.GoodsAttributeExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
