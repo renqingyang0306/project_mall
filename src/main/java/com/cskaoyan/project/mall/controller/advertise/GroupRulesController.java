@@ -3,6 +3,7 @@ package com.cskaoyan.project.mall.controller.advertise;
 import com.alibaba.fastjson.JSONObject;
 import com.cskaoyan.project.mall.domain.*;
 import com.cskaoyan.project.mall.service.advertiseService.GroupRulesService;
+import com.cskaoyan.project.mall.service.goods.GoodsService;
 import com.cskaoyan.project.mall.utils.PageBean;
 import com.cskaoyan.project.mall.utils.ResponseUtils;
 import com.github.pagehelper.PageHelper;
@@ -19,10 +20,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import static java.lang.Integer.parseInt;
+
 @Controller
 public class GroupRulesController {
 @Autowired
     GroupRulesService groupRulesService;
+    @Autowired
+    GoodsService goodsService;
 
 
     @ResponseBody
@@ -69,10 +74,12 @@ public class GroupRulesController {
         jsonObject.put("expireTime",parse);
         GrouponRules ad = jsonObject.toJavaObject(GrouponRules.class);
         //Goods 查询商品信息 放进rules
-          ad.setGoodsId(11);
-          ad.setGoodsName("11");
+        String goodsId = jsonObject.getString("goodsId");
+        Goods goods = goodsService.queryById(parseInt(goodsId));
+          ad.setGoodsId(goods.getId());
+          ad.setGoodsName(goods.getName());
         //Goods 查询商品信息 放进rules
-
+        ad.setPicUrl(goods.getPicUrl());
         Date date = new Date();
         ad.setAddTime(date);
 

@@ -1,8 +1,10 @@
 package com.cskaoyan.project.mall.controller.advertise;
 
 import com.cskaoyan.project.mall.domain.*;
+import com.cskaoyan.project.mall.mapper.GoodsMapper;
 import com.cskaoyan.project.mall.service.advertiseService.GroupOnService;
 import com.cskaoyan.project.mall.service.advertiseService.GroupRulesService;
+import com.cskaoyan.project.mall.service.goods.GoodsService;
 import com.cskaoyan.project.mall.utils.PageBean;
 import com.cskaoyan.project.mall.utils.ResponseUtils;
 import com.github.pagehelper.PageHelper;
@@ -24,6 +26,9 @@ public class GroupOnController  {
     GroupOnService groupOnService;
     @Autowired
     GroupRulesService groupRulesService;
+    @Autowired
+    GoodsService goodsService;
+
     @ResponseBody
     @RequestMapping("admin/groupon/listRecord")
     public ResponseUtils<PageBean> list(int page,
@@ -49,7 +54,7 @@ public class GroupOnController  {
                 GrouponRules grouponRules = groupRulesService.selectByPrimaryKey(rulesId);
                 //goods调用别人的接口查询
                 //**************** 查询商品
-                Goods goods = new Goods();
+                Goods goods = goodsService.queryById(grouponRules.getGoodsId());
 
                 //查响应人的信息
                 GrouponExample grouponExample1 = new GrouponExample();
@@ -67,7 +72,7 @@ public class GroupOnController  {
             //goods调用别人的GoodsID接口查询
             //**************** 查询商品
 
-            Goods goods = new Goods();
+            Goods goods = goodsService.queryById(Integer.parseInt(goodsId));
             GrouponRulesExample grouponRulesExample = new GrouponRulesExample();
             GrouponRulesExample.Criteria criteria = grouponRulesExample.createCriteria();
             criteria.andGoodsIdEqualTo(Integer.parseInt(goodsId));
