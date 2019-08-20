@@ -3,6 +3,7 @@ package com.cskaoyan.project.mall.service.goods;
 import com.cskaoyan.project.mall.controller.goods.vo.PageVO;
 import com.cskaoyan.project.mall.controller.goods.vo.ResponseVO;
 import com.cskaoyan.project.mall.domain.Goods;
+import com.cskaoyan.project.mall.domain.GoodsExample;
 import com.cskaoyan.project.mall.mapper.GoodsMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -22,6 +23,12 @@ import java.util.List;
 public class GoodsServiceImpl implements GoodsService{
     @Autowired
     GoodsMapper goodsMapper;
+
+    @Override
+    public List<Goods> selectByExample(GoodsExample example) {
+        List<Goods> goods = goodsMapper.selectByExample(example);
+        return goods;
+    }
 
     @Override
     public ResponseVO<PageVO<Goods>> query(int page, int limit) {

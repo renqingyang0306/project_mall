@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.System;
 import java.util.Date;
@@ -33,6 +34,7 @@ import java.util.List;
 @Controller
 //@Api(tags = "商品管理模块的商品列表")
 @RequestMapping("admin")
+@RestController
 public class GoodsController {
 
     @Autowired
@@ -56,7 +58,6 @@ public class GoodsController {
      */
     /*goods/list?page=1&limit=20&goodsSn=31&*/
     @RequestMapping("goods/list")
-    @ResponseBody
     public ResponseVO list(int page, int limit, String goodsSn,String name,String sort, String desc){
         //没有goodsSn或者name时的查询
 
@@ -75,22 +76,6 @@ public class GoodsController {
         }
 
     }
-    /* @RequestMapping("goods/list")
-    @ResponseBody
-    public ResponseVO getGoodsList(int page, int limit,String goodsSn,String name,String sort, String order) {
-        if (goodsSn == null && name == null) {
-            ResponseVO<PageVO<Goods>> responseVO = goodsService.queryAll(page, limit);
-            return responseVO;
-        } else {
-            if (goodsSn == null) {
-                goodsSn = "";
-            } else if (name == null) {
-                name = "";
-            }
-            ResponseVO<PageVO<Goods>> responseVO = goodsService.fuzzyQuery(page, limit, goodsSn, name);
-            return responseVO;
-        }
-    }*/
     /*商品列表界面的添加功能*/
     /*
      * description: catAndBrand
@@ -103,7 +88,6 @@ public class GoodsController {
     /*----------------------查询---------------------*/
     //回显种类和品牌
     @RequestMapping("goods/catAndBrand")
-    @ResponseBody
     public ResponseVO catAndBrand(){
 
         List<Item> brands = cartAndBrandService.queryBrandList();
@@ -115,7 +99,6 @@ public class GoodsController {
     /*---------------------商品上架--------------------*/
     //新增功能
     @RequestMapping("goods/create")
-    @ResponseBody
     public CreatVO create(@RequestBody JSONObject jsonObject){
         //得到前端传入的数据
         //jsonObject.put("gallery","[]");
@@ -173,7 +156,6 @@ public class GoodsController {
     //编辑的回显
     /*admin/goods/detail?id=1006002*/
     @RequestMapping("goods/detail")
-    @ResponseBody
     public ResponseVO echoGood(int id){
         Goods goods = goodsService.queryById(id);
         //get对应的种类id
@@ -195,7 +177,6 @@ public class GoodsController {
     /*admin/goods/update*/
     //商品的编辑
     @RequestMapping("goods/update")
-    @ResponseBody
     public CreatVO update(@RequestBody JSONObject jsonObject){
         InsertGoods insertGoods = jsonObject.toJavaObject(InsertGoods.class);
         Goods goods = insertGoods.getGoods();
@@ -230,7 +211,6 @@ public class GoodsController {
     //商品的删除
     /*admin/goods/delete*/
     @RequestMapping("goods/delete")
-    @ResponseBody
     public CreatVO delete(@RequestBody Goods goods){
         //得到goods的id，根据id删除
         CreatVO creatVO = new CreatVO();
@@ -246,6 +226,4 @@ public class GoodsController {
         }
         return creatVO;
     }
-
-
 }

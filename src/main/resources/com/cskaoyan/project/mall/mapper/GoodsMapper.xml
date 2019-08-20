@@ -6,7 +6,7 @@
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="category_id" jdbcType="VARCHAR" property="categoryId" />
         <result column="brand_id" jdbcType="VARCHAR" property="brandId" />
-        <result column="gallery" jdbcType="VARCHAR" property="gallery" typeHandler="com.cskaoyan.project.mall.typeHandler.StringToStringArrayHandler" />
+        <result column="gallery" jdbcType="VARCHAR" property="gallery" />
         <result column="keywords" jdbcType="VARCHAR" property="keywords" />
         <result column="brief" jdbcType="VARCHAR" property="brief" />
         <result column="is_on_sale" jdbcType="VARCHAR" property="isOnSale" />
@@ -31,7 +31,35 @@
         is_new,is_hot,unit,counter_price,retail_price,detail,add_time,
         update_time,deleted
     </sql>
-
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
     <sql id="WxGoods_Column_List">
         brief,counter_price,id,is_hot,is_new,name,pic_url,retail_price
     </sql>
@@ -88,6 +116,13 @@
         where id = #{id}
     </select>
 
+    <select id="countByExample" parameterType="com.cskaoyan.project.mall.domain.GoodsExample" resultType="java.lang.Long">
+        select count(*) from goods
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
         insert into goods
         (goods_sn,`name`,category_id,brand_id,
@@ -95,7 +130,7 @@
         is_new,is_hot,unit,counter_price,retail_price,detail,add_time,
         update_time,deleted)
         values
-        (#{goodsSn},#{name},#{categoryId},#{brandId},#{gallery,typeHandler=com.cskaoyan.project.mall.typeHandler.StringToStringArrayHandler},
+        (#{goodsSn},#{name},#{categoryId},#{brandId},#{gallery},
         #{keywords},#{brief},#{isOnSale},#{sortOrder},#{picUrl},#{shareUrl},#{isNew},#{isHot},
         #{unit},#{counterPrice},#{retailPrice},#{detail},#{addTime},#{updateTime},#{deleted})
     </insert>
@@ -103,7 +138,7 @@
     <update id="update">
         update goods set
         goods_sn=#{goods.goodsSn},`name`=#{goods.name},category_id=#{goods.categoryId},
-        brand_id=#{goods.brandId},gallery=#{goods.gallery,typeHandler=com.cskaoyan.project.mall.typeHandler.StringToStringArrayHandler},
+        brand_id=#{goods.brandId},gallery=#{goods.gallery},
         keywords=#{goods.keywords},
         brief=#{goods.brief},is_on_sale=#{goods.isOnSale},sort_order=#{goods.sortOrder},
         pic_url=#{goods.picUrl},share_url=#{goods.shareUrl},
@@ -122,92 +157,25 @@
         select count(*) from goods
     </select>
 
-
-    <!--<resultMap id="floorGoodsMap" type="com.cskaoyan.mall.wx.bean.FloorGoods">
-        <result property="id" column="id"/>
-        <result property="name" column="name"/>
-        <collection property="goodsList" column="id"
-                    select="com.cskaoyan.mall.admin.mapper.GoodsMapper.selectGoodsWxByCategoryId"/>
-    </resultMap>-->
-    <!--<select id="getWxFloorGoods" resultMap="floorGoodsMap">
-        select id,name from cskaoyan_mall_category
-        where deleted = 0 and level = 'L1'
-        limit 4
-    </select>-->
-
-    <!--<resultMap id="wxFloorGoodsMap" type="com.cskaoyan.mall.wx.bean.GoodsWx">
-        <id column="gid" jdbcType="VARCHAR" property="id" />
-        <result column="name" jdbcType="VARCHAR" property="name" />
-        <result column="brief" jdbcType="VARCHAR" property="brief" />
-        <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
-        <result column="is_new" jdbcType="VARCHAR" property="isNew" />
-        <result column="is_hot" jdbcType="VARCHAR" property="isHot" />
-        <result column="counter_price" jdbcType="VARCHAR" property="counterPrice" />
-        <result column="retail_price" jdbcType="VARCHAR" property="retailPrice" />
-    </resultMap>-->
-   <!-- <select id="selectGoodsWxByCategoryId" resultMap="wxFloorGoodsMap">
+    <select id="selectByExample" parameterType="com.cskaoyan.project.mall.domain.GoodsExample" resultMap="BaseResultMap">
         select
-	      g.brief,g.counter_price,g.id AS gid,g.is_hot,g.is_new,g.name,g.pic_url,g.retail_price,
-	      c.id AS cid,c.pid
-        from goods g
-        left join cskaoyan_mall_category c
-        on g.category_id = c.id
-		where g.deleted = 0 and c.deleted = 0 and pid = #{id}
-		limit 4
-    </select>
--->
-    <!--<resultMap id="wxGoodsMap" type="com.cskaoyan.mall.wx.bean.GoodsWx">
-        <id column="id" jdbcType="VARCHAR" property="id" />
-        <result column="name" jdbcType="VARCHAR" property="name" />
-        <result column="brief" jdbcType="VARCHAR" property="brief" />
-        <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
-        <result column="is_new" jdbcType="VARCHAR" property="isNew" />
-        <result column="is_hot" jdbcType="VARCHAR" property="isHot" />
-        <result column="counter_price" jdbcType="VARCHAR" property="counterPrice" />
-        <result column="retail_price" jdbcType="VARCHAR" property="retailPrice" />
-    </resultMap>-->
-    <!--<select id="getWxHotGoodsList" resultMap="wxGoodsMap">
-        select <include refid="WxGoods_Column_List"/>
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List" />
         from goods
-        where deleted = 0 and is_hot = 1
-        limit 5
-    </select>-->
-
-
-   <!-- <select id="getWxNewGoodsList" resultMap="wxGoodsMap">
-        select <include refid="WxGoods_Column_List"/>
-        from goods
-        where deleted = 0 and is_new = 1
-        limit 6
-    </select>
--->
-    <!--getGoodsWx-->
-  <!--  <resultMap id="GoodsToGroupon" type="com.cskaoyan.mall.admin.bean.GoodsToGroupon">
-        <id column="id" jdbcType="VARCHAR" property="id" />
-        <result column="name" jdbcType="VARCHAR" property="name" />
-        <result column="brief" jdbcType="VARCHAR" property="brief" />
-        <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
-        <result column="counter_price" jdbcType="VARCHAR" property="counterPrice" />
-        <result column="retail_price" jdbcType="VARCHAR" property="retailPrice" />
-    </resultMap>
-    <select id="getGoodsWx" resultMap="GoodsToGroupon">
-        select brief,counter_price,id ,name , pic_url,retail_price
-        from  goods
-        where id = #{goodsId}
-    </select>-->
-
-   <!-- <select id="getCategoryIdByGoodsId" resultType="java.lang.Integer">
-        select category_id
-        from goods
-        where deleted = 0 and id = #{goodsId}
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
     </select>
 
-    <select id="getWxRelatedGoodsByCategoryId" resultMap="wxGoodsMap">
-        select <include refid="WxGoods_Column_List"/>
-        from goods
-        where deleted = 0 and category_id = #{categoryId}
-        limit 6
-    </select>-->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from goods
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
 
 
 </mapper>

@@ -4,7 +4,10 @@ import com.cskaoyan.project.mall.controller.goods.vo.PageVO;
 import com.cskaoyan.project.mall.controller.goods.vo.ResponseVO;
 import com.cskaoyan.project.mall.domain.Comment;
 import com.cskaoyan.project.mall.domain.Goods;
+import com.cskaoyan.project.mall.domain.GoodsExample;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA
@@ -15,6 +18,9 @@ import org.springframework.stereotype.Service;
  */
 
 public interface GoodsService {
+
+    List<Goods> selectByExample(GoodsExample example);
+
     ResponseVO<PageVO<Goods>> query(int page, int limit);
 
     int insert(Goods goods);
