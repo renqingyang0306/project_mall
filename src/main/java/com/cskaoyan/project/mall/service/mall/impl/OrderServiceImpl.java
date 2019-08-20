@@ -62,4 +62,29 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderMapper.selectByPrimaryKey(id);
         return order;
     }
+
+    @Override
+    public int insertOrder(Order order) {
+        int insert = orderMapper.insert(order);
+        return insert;
+    }
+
+    @Override
+    public int updateOrderById(Order order) {
+        int update = orderMapper.updateByPrimaryKey(order);
+        return update;
+    }
+
+    @Override
+    public int deleteRealOrderById(Integer id) {
+        int delete = orderMapper.deleteByPrimaryKey(id);
+        return delete;
+    }
+
+    @Override
+    public int deleteLogicOrderByDeleted(Order order) {
+        order.setDeleted(true);
+        int update = orderMapper.updateByPrimaryKey(order);
+        return update;
+    }
 }

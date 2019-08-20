@@ -57,4 +57,68 @@ public class OederController {
         }
         return responseUtils;
     }
+
+    @RequestMapping("/admin/order/create")
+    @ResponseBody
+    public ResponseUtils insertOrder(Order order) {
+        ResponseUtils responseUtils = new ResponseUtils();
+
+
+        //int insert = orderService.insertOrder(order);
+
+
+        if (order == null) {
+            responseUtils.setErrno(401);
+            responseUtils.setErrmsg("服务端错误！");
+        } else {
+            responseUtils.setErrno(0);
+            responseUtils.setErrmsg("成功！");
+            responseUtils.setData(order);
+        }
+        return responseUtils;
+    }
+
+    @RequestMapping("/admin/order/update")
+    @ResponseBody
+    public ResponseUtils updateOrder(Order order) {
+        ResponseUtils responseUtils = new ResponseUtils();
+        if (order.getId() == null) {
+            responseUtils.setErrno(401);
+            responseUtils.setErrmsg("id 不能为 null");
+            return responseUtils;
+        }
+//        int update = orderService.updateOrderById(order);
+
+        if (order == null) {
+            responseUtils.setErrno(401);
+            responseUtils.setErrmsg("服务端错误！");
+        } else {
+            responseUtils.setErrno(0);
+            responseUtils.setErrmsg("成功！");
+            responseUtils.setData(order);
+        }
+        return responseUtils;
+    }
+
+    @RequestMapping("/admin/order/delete")
+    @ResponseBody
+    public ResponseUtils deleteOrder(Order order) {
+        ResponseUtils responseUtils = new ResponseUtils();
+        if (order.getId() == null) {
+            responseUtils.setErrno(401);
+            responseUtils.setErrmsg("id 不能为 null");
+            return responseUtils;
+        }
+        int deleted = orderService.deleteLogicOrderByDeleted(order);
+
+        if (deleted == 0) {
+            responseUtils.setErrno(401);
+            responseUtils.setErrmsg("服务端错误！");
+        } else {
+            responseUtils.setErrno(0);
+            responseUtils.setErrmsg("成功！");
+            responseUtils.setData(null);
+        }
+        return responseUtils;
+    }
 }

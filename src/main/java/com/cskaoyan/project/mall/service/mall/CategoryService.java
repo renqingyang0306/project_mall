@@ -13,6 +13,8 @@ public interface CategoryService {
     List<Category> queryAllCategory();
     List<Category> queryAllCategoryLevel1();
     List<Category> queryAllCategoryByPid(Integer pid);
+
+    Category queryCategory(Integer id);
     int insertCategory(Category category);
     int updateCategoryById(Category category);
     int deleteCategoryById(Category category);

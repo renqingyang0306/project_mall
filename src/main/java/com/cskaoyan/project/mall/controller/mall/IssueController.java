@@ -46,13 +46,21 @@ public class IssueController {
     @RequestMapping("/admin/issue/create")
     @ResponseBody
     public ResponseUtils insertIssues(@RequestBody Issue issue) {
+        ResponseUtils responseUtils = new ResponseUtils();
+
+        if (issue.getQuestion() == null || issue.getQuestion() == "" ||
+                issue.getAnswer() == null || issue.getAnswer() == "") {
+            responseUtils.setErrno(401);
+            responseUtils.setErrmsg("问题内容 或 问题回复 不能为空！");
+            return responseUtils;
+        }
         //insert 成功后issue就会变为 insert 后的issue
         Date date = new Date();
         issue.setAddTime(date);
         issue.setUpdateTime(date);
         issue.setDeleted(false);
         int insert = issueService.insertIssue(issue);
-        ResponseUtils responseUtils = new ResponseUtils();
+
         if (insert == 0) {
             responseUtils.setErrno(401);
             responseUtils.setErrmsg("服务端错误！");
@@ -67,11 +75,24 @@ public class IssueController {
     @RequestMapping("/admin/issue/update")
     @ResponseBody
     public ResponseUtils updateIssues(@RequestBody Issue issue) {
+        ResponseUtils responseUtils = new ResponseUtils();
+        if (issue.getQuestion() == null || issue.getQuestion() == "" ||
+                issue.getAnswer() == null || issue.getAnswer() == "") {
+            responseUtils.setErrno(401);
+            responseUtils.setErrmsg("问题内容 或 问题回复 不能为空！");
+            return responseUtils;
+        }
         issue.setUpdateTime(new Date());
         int update = issueService.updateIssueById(issue);
+        //查询原始的issue
+        Issue issue1 = issueService.queryIssue(issue.getId());
+        //add_time和deleted不允许用户编辑时修改
+        issue.setAddTime(issue1.getAddTime());
+        issue.setDeleted(issue1.getDeleted());
+
         //查询更新后的 issue
         issue = issueService.queryIssue(issue.getId());
-        ResponseUtils responseUtils = new ResponseUtils();
+
         if (update == 0) {
             responseUtils.setErrno(401);
             responseUtils.setErrmsg("服务端错误！");
