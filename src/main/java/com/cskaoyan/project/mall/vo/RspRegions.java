@@ -8,7 +8,7 @@ import java.util.List;
  * @author 申涛涛
  * @date 2019/8/16 16:06
  */
-public class ResponseRegions {
+public class RspRegions {
     private Integer id;
 
     private String name;
@@ -17,13 +17,31 @@ public class ResponseRegions {
 
     private Integer code;
 
-    private List<Children> children;
+    private List<RspRegions> children;
 
-    public List<Children> getChildren() {
+    public RspRegions() {
+    }
+
+    public RspRegions(Integer id, String name, Byte type, Integer code) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.code = code;
+    }
+
+    public RspRegions(Integer id, String name, Byte type, Integer code, List<RspRegions> children) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.code = code;
+        this.children = children;
+    }
+
+    public List<RspRegions> getChildren() {
         return children;
     }
 
-    public void setChildren(List<Children> children) {
+    public void setChildren(List<RspRegions> children) {
         this.children = children;
     }
 

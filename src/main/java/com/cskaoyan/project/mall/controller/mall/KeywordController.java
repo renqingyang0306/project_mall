@@ -47,10 +47,14 @@ public class KeywordController {
     @ResponseBody
     public ResponseUtils insertKeyword(@RequestBody Keyword keyword) {
         ResponseUtils responseUtils = new ResponseUtils();
-        if (keyword.getUrl() == null) {
+        if (keyword.getKeyword() == null) {
             responseUtils.setErrno(401);
-            responseUtils.setErrmsg("参数不对，url为必选项");
+            responseUtils.setErrmsg("参数不对，关键词为必选项");
             return responseUtils;
+        }
+        //为以下字段设置默认值
+        if (keyword.getUrl() == null) {
+            keyword.setUrl("");
         }
         if (keyword.getIsHot() == null) {
             keyword.setIsHot(false);
@@ -80,12 +84,36 @@ public class KeywordController {
     @RequestMapping("/admin/keyword/update")
     @ResponseBody
     public ResponseUtils updateKeyword(@RequestBody Keyword keyword) {
+        ResponseUtils responseUtils = new ResponseUtils();
+        if (keyword.getKeyword() == null || keyword.getId() == null) {
+            responseUtils.setErrno(401);
+            responseUtils.setErrmsg("关键词 或 关键词id 不能为null");
+            return responseUtils;
+        }
+        Keyword keyword1 = keywordService.queryKeyword(keyword.getId());
+        //若是没有传以下数据，则取原数据
+        if (keyword.getUrl() == null) {
+            keyword.setUrl(keyword1.getUrl());
+        }
+        if (keyword.getIsHot() == null) {
+            keyword.setIsHot(keyword1.getIsHot());
+        }
+        if (keyword.getIsDefault() == null) {
+            keyword.setIsDefault(keyword1.getIsDefault());
+        }
+        if (keyword.getSortOrder() == null) {
+            keyword.setSortOrder(keyword1.getSortOrder());
+        }
+        //add_time和deleted不允许用户编辑时修改
+        keyword.setAddTime(keyword1.getAddTime());
+        keyword.setDeleted(keyword1.getDeleted());
+
         keyword.setUpdateTime(new Date());
         //更新操作
         int update = keywordService.updateKeyword(keyword);
         //查询最新的keyword
         keyword = keywordService.queryKeyword(keyword.getId());
-        ResponseUtils responseUtils = new ResponseUtils();
+
         if (update == 0) {
             responseUtils.setErrno(401);
             responseUtils.setErrmsg("服务端错误！");

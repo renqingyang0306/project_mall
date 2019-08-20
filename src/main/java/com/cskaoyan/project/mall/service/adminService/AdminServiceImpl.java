@@ -3,9 +3,7 @@ package com.cskaoyan.project.mall.service.adminService;
 import com.cskaoyan.project.mall.domain.Admin;
 import com.cskaoyan.project.mall.domain.AdminExample;
 import com.cskaoyan.project.mall.mapper.AdminMapper;
-import com.cskaoyan.project.mall.utils.StringToList;
 import com.github.pagehelper.PageHelper;
-import com.sun.deploy.net.proxy.pac.PACFunctions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
