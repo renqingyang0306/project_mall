@@ -15,6 +15,8 @@ public interface KeywordService {
 
     List<Keyword> queryAllKeyword();
     List<Keyword> selectByExample(KeywordExample example);
+    List<Keyword> queryKeywordByIsDefault(Boolean isFefault);
+    List<Keyword> queryKeywordByIsHot(Boolean isFefault);
 
     int insertKeyword(Keyword keyword);
     int updateKeyword(Keyword keyword);

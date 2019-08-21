@@ -77,12 +77,23 @@ public class GoodsServiceImpl implements GoodsService{
     }
 
     @Override
-    public List<Goods> queryPageOrderByExample(Integer categoryId, Integer page, Integer size) {
-        PageHelper.startPage(page, size);
+    public List<Goods> queryPageOrderByExample(String keyword, Integer categoryId, Integer page, Integer size, String sort, String order) {
+        if (page != null && size != null) {
+            PageHelper.startPage(page, size);
+        }
         GoodsExample goodsExample = new GoodsExample();
         GoodsExample.Criteria criteria = goodsExample.createCriteria();
         criteria.andDeletedEqualTo(false);
-        criteria.andCategoryIdEqualTo(categoryId);
+        if (sort != null && order != null) {
+            goodsExample.setOrderByClause(sort + " " + order);
+        }
+        if (categoryId != null && categoryId != 0) {
+            criteria.andCategoryIdEqualTo(categoryId);
+        }
+        if (keyword != null) {
+            String name = "%" + keyword + "%";
+            criteria.andNameLike(name);
+        }
         List<Goods> goods = goodsMapper.selectByExample(goodsExample);
         return goods;
     }
