@@ -15,7 +15,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("wx")
-public class CommentController {
+public class WxCommentController {
     @Autowired
     CommentService commentService;
 
