@@ -23,4 +23,6 @@ public interface UserService {
     int updateByPrimaryKey(User record);
 
     List<User> findAllUser(int page,int limit,String username,String mobile);
+
+    List<User> findUserByUsernameAndPassword(String username, String password);
 }

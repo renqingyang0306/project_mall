@@ -39,10 +39,9 @@ public class ShiroConfig {
         //可以直接匿名访问
         map.put("/admin/auth/login", "anon");
         map.put("/wx/home/index", "anon");
-        map.put("/wx/auth/login", "anon");
         map.put("/wx/goods/**", "anon");
         map.put("/wx/search/**", "anon");
-        map.put("/wx/catalog/**", "anon");
+        map.put("/wx/catalog/index", "anon");
         //需要认证
         map.put("/**", "authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(map);

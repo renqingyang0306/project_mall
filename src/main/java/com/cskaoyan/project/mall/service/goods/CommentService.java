@@ -3,7 +3,10 @@ package com.cskaoyan.project.mall.service.goods;
 import com.cskaoyan.project.mall.controller.goods.vo.PageVO;
 import com.cskaoyan.project.mall.controller.goods.vo.ResponseVO;
 import com.cskaoyan.project.mall.domain.Comment;
+import com.cskaoyan.project.mall.domain.CommentExample;
 import com.cskaoyan.project.mall.domain.Goods;
+
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA
@@ -22,4 +25,6 @@ public interface CommentService {
     int updateByPrimaryKey(Comment comment);
 
     ResponseVO<PageVO<Comment>> fuzzyQuery(int page, int limit, String userId, String valueId);
+
+    List<Comment> selectByExample(CommentExample example);
 }
