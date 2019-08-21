@@ -45,10 +45,7 @@ public class ShiroConfig {
         map.put("/wx/catalog/index", "anon");
         //需要认证
         map.put("/**", "authc");
-      
-
-//需要认证
-        map.put("/**", "authc");
+  
         shiroFilterFactoryBean.setFilterChainDefinitionMap(map);
         return shiroFilterFactoryBean;
     }
