@@ -45,6 +45,7 @@ public class ShiroConfig {
         map.put("/wx/catalog/**", "anon");
         //需要认证
         map.put("/**", "authc");
+  
         shiroFilterFactoryBean.setFilterChainDefinitionMap(map);
         return shiroFilterFactoryBean;
     }
