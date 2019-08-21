@@ -40,6 +40,16 @@ public class ShiroConfig {
         map.put("/admin/auth/login", "anon");
         //需要认证
         map.put("/**", "authc");
+        map.put("/wx/home/index", "anon");
+        map.put("/wx/auth/login", "anon");
+        map.put("/wx/goods/**", "anon");
+        map.put("/wx/search/**", "anon");
+        map.put("/wx/catalog/**", "anon");
+        map.put("/wx/groupon/**", "anon");
+        map.put("/wx/coupon/**", "anon");
+
+//需要认证
+        map.put("/**", "authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(map);
         return shiroFilterFactoryBean;
     }
