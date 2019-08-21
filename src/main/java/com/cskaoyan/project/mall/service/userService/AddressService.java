@@ -9,4 +9,8 @@ public interface AddressService {
     List<Address> selectByExample(AddressExample example);
 
     List<Address> findAllAddress(int page,int limit,String name,Integer userId);
+    List<Address> findAllAddress();
+
+    List<Address> queryAllAddressByUserId(Integer userId);
+
 }

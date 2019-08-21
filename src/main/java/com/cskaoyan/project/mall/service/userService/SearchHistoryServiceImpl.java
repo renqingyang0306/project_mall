@@ -38,4 +38,23 @@ public class SearchHistoryServiceImpl implements SearchHistoryService {
         }
         return searchHistories;
     }
+
+    @Override
+    public List<SearchHistory> queryAllSearchHistoryByUserId(Integer userId) {
+        SearchHistoryExample searchHistoryExample = new SearchHistoryExample();
+        SearchHistoryExample.Criteria criteria = searchHistoryExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        criteria.andUserIdEqualTo(userId);
+        List<SearchHistory> searchHistories = searchHistoryMapper.selectByExample(searchHistoryExample);
+        return searchHistories;
+    }
+
+    @Override
+    public List<SearchHistory> queryAllSearchHistory() {
+        SearchHistoryExample searchHistoryExample = new SearchHistoryExample();
+        SearchHistoryExample.Criteria criteria = searchHistoryExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        List<SearchHistory> searchHistories = searchHistoryMapper.selectByExample(searchHistoryExample);
+        return searchHistories;
+    }
 }

@@ -12,6 +12,9 @@ import java.util.List;
 public interface BrandService {
     List<Brand> queryAllBrand();
     List<Brand> queryPageBrands(int page,int limit,String sort,String order);
+
+    List<Brand> queryBrandByExample(Integer page, Integer limit, Integer id, String name, String sort, String order);
+
     Brand queryBrandById(Integer id);
     List<Brand> searchBrandById(int page, int limit, Integer id, String sort, String order);
     List<Brand> searchBrandByName(int page, int limit, String name, String sort, String order);

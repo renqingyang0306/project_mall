@@ -3,6 +3,7 @@ package com.cskaoyan.project.mall.service.goods;
 import com.cskaoyan.project.mall.controller.goods.vo.PageVO;
 import com.cskaoyan.project.mall.controller.goods.vo.ResponseVO;
 import com.cskaoyan.project.mall.domain.Comment;
+import com.cskaoyan.project.mall.domain.CommentExample;
 import com.cskaoyan.project.mall.domain.Goods;
 import com.cskaoyan.project.mall.mapper.CommentMapper;
 import com.github.pagehelper.Page;
@@ -64,5 +65,10 @@ public class CommentServiceImpl implements CommentService{
         ResponseVO<PageVO<Comment>> responseVO = new ResponseVO<>(pageVO, "成功", 0);
         return responseVO;
 
+    }
+
+    @Override
+    public List<Comment> selectByExample(CommentExample example) {
+        return commentMapper.selectByExample(example);
     }
 }

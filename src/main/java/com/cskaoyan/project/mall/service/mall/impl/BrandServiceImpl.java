@@ -38,6 +38,24 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
+    public List<Brand> queryBrandByExample(Integer page, Integer limit, Integer id, String name, String sort, String order) {
+        if (page != null && limit != null) {
+            PageHelper.startPage(page,limit);
+        }
+        BrandExample brandExample = new BrandExample();
+        BrandExample.Criteria criteria = brandExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        if (sort != null && order != null) {
+            brandExample.setOrderByClause(sort + " " + order);
+        }
+        criteria.andIdEqualTo(id);
+        name = "%" + name + "%";
+        criteria.andNameLike(name);
+        List<Brand> brands = brandMapper.selectByExample(brandExample);
+        return brands;
+    }
+
+    @Override
     public Brand queryBrandById(Integer id) {
         BrandExample brandExample = new BrandExample();
         BrandExample.Criteria criteria = brandExample.createCriteria();

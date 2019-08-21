@@ -82,7 +82,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, coupon.name, coupon.desc, tag, total, discount, min, coupon.limit, type, coupon.status, goods_type, goods_value,
+    id, coupon.name, coupon.desc, tag, total, discount, coupon.min, coupon.limit, coupon.type, coupon.status, goods_type, goods_value,
     code, time_type, days, start_time, end_time, add_time, update_time, deleted
   </sql>
   <select id="selectByExample" parameterType="com.cskaoyan.project.mall.domain.CouponExample" resultMap="BaseResultMap">

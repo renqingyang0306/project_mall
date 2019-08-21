@@ -1,9 +1,11 @@
 package com.cskaoyan.project.mall.shiro;
 
 import com.cskaoyan.project.mall.domain.Admin;
+import com.cskaoyan.project.mall.domain.User;
 import com.cskaoyan.project.mall.service.adminService.AdminService;
 import com.cskaoyan.project.mall.service.permissionService.PermissionService;
 import com.cskaoyan.project.mall.service.roleService.RoleService;
+import com.cskaoyan.project.mall.service.userService.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationException;
@@ -32,6 +34,8 @@ public class CustomRealm extends AuthorizingRealm {
     RoleService roleService;
     @Autowired
     PermissionService permissionService;
+    @Autowired
+    UserService userService;
     //认证
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
@@ -41,20 +45,33 @@ public class CustomRealm extends AuthorizingRealm {
         /*String username = (String) authenticationToken.getPrincipal();
         String password = (String) authenticationToken.getCredentials();*/
         //方法二
-        UsernamePasswordToken upToken = (UsernamePasswordToken) authenticationToken;
-        String username = upToken.getUsername();
-        String password = new String(upToken.getPassword());
-        //根据用户名 去查询数据库中的密码
-        List<Admin> adminList = adminService.findAdminByUsername(username);
-        Assert.state(adminList.size() < 2, "同一个用户名存在两个账户");
-        if (adminList.size() == 0) {
-            throw new UnknownAccountException("找不到用户（" + username + "）的帐号信息");
+        MallToken mallToken = (MallToken) authenticationToken;
+        String username = mallToken.getUsername();
+        String password = new String(mallToken.getPassword());
+        String type = mallToken.getType();
+        if ("admin".equals(type)){
+            //根据用户名 去查询数据库中的密码
+            List<Admin> adminList= adminService.findAdminByUsername(username);
+            Assert.state(adminList.size() < 2, "同一个用户名存在两个账户");
+            if (adminList.size() == 0) {
+                throw new UnknownAccountException("找不到用户（" + username + "）的帐号信息");
+            }
+            Admin admin = adminList.get(0);
+            //参数1：principle是要给到授权使用的
+            //参数2：通常写来源于数据库的密码 如果和subject。login中token的密码匹配 才能通过认证
+            //参数3：当前的域名（基本没用）
+            return new SimpleAuthenticationInfo(admin, admin.getPassword(),"admin");
         }
-        Admin admin = adminList.get(0);
-        //参数1：principle是要给到授权使用的
-        //参数2：通常写来源于数据库的密码 如果和subject。login中token的密码匹配 才能通过认证
-        //参数3：当前的域名（基本没用）
-        return new SimpleAuthenticationInfo(admin, admin.getPassword(), getName());
+        else{
+            //微信用户登录
+            List<User> userList = userService.findUserByUsernameAndPassword(username, password);
+            if (userList.size() == 0) {
+                throw new UnknownAccountException("找不到用户（" + username + "）的帐号信息");
+            }
+            User user = userList.get(0);
+
+            return new SimpleAuthenticationInfo(user, user.getPassword(), "wx");
+        }
 
     }
 

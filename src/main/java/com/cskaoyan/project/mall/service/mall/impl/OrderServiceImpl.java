@@ -46,9 +46,13 @@ public class OrderServiceImpl implements OrderService {
             criteria.andOrderSnEqualTo(orderSn);
         }
         if (orderStatusArray != null) {
-            for (Short aShort : orderStatusArray) {
-                OrderExample.Criteria criteria1 = orderExample.createCriteria();
-                orderExample.or(criteria1.andOrderStatusEqualTo(aShort));
+            if (orderStatusArray.length == 1) {
+                criteria.andOrderStatusEqualTo(orderStatusArray[0]);
+            } else {
+                for (Short aShort : orderStatusArray) {
+                    OrderExample.Criteria criteria1 = orderExample.createCriteria();
+                    orderExample.or(criteria1.andOrderStatusEqualTo(aShort));
+                }
             }
             //orderExample.or().andOrderStatusEqualTo((short) 2).andOrderStatusEqualTo((short) 1);
 
