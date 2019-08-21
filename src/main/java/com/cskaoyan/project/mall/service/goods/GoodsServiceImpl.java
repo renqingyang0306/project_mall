@@ -75,4 +75,25 @@ public class GoodsServiceImpl implements GoodsService{
         ResponseVO<PageVO<Goods>> responseVO = new ResponseVO<>(pageVO, "成功", 0);
         return responseVO;
     }
+
+    @Override
+    public List<Goods> queryPageOrderByExample(Integer categoryId, Integer page, Integer size) {
+        PageHelper.startPage(page, size);
+        GoodsExample goodsExample = new GoodsExample();
+        GoodsExample.Criteria criteria = goodsExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        criteria.andCategoryIdEqualTo(categoryId);
+        List<Goods> goods = goodsMapper.selectByExample(goodsExample);
+        return goods;
+    }
+
+    @Override
+    public long selectCountGoods() {
+        GoodsExample goodsExample = new GoodsExample();
+        GoodsExample.Criteria criteria = goodsExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        criteria.andIdIsNotNull();
+        long count = goodsMapper.countByExample(goodsExample);
+        return count;
+    }
 }
