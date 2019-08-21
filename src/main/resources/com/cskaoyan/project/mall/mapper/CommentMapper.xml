@@ -109,6 +109,12 @@
     from comment
     where value_id like #{valueId} and user_id like #{userId}
   </select>
+  <select id="fuzzyQueryAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from comment
+    where type like #{type} and value_id like #{valueId} and has_picture like #{hasPicture}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from comment
     where id = #{id,jdbcType=INTEGER}
