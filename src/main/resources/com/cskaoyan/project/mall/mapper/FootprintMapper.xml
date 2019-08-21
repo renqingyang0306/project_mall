@@ -70,6 +70,16 @@
   <sql id="Base_Column_List">
     id, user_id, goods_id, add_time, update_time, deleted
   </sql>
+  <!--左连接多表查询-->
+  <select id="echoFootprintListByUid" parameterType="java.lang.Integer" resultMap="EchoFootprintMap">
+    SELECT
+    fp.add_time,g.brief,fp.goods_id,fp.id,g.name,g.pic_url,
+    g.retail_price
+    from cskaoyan_mall_footprint fp
+    LEFT JOIN cskaoyan_mall_goods g
+    ON fp.goods_id = g.id
+    where fp.user_id = #{userId}
+  </select>
   <select id="selectByExample" parameterType="com.cskaoyan.project.mall.domain.FootprintExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
