@@ -1,8 +1,6 @@
-package com.cskaoyan.project.mall.controllerWx.classify;
+package com.cskaoyan.project.mall.controllerwx.classify;
 
 import com.cskaoyan.project.mall.domain.Category;
-import com.cskaoyan.project.mall.domain.Goods;
-import com.cskaoyan.project.mall.domain.GoodsSpecification;
 import com.cskaoyan.project.mall.service.goods.GoodsService;
 import com.cskaoyan.project.mall.service.mall.CategoryService;
 import com.cskaoyan.project.mall.utils.ResponseUtils;
