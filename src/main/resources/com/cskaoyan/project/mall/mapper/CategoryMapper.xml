@@ -97,6 +97,11 @@
     from category
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="queryPidById" parameterType="java.lang.Integer" resultType="_int">
+    select pid
+    from category
+    where id = #{id}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from category
     where id = #{id,jdbcType=INTEGER}
@@ -113,7 +118,7 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into category (id, category.name, keywords,
-      category.desc, pid, icon_url,
+    category.desc, pid, icon_url,
       pic_url, category.level, sort_order,
       add_time, update_time, deleted
       )
@@ -124,6 +129,10 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.cskaoyan.project.mall.domain.Category">
+    <selectKey keyProperty="id" order="AFTER"
+               resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into category
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -215,13 +224,13 @@
         id = #{record.id,jdbcType=INTEGER},
       </if>
       <if test="record.name != null">
-        name = #{record.name,jdbcType=VARCHAR},
+        category.name = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.keywords != null">
         keywords = #{record.keywords,jdbcType=VARCHAR},
       </if>
       <if test="record.desc != null">
-        desc = #{record.desc,jdbcType=VARCHAR},
+        category.desc = #{record.desc,jdbcType=VARCHAR},
       </if>
       <if test="record.pid != null">
         pid = #{record.pid,jdbcType=INTEGER},
@@ -233,7 +242,7 @@
         pic_url = #{record.picUrl,jdbcType=VARCHAR},
       </if>
       <if test="record.level != null">
-        level = #{record.level,jdbcType=VARCHAR},
+        category.level = #{record.level,jdbcType=VARCHAR},
       </if>
       <if test="record.sortOrder != null">
         sort_order = #{record.sortOrder,jdbcType=TINYINT},

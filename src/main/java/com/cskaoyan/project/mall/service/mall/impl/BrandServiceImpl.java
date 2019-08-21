@@ -15,9 +15,17 @@ import java.util.List;
  * @date 2019/8/17 15:23
  */
 @Service
-public class brandServiceImpl implements BrandService {
+public class BrandServiceImpl implements BrandService {
     @Autowired
     BrandMapper brandMapper;
+
+    @Override
+    public List<Brand> queryAllBrand() {
+        BrandExample brandExample = new BrandExample();
+        brandExample.createCriteria().andDeletedEqualTo(false);
+        List<Brand> brands = brandMapper.selectByExample(brandExample);
+        return brands;
+    }
 
     @Override
     public List<Brand> queryPageBrands(int page, int limit,String sort,String order) {
@@ -25,6 +33,24 @@ public class brandServiceImpl implements BrandService {
         BrandExample brandExample = new BrandExample();
         brandExample.createCriteria().andDeletedEqualTo(false);
         brandExample.setOrderByClause(sort + " " + order);
+        List<Brand> brands = brandMapper.selectByExample(brandExample);
+        return brands;
+    }
+
+    @Override
+    public List<Brand> queryBrandByExample(Integer page, Integer limit, Integer id, String name, String sort, String order) {
+        if (page != null && limit != null) {
+            PageHelper.startPage(page,limit);
+        }
+        BrandExample brandExample = new BrandExample();
+        BrandExample.Criteria criteria = brandExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        if (sort != null && order != null) {
+            brandExample.setOrderByClause(sort + " " + order);
+        }
+        criteria.andIdEqualTo(id);
+        name = "%" + name + "%";
+        criteria.andNameLike(name);
         List<Brand> brands = brandMapper.selectByExample(brandExample);
         return brands;
     }
@@ -106,5 +132,10 @@ public class brandServiceImpl implements BrandService {
         brand.setDeleted(true);
         int update = brandMapper.updateByPrimaryKey(brand);
         return update;
+    }
+
+    @Override
+    public List<Brand> selectByExample(BrandExample example) {
+        return brandMapper.selectByExample(example);
     }
 }

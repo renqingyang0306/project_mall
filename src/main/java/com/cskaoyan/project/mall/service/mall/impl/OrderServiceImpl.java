@@ -46,9 +46,13 @@ public class OrderServiceImpl implements OrderService {
             criteria.andOrderSnEqualTo(orderSn);
         }
         if (orderStatusArray != null) {
-            for (Short aShort : orderStatusArray) {
-                OrderExample.Criteria criteria1 = orderExample.createCriteria();
-                orderExample.or(criteria1.andOrderStatusEqualTo(aShort));
+            if (orderStatusArray.length == 1) {
+                criteria.andOrderStatusEqualTo(orderStatusArray[0]);
+            } else {
+                for (Short aShort : orderStatusArray) {
+                    OrderExample.Criteria criteria1 = orderExample.createCriteria();
+                    orderExample.or(criteria1.andOrderStatusEqualTo(aShort));
+                }
             }
             //orderExample.or().andOrderStatusEqualTo((short) 2).andOrderStatusEqualTo((short) 1);
 
@@ -61,5 +65,44 @@ public class OrderServiceImpl implements OrderService {
     public Order queryOrderById(Integer id) {
         Order order = orderMapper.selectByPrimaryKey(id);
         return order;
+    }
+
+    @Override
+    public List<Order> queryAllOrder() {
+        OrderExample orderExample = new OrderExample();
+        OrderExample.Criteria criteria = orderExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        List<Order> orders = orderMapper.selectByExample(orderExample);
+        return orders;
+    }
+
+    @Override
+    public List<Order> selectByExample(OrderExample example) {
+        return orderMapper.selectByExample(example);
+    }
+
+    @Override
+    public int insertOrder(Order order) {
+        int insert = orderMapper.insert(order);
+        return insert;
+    }
+
+    @Override
+    public int updateOrderById(Order order) {
+        int update = orderMapper.updateByPrimaryKey(order);
+        return update;
+    }
+
+    @Override
+    public int deleteRealOrderById(Integer id) {
+        int delete = orderMapper.deleteByPrimaryKey(id);
+        return delete;
+    }
+
+    @Override
+    public int deleteLogicOrderByDeleted(Order order) {
+        order.setDeleted(true);
+        int update = orderMapper.updateByPrimaryKey(order);
+        return update;
     }
 }

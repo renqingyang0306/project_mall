@@ -92,6 +92,61 @@
   <sql id="Blob_Column_List">
     detail
   </sql>
+  <!--//新增加的功能-->
+  <!--getListRecord-->
+	<select id="getListRecord"  resultMap="BaseResultMap">
+		select  <include refid="Base_Column_List"/>
+		from goods
+		where  id like "%" #{goodsId} "%"
+		order by #{sort}  #{order}
+	</select>
+	<!--//分页查询出goods-->
+	<select id="queryAll" resultMap="BaseResultMap">
+		select
+	<include refid="Base_Column_List"/>
+		from goods
+	</select>
+	<select id="fuzzyQuery" resultMap="BaseResultMap">
+		select
+	<include refid="Base_Column_List"/>
+		from goods
+		where goods_sn like #{goodsSn} and `name` like #{name}
+	</select>
+	<!--查询一条goods信息-->
+<select id="queryById" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from goods
+    where id = #{id}
+</select>
+<!--//新增加商品-->
+<insert id="insert" keyProperty="id" useGeneratedKeys="true">
+    insert into goods
+    (goods_sn,`name`,category_id,brand_id,
+    gallery,keywords,brief,is_on_sale,sort_order,pic_url,share_url,
+    is_new,is_hot,unit,counter_price,retail_price,detail,add_time,
+    update_time,deleted)
+    values
+    (#{goodsSn},#{name},#{categoryId},#{brandId},#{gallery},
+    #{keywords},#{brief},#{isOnSale},#{sortOrder},#{picUrl},#{shareUrl},#{isNew},#{isHot},
+    #{unit},#{counterPrice},#{retailPrice},#{detail},#{addTime},#{updateTime},#{deleted})
+</insert>
+<!--//update-->
+<update id="update">
+        update goods set
+        goods_sn=#{goods.goodsSn},`name`=#{goods.name},category_id=#{goods.categoryId},
+        brand_id=#{goods.brandId},gallery=#{goods.gallery},
+        keywords=#{goods.keywords},
+        brief=#{goods.brief},is_on_sale=#{goods.isOnSale},sort_order=#{goods.sortOrder},
+        pic_url=#{goods.picUrl},share_url=#{goods.shareUrl},
+        is_new=#{goods.isNew},is_hot=#{goods.isHot},unit=#{goods.unit},counter_price=#{goods.counterPrice},
+        retail_price=#{goods.retailPrice},detail=#{goods.detail},add_time=#{goods.addTime},
+        update_time=#{goods.updateTime},deleted=#{goods.deleted}
+        where id=#{goods.id}
+
+    </update>
+
+
   <select id="selectByExampleWithBLOBs" parameterType="com.cskaoyan.project.mall.domain.GoodsExample" resultMap="ResultMapWithBLOBs">
     select
     <if test="distinct">
@@ -140,22 +195,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.cskaoyan.project.mall.domain.Goods">
-    insert into goods (id, goods_sn, name, 
-      category_id, brand_id, gallery, 
-      keywords, brief, is_on_sale, 
-      sort_order, pic_url, share_url, 
-      is_new, is_hot, unit, counter_price, 
-      retail_price, add_time, update_time, 
-      deleted, detail)
-    values (#{id,jdbcType=INTEGER}, #{goodsSn,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
-      #{categoryId,jdbcType=INTEGER}, #{brandId,jdbcType=INTEGER}, #{gallery,jdbcType=VARCHAR}, 
-      #{keywords,jdbcType=VARCHAR}, #{brief,jdbcType=VARCHAR}, #{isOnSale,jdbcType=BIT}, 
-      #{sortOrder,jdbcType=SMALLINT}, #{picUrl,jdbcType=VARCHAR}, #{shareUrl,jdbcType=VARCHAR}, 
-      #{isNew,jdbcType=BIT}, #{isHot,jdbcType=BIT}, #{unit,jdbcType=VARCHAR}, #{counterPrice,jdbcType=DECIMAL}, 
-      #{retailPrice,jdbcType=DECIMAL}, #{addTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{deleted,jdbcType=BIT}, #{detail,jdbcType=LONGVARCHAR})
-  </insert>
+
   <insert id="insertSelective" parameterType="com.cskaoyan.project.mall.domain.Goods">
     insert into goods
     <trim prefix="(" suffix=")" suffixOverrides=",">

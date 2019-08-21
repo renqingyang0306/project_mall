@@ -14,7 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @MappedJdbcTypes(JdbcType.VARCHAR)
-@MappedTypes(int[].class)
+@MappedTypes({int[].class})
 public class String2ArrayHandler implements TypeHandler<int[]> {
     @Override
     public void setParameter(PreparedStatement preparedStatement, int index, int[] ints, JdbcType jdbcType) throws SQLException {

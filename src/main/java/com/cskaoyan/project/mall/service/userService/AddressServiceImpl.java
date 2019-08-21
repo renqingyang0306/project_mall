@@ -39,4 +39,23 @@ public class AddressServiceImpl implements AddressService{
         }
         return addresses;
     }
+
+    @Override
+    public List<Address> findAllAddress() {
+        AddressExample addressExample = new AddressExample();
+        AddressExample.Criteria criteria = addressExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        List<Address> addresses = addressMapper.selectByExample(addressExample);
+        return addresses;
+    }
+
+    @Override
+    public List<Address> queryAllAddressByUserId(Integer userId) {
+        AddressExample addressExample = new AddressExample();
+        AddressExample.Criteria criteria = addressExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        criteria.andUserIdEqualTo(userId);
+        List<Address> addresses = addressMapper.selectByExample(addressExample);
+        return addresses;
+    }
 }

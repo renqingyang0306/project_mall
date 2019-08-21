@@ -50,6 +50,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public Category queryCategory(Integer id) {
+        return categoryMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
     public int insertCategory(Category category) {
         int insert = categoryMapper.insert(category);
         if (insert == 1) {
@@ -75,5 +80,10 @@ public class CategoryServiceImpl implements CategoryService {
         category.setDeleted(true);
         int update = categoryMapper.updateByPrimaryKey(category);
         return update;
+    }
+
+    @Override
+    public List<Category> selectByExample(CategoryExample example) {
+        return categoryMapper.selectByExample(example);
     }
 }

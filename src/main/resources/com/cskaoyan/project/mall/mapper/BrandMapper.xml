@@ -104,6 +104,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.cskaoyan.project.mall.domain.Brand">
+    <selectKey keyProperty="id" order="AFTER"
+               resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into brand (id, brand.name, brand.desc,
       pic_url, sort_order, floor_price, 
       add_time, update_time, deleted
@@ -114,6 +118,10 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.cskaoyan.project.mall.domain.Brand">
+    <selectKey keyProperty="id" order="AFTER"
+               resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into brand
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">

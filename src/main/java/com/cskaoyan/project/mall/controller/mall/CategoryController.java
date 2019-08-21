@@ -77,12 +77,34 @@ public class CategoryController {
 
     @RequestMapping("/admin/category/update")
     @ResponseBody
-    public ResponseUtils updateCategoryById(@RequestBody Category categorie) {
-        //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-        categorie.setUpdateTime(new Date());
-        int update = categoryService.updateCategoryById(categorie);
+    public ResponseUtils updateCategoryById(@RequestBody Category category) {
         ResponseUtils responseUtils = new ResponseUtils();
+        //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (category.getName() == null || category.getId() == null) {
+            responseUtils.setErrno(401);
+            responseUtils.setErrmsg("类目名称或类目 id 不能为 null");
+            return responseUtils;
+        }
+        //查询该 category 是否存在
+        Category category1 = categoryService.queryCategory(category.getId());
+        if (category1 == null) {
+            responseUtils.setErrno(401);
+            responseUtils.setErrmsg("该商品类目不存在");
+            return responseUtils;
+        }
+        //若是没有传以下数据，则取原数据
+        if (category.getKeywords() == null) {
+            category.setKeywords(category1.getKeywords());
+        }
+
+
+        //add_time和deleted不允许用户编辑时修改
+        category.setAddTime(category1.getAddTime());
+        category.setDeleted(category1.getDeleted());
+
+        category.setUpdateTime(new Date());
+        int update = categoryService.updateCategoryById(category);
+
         if (update == 0) {
             responseUtils.setErrno(401);
             responseUtils.setErrmsg("服务端错误！");
@@ -98,6 +120,19 @@ public class CategoryController {
     @RequestMapping("/admin/category/create")
     @ResponseBody
     public ResponseUtils createCategory(@RequestBody Category category) {
+        ResponseUtils responseUtils = new ResponseUtils();
+        if (category.getPid() == null) {
+            //默认的 pid 为 0
+            category.setPid(0);
+        }
+        if (category.getName() == null) {
+            responseUtils.setErrno(401);
+            responseUtils.setErrmsg("类目名称不能为 null");
+            return responseUtils;
+        }
+        if (category.getKeywords() == null) {
+            category.setKeywords("");
+        }
         Date date = new Date();
         category.setAddTime(date);
         category.setUpdateTime(date);
@@ -107,7 +142,6 @@ public class CategoryController {
         int insert = categoryService.insertCategory(category);
         //查询刚刚添加成功的category信息
         //System.out.println(category);
-        ResponseUtils responseUtils = new ResponseUtils();
         if (insert == 0) {
             responseUtils.setErrno(401);
             responseUtils.setErrmsg("服务端错误！");
