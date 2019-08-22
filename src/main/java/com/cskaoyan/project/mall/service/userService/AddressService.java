@@ -10,7 +10,6 @@ public interface AddressService {
 
     List<Address> findAllAddress(int page,int limit,String name,Integer userId);
     List<Address> findAllAddress();
-    Address queryAddressById(Integer id);
 
     List<Address> queryAllAddressByUserId(Integer userId);
 
@@ -19,4 +18,7 @@ public interface AddressService {
     int deleteRealAddressById(Integer id);
     int deleteLogicAddressByDeleted(Address address);
 
+    Address queryAddressByUidAndAddressId(Integer uid, int addressId);
+
+    Address queryAddressById(Integer id);
 }

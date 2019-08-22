@@ -42,4 +42,6 @@ public interface OrderService {
     int confrimByOid(Integer oid);
 
     int deleteByPrimaryKey(Integer oid);
+
+    String generateOrderSn(Integer userId);
 }
