@@ -35,4 +35,11 @@ public interface OrderService {
 
     ResponseVO showOrderDetail(int orderId);
 
+    int cancleOrderByOid(int oid);
+
+    int refundByOid(Integer oid);
+
+    int confrimByOid(Integer oid);
+
+    int deleteByPrimaryKey(Integer oid);
 }

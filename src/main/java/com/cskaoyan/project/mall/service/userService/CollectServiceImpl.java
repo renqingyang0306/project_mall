@@ -38,4 +38,16 @@ public class CollectServiceImpl implements CollectService {
         }
         return collects;
     }
+
+    @Override
+    public List<Collect> queryByType(Integer userId, Byte type, Integer page, Integer i) {
+        CollectExample collectExample = new CollectExample();
+        CollectExample.Criteria criteria = collectExample.createCriteria();
+        criteria.andUserIdEqualTo(userId);
+        criteria.andTypeEqualTo(type);
+        //collectExample.setOrderByClause("add_time desc");
+        int limit = 10;
+        PageHelper.startPage(page,limit);
+        return collectMapper.selectByExample(collectExample);
+    }
 }

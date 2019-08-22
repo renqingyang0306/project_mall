@@ -9,4 +9,6 @@ public interface CollectService {
     List<Collect> selectByExample(CollectExample example);
 
     List<Collect> findAllCollect(int page,int limit,Integer userId,Integer valueId);
+
+    List<Collect> queryByType(Integer userId, Byte type, Integer page, Integer limit);
 }

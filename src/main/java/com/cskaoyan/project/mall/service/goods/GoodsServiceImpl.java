@@ -107,4 +107,11 @@ public class GoodsServiceImpl implements GoodsService{
         long count = goodsMapper.countByExample(goodsExample);
         return count;
     }
+
+
+    @Override
+    public Goods findById(Integer id) {
+        Goods goods = goodsMapper.selectByPrimaryKey(id);
+        return goods;
+    }
 }
