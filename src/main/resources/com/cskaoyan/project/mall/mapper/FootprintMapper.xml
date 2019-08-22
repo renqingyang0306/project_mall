@@ -9,6 +9,15 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="deleted" jdbcType="BIT" property="deleted" />
   </resultMap>
+  <resultMap id="EchoFootprintMap" type="com.cskaoyan.project.mall.controllerwx.orders.vo.EchoFootprint">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="add_time" property="addTime" />
+    <result column="brief" property="brief" />
+    <result column="goods_id" property="goodsId" />
+    <result column="name" property="name" />
+    <result column="pic_url" property="picUrl" />
+    <result column="retail_price" property="retailPrice" />
+  </resultMap>
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
