@@ -4,9 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cskaoyan.project.mall.controller.goods.vo.CreatVO;
 import com.cskaoyan.project.mall.controller.goods.vo.ResponseVO;
-import com.cskaoyan.project.mall.domain.User;
+import com.cskaoyan.project.mall.controllerwx.orders.vo.OrderMsg;
+import com.cskaoyan.project.mall.domain.*;
+import com.cskaoyan.project.mall.service.advertiseService.GroupRulesService;
+import com.cskaoyan.project.mall.service.mall.CategoryService;
 import com.cskaoyan.project.mall.service.mall.OrderGoodsService;
 import com.cskaoyan.project.mall.service.mall.OrderService;
+import com.cskaoyan.project.mall.service.userService.AddressService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +19,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.lang.System;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.lang.System.out;
 
@@ -34,6 +43,13 @@ public class OrderControllerWx {
     OrderGoodsService orderGoodsService;
     @Autowired
     OrderService orderService;
+    @Autowired
+    AddressService addressService;
+    @Autowired
+    GroupRulesService groupRulesService;
+    @Autowired
+    CategoryService categoryService;
+
 
     /*
      * description: showList
@@ -192,5 +208,67 @@ public class OrderControllerWx {
             CreatVO creatVO = new CreatVO(-1, "失败");
             return creatVO;
         }
+    }
+
+    //提交订单
+    @RequestMapping("order/submit")
+    @ResponseBody
+    public ResponseVO submitOrder(@RequestBody OrderMsg OrderMsg) {
+        //得到userId,根据userId对客户的订单进行查询
+        Subject subject = SecurityUtils.getSubject();
+        User user = (User) subject.getPrincipal();
+        Integer uid = user.getId();
+        //订单的详情
+        int addressId = OrderMsg.getAddressId();
+        int cartId = OrderMsg.getCarid();
+        int couponId = OrderMsg.getCouponId();
+        int grouponLinkId = OrderMsg.getGrouponLinkId();
+        int grouponRulesId = OrderMsg.getGrouponRulesId();
+        String message = OrderMsg.getMessage();
+        //塞到order和OrderGood两张表里
+        // 1.收货地址
+        Address address  = addressService.queryAddressByUidAndAddressId(uid,addressId);
+
+        Order order = new Order();
+        order.setUserId(uid);
+        //放入订单编号orderSn
+        order.setOrderSn(orderService.generateOrderSn(uid));
+        //放入订单状态码 未付款 102
+        short status = 102;
+        order.setOrderStatus(status);
+        //放入订单用户的地址
+        order.setConsignee(address.getName());
+        //放入用户的手机号
+        order.setMobile(address.getMobile());
+        //注入message
+        order.setMessage(message);
+
+        //String detailedAddress = address.getProvince() + address.getCity() + address.getCounty() + " " + address.getAddressDetail();
+
+        //order.setAddress(detailedAddress);
+
+        //团购优惠价格
+        BigDecimal grouponPrice = new BigDecimal(0.00);
+        //根据grouponRulesId，查出团购的优惠方案
+        GrouponRules grouponRules = groupRulesService.selectByPrimaryKey(grouponRulesId);
+
+        // 3.货品价格 根据uid查询购物车里的商品列表
+        /*List<Cart> checkedGoodsList = null;
+        if (cartId == 0) {
+            checkedGoodsList = categoryService.(uid);
+        } else {
+            LitemallCart cart = cartService.findById(cartId);
+            checkedGoodsList = new ArrayList<>(1);
+            checkedGoodsList.add(cart);
+        }
+
+        order.setGoodsPrice(checkedGoodsPrice);
+        order.setFreightPrice(freightPrice);
+        order.setCouponPrice(couponPrice);
+        order.setIntegralPrice(integralPrice);
+        order.setOrderPrice(orderTotalPrice);
+        order.setActualPrice(actualPrice);*/
+
+        return null;
     }
 }

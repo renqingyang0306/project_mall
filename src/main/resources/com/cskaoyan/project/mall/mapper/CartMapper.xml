@@ -110,7 +110,11 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.cskaoyan.project.mall.domain.Cart">
-    insert into cart (id, user_id, goods_id, 
+    <selectKey keyProperty="id" order="AFTER"
+               resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into cart (id, user_id, goods_id,
       goods_sn, goods_name, product_id, 
       price, number, specifications, 
       checked, pic_url, add_time, 
@@ -122,6 +126,10 @@
       #{updateTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="com.cskaoyan.project.mall.domain.Cart">
+    <selectKey keyProperty="id" order="AFTER"
+               resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into cart
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
