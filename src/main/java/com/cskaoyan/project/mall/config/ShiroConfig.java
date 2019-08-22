@@ -43,6 +43,8 @@ public class ShiroConfig {
         map.put("/wx/goods/**", "anon");
         map.put("/wx/search/**", "anon");
         map.put("/wx/catalog/**", "anon");
+        map.put("/wx/storage/**", "anon");
+        map.put("/wx/comment/**", "anon");
         //需要认证
         map.put("/**", "authc");
   
