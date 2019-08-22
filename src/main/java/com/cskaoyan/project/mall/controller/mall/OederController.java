@@ -84,7 +84,7 @@ public class OederController {
         ResponseUtils responseUtils = new ResponseUtils();
 
 
-        //int insert = orderService.insertOrder(order);
+        //int insert = orderService.insertOrder(orders);
 
 
         if (order == null) {
@@ -107,7 +107,7 @@ public class OederController {
             responseUtils.setErrmsg("id 不能为 null");
             return responseUtils;
         }
-//        int update = orderService.updateOrderById(order);
+//        int update = orderService.updateOrderById(orders);
 
         if (order == null) {
             responseUtils.setErrno(401);

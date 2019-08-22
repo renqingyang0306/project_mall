@@ -1,6 +1,7 @@
 package com.cskaoyan.project.mall.mapper;
 
 
+import com.cskaoyan.project.mall.controllerwx.orders.vo.EchoFootprint;
 import com.cskaoyan.project.mall.domain.Footprint;
 import com.cskaoyan.project.mall.domain.FootprintExample;
 import org.apache.ibatis.annotations.Param;
@@ -29,4 +30,6 @@ public interface FootprintMapper {
     int updateByPrimaryKeySelective(Footprint record);
 
     int updateByPrimaryKey(Footprint record);
+
+    List<EchoFootprint> echoFootprintListByUid(Integer uid);
 }

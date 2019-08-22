@@ -9,4 +9,7 @@ public interface SearchHistoryService {
     List<SearchHistory> selectByExample(SearchHistoryExample example);
 
     List<SearchHistory> findAllHistory(int page,int limit,Integer userId,String keyword);
+
+    List<SearchHistory> queryAllSearchHistoryByUserId(Integer userId);
+    List<SearchHistory> queryAllSearchHistory();
 }

@@ -62,6 +62,30 @@ public class KeywordServiceImpl implements KeywordService {
     }
 
     @Override
+    public List<Keyword> queryKeywordByIsDefault(Boolean isFefault) {
+        KeywordExample keywordExample = new KeywordExample();
+        KeywordExample.Criteria criteria = keywordExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        criteria.andIsDefaultEqualTo(isFefault);
+        //按照修改时间降序排序
+        keywordExample.setOrderByClause("update_time desc");
+        List<Keyword> keywords = keywordMapper.selectByExample(keywordExample);
+        return keywords;
+    }
+
+    @Override
+    public List<Keyword> queryKeywordByIsHot(Boolean isHot) {
+        KeywordExample keywordExample = new KeywordExample();
+        KeywordExample.Criteria criteria = keywordExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        criteria.andIsHotEqualTo(isHot);
+        //按照修改时间降序排序
+        keywordExample.setOrderByClause("update_time desc");
+        List<Keyword> keywords = keywordMapper.selectByExample(keywordExample);
+        return keywords;
+    }
+
+    @Override
     public int insertKeyword(Keyword keyword) {
         int insert = keywordMapper.insert(keyword);
         return insert;
