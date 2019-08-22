@@ -1,10 +1,14 @@
 package com.cskaoyan.project.mall.controllerwx;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cskaoyan.project.mall.domain.*;
 import com.cskaoyan.project.mall.mapper.*;
+import com.cskaoyan.project.mall.utils.RedisUtil;
 import com.cskaoyan.project.mall.utils.ResponseUtils;
 import com.cskaoyan.project.mall.vo.GoodsListBean;
 import com.cskaoyan.project.mall.vo.GrouponListBean;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,7 +39,8 @@ public class HomeController {
 
     @RequestMapping("home/index")
     @ResponseBody
-    public ResponseUtils<HashMap> home(){
+    public Object home(){
+
         //顶部显示的三张滚动图片
         List<Ad> adList = adMapper.selectByExample(new AdExample());
         HashMap<String, List> hashMap = new HashMap<>();
