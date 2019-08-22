@@ -8,7 +8,6 @@ import com.cskaoyan.project.mall.domain.OrderGoods;
 import com.cskaoyan.project.mall.domain.OrderGoodsExample;
 import com.cskaoyan.project.mall.mapper.OrderGoodsMapper;
 import com.cskaoyan.project.mall.mapper.OrderMapper;
-import com.cskaoyan.project.mall.service.mall.OrderGoodsService;
 import com.cskaoyan.project.mall.service.mall.OrderService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -190,7 +189,7 @@ public class OrderServiceImpl implements OrderService {
         OrderExample.Criteria criteria = orderExample.createCriteria();
         criteria.andDeletedEqualTo(false);
         criteria.andUserIdEqualTo(uid);
-        //301代表未发货的订单
+        //301代表未收货的订单
         short status = 301;
         criteria.andOrderStatusEqualTo(status);
         List<Order> orders = orderMapper.selectByExample(orderExample);
@@ -299,6 +298,89 @@ public class OrderServiceImpl implements OrderService {
         ResponseVO<OrderDetailWx> responseVO = new ResponseVO<>(orderDetailWx, "成功", 0);
         return responseVO;
 
+    }
+
+    /*
+     * description: 根据orderId取消订单
+     * version: 1.0
+     * date: 2019/8/22 10:31
+     * author: du
+     * @Param: [oid]
+     * @return: int
+     */
+    @Override
+    public int cancleOrderByOid(int oid) {
+        //把order状态码改为102就是取消订单
+        OrderExample orderExample = new OrderExample();
+        OrderExample.Criteria criteria = orderExample.createCriteria();
+        //找到要改变的订单
+        criteria.andIdEqualTo(oid);
+        //修改状态码
+        Order order = new Order();
+        short status = 102;
+        order.setOrderStatus(status);
+        int i = orderMapper.updateByExampleSelective(order, orderExample);
+        return i;
+    }
+
+    /*
+     * description: refundByOid
+     * version: 1.0
+     * date: 2019/8/22 11:01
+     * author: du
+     * @Param: [oid]
+     * @return: int
+     */
+    @Override
+    public int refundByOid(Integer oid) {
+        //把order状态码改为202就是退款
+        OrderExample orderExample = new OrderExample();
+        OrderExample.Criteria criteria = orderExample.createCriteria();
+        //找到要改变的订单
+        criteria.andIdEqualTo(oid);
+        //修改状态码
+        Order order = new Order();
+        short status = 202;
+        order.setOrderStatus(status);
+        int i = orderMapper.updateByExampleSelective(order, orderExample);
+        return i;
+    }
+
+    /*
+     * description: confrimByOid
+     * version: 1.0
+     * date: 2019/8/22 11:05
+     * author: du
+     * @Param: [oid]
+     * @return: int
+     */
+    @Override
+    public int confrimByOid(Integer oid) {
+        //把order状态码改401就是确认收货
+        OrderExample orderExample = new OrderExample();
+        OrderExample.Criteria criteria = orderExample.createCriteria();
+        //找到要改变的订单
+        criteria.andIdEqualTo(oid);
+        //修改状态码
+        Order order = new Order();
+        short status = 401;
+        order.setOrderStatus(status);
+        int i = orderMapper.updateByExampleSelective(order, orderExample);
+        return i;
+    }
+
+    /*
+     * description: 根据order的id删除order的订单
+     * version: 1.0
+     * date: 2019/8/22 11:14
+     * author: du
+     * @Param: [oid]
+     * @return: int
+     */
+    @Override
+    public int deleteByPrimaryKey(Integer oid) {
+        int i = orderMapper.deleteByPrimaryKey(oid);
+        return i;
     }
 
     /*

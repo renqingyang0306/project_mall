@@ -29,4 +29,5 @@ public interface OrderGoodsService {
 
     int deleteLogicOrderGoodsByDeleted(OrderGoods orderGoods);
 
+    int deleteByOid(Integer oid);
 }

@@ -91,9 +91,7 @@ public class CouponControllerWx {
         CouponExample couponExample = new CouponExample();
         CouponExample.Criteria criteria = couponExample.createCriteria();
         criteria.andCodeEqualTo(code);
-
         Date date = new Date();
-
         criteria.andEndTimeGreaterThan(date);
 
         List<Coupon> coupons = couponService.selectByExample(couponExample);
@@ -118,6 +116,56 @@ public class CouponControllerWx {
             pageBeanResponseUtils.setErrmsg("优惠券领取失败");
             return pageBeanResponseUtils;
         }
+        ResponseUtils pageBeanResponseUtils = new ResponseUtils<>();
+        pageBeanResponseUtils.setErrno(0);
+        pageBeanResponseUtils.setErrmsg("优惠券领取成功");
+        return pageBeanResponseUtils;
+    }
+
+
+
+
+    @ResponseBody
+    @RequestMapping("wx/coupon/receive")
+    public ResponseUtils exchansge(@RequestBody JSONObject jsonObject){
+
+        int code = (int) jsonObject.get("couponId");
+        //获得UserId以后，判断优惠券code是否有效，如果有效往coupon_user里塞
+        Subject subject = SecurityUtils.getSubject();
+        subject = SecurityUtils.getSubject();
+        //获取认证后的用户信息，通过Realm进行封装的
+        User user = (User) subject.getPrincipal();
+
+        if(user == null){
+            ResponseUtils pageBeanResponseUtils = new ResponseUtils<>();
+            pageBeanResponseUtils.setErrno(1);
+            pageBeanResponseUtils.setErrmsg("用户未登录");
+            return pageBeanResponseUtils;
+        }
+
+        CouponUserExample couponExample = new CouponUserExample();
+        CouponUserExample.Criteria criteria = couponExample.createCriteria();
+        criteria.andCouponIdEqualTo(code);
+        criteria.andUserIdEqualTo(user.getId());
+        List<CouponUser> couponUsers = couponUserService.selectByExample(couponExample);
+        if(couponUsers.size() != 0){
+            ResponseUtils pageBeanResponseUtils = new ResponseUtils<>();
+            pageBeanResponseUtils.setErrno(740);
+            pageBeanResponseUtils.setErrmsg("优惠券已经领取过");
+            return pageBeanResponseUtils;
+        }
+
+        Coupon coupon = couponService.selectByPrimaryKey(code);
+
+            CouponUser couponUser = new CouponUser();
+            couponUser.setUserId(user.getId());
+            couponUser.setStatus((short) 0);
+            couponUser.setCouponId(coupon.getId());
+            couponUser.setAddTime(new Date());
+            couponUser.setEndTime(coupon.getEndTime());
+            couponUser.setStartTime(coupon.getStartTime());
+            couponUserService.insert(couponUser);
+
         ResponseUtils pageBeanResponseUtils = new ResponseUtils<>();
         pageBeanResponseUtils.setErrno(0);
         pageBeanResponseUtils.setErrmsg("优惠券领取成功");

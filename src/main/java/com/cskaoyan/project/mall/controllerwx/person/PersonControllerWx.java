@@ -1,8 +1,14 @@
 package com.cskaoyan.project.mall.controllerwx.person;
 
+import com.cskaoyan.project.mall.controller.goods.vo.PageVO;
 import com.cskaoyan.project.mall.controller.goods.vo.ResponseVO;
+import com.cskaoyan.project.mall.controllerwx.orders.vo.CollectPageVO;
 import com.cskaoyan.project.mall.controllerwx.orders.vo.FootprintVO;
+import com.cskaoyan.project.mall.domain.Collect;
+import com.cskaoyan.project.mall.domain.Goods;
 import com.cskaoyan.project.mall.domain.User;
+import com.cskaoyan.project.mall.service.goods.GoodsService;
+import com.cskaoyan.project.mall.service.userService.CollectService;
 import com.cskaoyan.project.mall.service.userService.FootprintService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -11,7 +17,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA
@@ -26,25 +35,14 @@ public class PersonControllerWx {
 
     @Autowired
     FootprintService footprintService;
-    /*wx/collect/list?type=0&page=1&size=10*/
-    /*
-     * description: 展示个人的收藏
-     * version: 1.0
-     * date: 2019/8/21 22:09
-     * author: du
-     * @Param: [type, page, size]
-     * @return: com.cskaoyan.project.mall.controller.goods.vo.ResponseVO
-     */
-    //我的收藏功能
-    /*@RequestMapping("collect/list")
-    @ResponseBody
-    public ResponseVO showCollect(int type,int page,int size){
+    @Autowired
+    CollectService collectService;
+    @Autowired
+    GoodsService goodsService;
 
-
-
-
-    }*/
     //获得访问足迹
+    @RequestMapping("footprint/list")
+    @ResponseBody
     public ResponseVO getFootprintList(int page, int size){
         Subject subject = SecurityUtils.getSubject();
         User user = (User) subject.getPrincipal();
@@ -53,18 +51,43 @@ public class PersonControllerWx {
         return responseVO;
     }
 
+    //获得个人收藏
+    @RequestMapping("collect/list")
+    @ResponseBody
+    public ResponseVO list(Byte type,Integer page,Integer limit){
+        Subject subject = SecurityUtils.getSubject();
+        User user = (User) subject.getPrincipal();
+        Integer userId = user.getId();
+        //查出collect表的信息
+        List<Collect> collectList = collectService.queryByType(userId, type, page, limit);
 
-    /*@Autowired
-    FootprintService footprintService;
-    //http://192.168.2.100:8081/wx/footprint/list?page=1&size=10
-    //足迹列表
-    @RequestMapping("footprint/list")
-    public ResponseVO getFootprintList(int page, int size, HttpServletRequest request) {
-        //获得请求头
-        String tokenKey = request.getHeader("X-Litemall-Token");
-        Integer userId = UserTokenManager.getUserId(tokenKey);
-        ResponseVO<FootprintVO> responseVO = footprintService.findFootprintByUid(page, size, userId);
+        List<Object> collects = new ArrayList<>(collectList.size());
+        for (Collect collect : collectList) {
+            //注入collectList
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", collect.getId());
+            map.put("type", collect.getType());
+            map.put("valueId", collect.getValueId());
+            Goods goods = goodsService.findById(collect.getValueId());
+            map.put("name", goods.getName());
+            map.put("brief", goods.getBrief());
+            map.put("picUrl", goods.getPicUrl());
+            map.put("retailPrice", goods.getRetailPrice());
+            collects.add(map);
+        }
+        //放到到pageVO里
+        /*PageVO pageVO = new PageVO();
+        pageVO.setItems(collects);*/
+        CollectPageVO<Object> pageVO = new CollectPageVO<>();
+        long tatol = 2 ;
+        pageVO.setTotalPages(tatol);
+        pageVO.setCollectList(collects);
+        ResponseVO responseVO = new ResponseVO(pageVO, "成功", 0);
         return responseVO;
+    }
 
-    }*/
+
+
+
+
 }

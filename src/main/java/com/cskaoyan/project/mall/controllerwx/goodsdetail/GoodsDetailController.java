@@ -1,6 +1,7 @@
 package com.cskaoyan.project.mall.controllerwx.goodsdetail;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.cskaoyan.project.mall.domain.*;
 import com.cskaoyan.project.mall.mapper.*;
 import com.cskaoyan.project.mall.service.advertiseService.GroupRulesService;
@@ -13,6 +14,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -52,6 +54,8 @@ public class GoodsDetailController {
     GroupRulesService groupRulesService;
     @Autowired
     UserService userService;
+    @Autowired
+    CartMapper cartMapper;
 
 
 
@@ -62,12 +66,14 @@ public class GoodsDetailController {
     public ResponseUtils<HashMap> detailesd( Integer id)//UserId// )
     {
 
+
         Subject subject = SecurityUtils.getSubject();
         subject = SecurityUtils.getSubject();
         //获取认证后的用户信息，通过Realm进行封装的
-        User user = (User) subject.getPrincipal();
-        int userId = user.getId();
-
+        User user = new User();
+        if(subject!=null) {
+            user = (User) subject.getPrincipal();
+        }
         Goods goods = goodsMapper.selectByPrimaryKey(id);
         //Attribute
         List<GoodsAttribute> goodsAttributes = goodsAttributeService.queryByGoodsId(id);
@@ -127,7 +133,7 @@ public class GoodsDetailController {
         if (user != null) {
             CollectExample collectExample = new CollectExample();
             CollectExample.Criteria criteria2 = collectExample.createCriteria();
-            criteria2.andUserIdEqualTo(userId);
+            criteria2.andUserIdEqualTo(user.getId());
             criteria2.andValueIdEqualTo(id);
             List<Collect> collects = collectMapper.selectByExample(collectExample);
            if(collects.size() != 0){
@@ -148,7 +154,7 @@ public class GoodsDetailController {
             //去重
             if(l == 0) {
                 Footprint footprint = new Footprint();
-                footprint.setUserId(userId);
+                footprint.setUserId(user.getId());
                 footprint.setGoodsId(id);
                 footprintMapper.insert(footprint);
             }
@@ -166,7 +172,6 @@ public class GoodsDetailController {
             data.put("attribute", goodsAttributes);
             data.put("brand", brand);
             data.put("groupon", grouponRules);
-            //SystemConfig.isAutoCreateShareImage()
 
         }
         catch (Exception e) {
@@ -184,15 +189,8 @@ public class GoodsDetailController {
 
     @RequestMapping("wx/goods/related")
     @ResponseBody
-    public ResponseUtils detailed(Integer id)//UserId// )
+    public ResponseUtils detdailed(Integer id)
     {
-
-        Subject subject = SecurityUtils.getSubject();
-        subject = SecurityUtils.getSubject();
-        //获取认证后的用户信息，通过Realm进行封装的
-        User user = (User) subject.getPrincipal();
-        int userId = user.getId();
-        //查相关商品
         Goods goods = goodsService.queryById(id);
         GoodsExample goodsExample = new GoodsExample();
         GoodsExample.Criteria criteria = goodsExample.createCriteria();
@@ -209,15 +207,80 @@ public class GoodsDetailController {
     }
 
 
- /*   @RequestMapping("goodscount")
+   @RequestMapping("wx/cart/goodscount")
     @ResponseBody
-    public ResponseUtils<int> detailed( userId,Integer id)//UserId// )
+    public ResponseUtils<Integer> detailesssd(Integer id)//UserId// )
     {
-       return null; //购物车，等购物车回显。
+
+        Subject subject = SecurityUtils.getSubject();
+        subject = SecurityUtils.getSubject();
+        //获取认证后的用户信息，通过Realm进行封装的
+        User user = new User();
+        if(subject!=null) {
+            user = (User) subject.getPrincipal();
+        }
+        CartExample cartExample = new CartExample();
+        CartExample.Criteria criteria = cartExample.createCriteria();
+        criteria.andUserIdEqualTo(user.getId());
+        long l = cartMapper.countByExample(cartExample);
+        ResponseUtils pageBeanResponseUtils = new ResponseUtils<>();
+        pageBeanResponseUtils.setData(l);
+        pageBeanResponseUtils.setErrno(0);
+        pageBeanResponseUtils.setErrmsg("成功");
+        return pageBeanResponseUtils; //购物车，等购物车回显。
     }
-*/
+    @RequestMapping("wx/collect/addordelete")
+    @ResponseBody
+    public ResponseUtils detailessssd(@RequestBody JSONObject jsonObject)//UserId// )
+    {
+        int type = (int) jsonObject.get("type");
+        int valueId = (int) jsonObject.get("valueId");
+        Subject subject = SecurityUtils.getSubject();
+        subject = SecurityUtils.getSubject();
+        //获取认证后的用户信息，通过Realm进行封装的
+        User user = new User();
+        if(subject!=null) {
+            user = (User) subject.getPrincipal();
+        }
+        if (user != null) {
+            CollectExample collectExample = new CollectExample();
+            CollectExample.Criteria criteria2 = collectExample.createCriteria();
+            criteria2.andUserIdEqualTo(user.getId());
+            criteria2.andValueIdEqualTo(valueId);
+            List<Collect> collects = collectMapper.selectByExample(collectExample);
+            if(collects.size() != 0){
+                if(collects.get(0).getType() == 0){
+                collects.get(0).setType((byte) 1);
+                }else {
+                    collects.get(0).setType((byte) 0);
+                }
+                collectMapper.updateByPrimaryKey(collects.get(0));
+            }else {
+                Collect collect = new Collect();
+                collect.setType((byte) 1);
+                collect.setUserId(user.getId());
+                collect.setValueId(valueId);
+                collect.setDeleted(false);
+                collectMapper.insert(collect);
+            }
+            HashMap<String, String> map = new HashMap<>();
+            map.put("type","add");
+            ResponseUtils pageBeanResponseUtils = new ResponseUtils<>();
+            pageBeanResponseUtils.setData(map);
+            pageBeanResponseUtils.setErrno(0);
+            pageBeanResponseUtils.setErrmsg("成功");
+            return pageBeanResponseUtils; //购物车，等
+        }
 
+        HashMap<String, String> map = new HashMap<>();
+        map.put("error","请登录");
+        ResponseUtils pageBeanResponseUtils = new ResponseUtils<>();
+        pageBeanResponseUtils.setData(map);
+        pageBeanResponseUtils.setErrno(0);
+        pageBeanResponseUtils.setErrmsg("成功");
+        return pageBeanResponseUtils;
 
-
+    }
 }
+
 

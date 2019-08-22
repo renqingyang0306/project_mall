@@ -1,5 +1,8 @@
 package com.cskaoyan.project.mall.controllerwx.orders;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.cskaoyan.project.mall.controller.goods.vo.CreatVO;
 import com.cskaoyan.project.mall.controller.goods.vo.ResponseVO;
 import com.cskaoyan.project.mall.domain.User;
 import com.cskaoyan.project.mall.service.mall.OrderGoodsService;
@@ -7,9 +10,13 @@ import com.cskaoyan.project.mall.service.mall.OrderService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.json.JsonParser;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import static java.lang.System.out;
 
 /**
  * Created by IntelliJ IDEA
@@ -38,6 +45,7 @@ public class OrderControllerWx {
      */
     //请求的url:wx/order/list?showType=1&page=1&size=10
     @RequestMapping("order/list")
+    @ResponseBody
     public ResponseVO showList(int showType,int page,int size){
         ResponseVO responseVO = null;
         //根据showType查询出未支付的订单
@@ -87,4 +95,102 @@ public class OrderControllerWx {
         return responseVO;
     }
 
+    /*
+     * description: 未付款的用户取消订单
+     * version: 1.0
+     * date: 2019/8/22 10:58
+     * author: du
+     * @Param: [orderId]
+     * @return: com.cskaoyan.project.mall.controller.goods.vo.CreatVO
+     */
+    //未付款的用户直接取消订单
+    @RequestMapping("order/cancel")
+    @ResponseBody
+    public CreatVO cancelOrder(@RequestBody String orderId){
+        JSONObject jsonObject = JSON.parseObject(orderId);
+        Integer oid = jsonObject.getInteger("orderId");
+        //string-->int
+        int cancel = orderService.cancleOrderByOid(oid);
+
+        if (cancel == 1){
+            CreatVO creatVO = new CreatVO(0, "成功");
+            return creatVO;
+        }else {
+            CreatVO creatVO = new CreatVO(-1, "失败");
+            return creatVO;
+        }
+    }
+
+    /*
+     * description: refundOrder
+     * version: 1.0
+     * date: 2019/8/22 11:19
+     * author: du
+     * @Param: [orderId]
+     * @return: com.cskaoyan.project.mall.controller.goods.vo.CreatVO
+     */
+    //退款取消订单
+    @RequestMapping("order/refund")
+    @ResponseBody
+    public CreatVO refundOrder(@RequestBody String orderId){
+        JSONObject jsonObject = JSON.parseObject(orderId);
+        Integer oid = jsonObject.getInteger("orderId");
+        int refund = orderService.refundByOid(oid);
+        if (refund == 1){
+            CreatVO creatVO = new CreatVO(0, "成功");
+            return creatVO;
+        }else {
+            CreatVO creatVO = new CreatVO(-1, "失败");
+            return creatVO;
+        }
+    }
+
+    /*
+     * description: confirmOrder
+     * version: 1.0
+     * date: 2019/8/22 11:19
+     * author: du
+     * @Param: [orderId]
+     * @return: com.cskaoyan.project.mall.controller.goods.vo.CreatVO
+     */
+    //确认收货
+    @RequestMapping("order/confirm")
+    @ResponseBody
+    public CreatVO confirmOrder(@RequestBody String orderId){
+        JSONObject jsonObject = JSON.parseObject(orderId);
+        Integer oid = jsonObject.getInteger("orderId");
+        int confrim = orderService.confrimByOid(oid);
+        if (confrim == 1){
+            CreatVO creatVO = new CreatVO(0, "成功");
+            return creatVO;
+        }else {
+            CreatVO creatVO = new CreatVO(-1, "失败");
+            return creatVO;
+        }
+    }
+    /*
+     * description: deleteOrder
+     * version: 1.0
+     * date: 2019/8/22 11:18
+     * author: du
+     * @Param: [orderId]
+     * @return: com.cskaoyan.project.mall.controller.goods.vo.CreatVO
+     */
+    //删除订单
+    @RequestMapping("order/delete")
+    @ResponseBody
+    public CreatVO deleteOrder(@RequestBody String orderId){
+        JSONObject jsonObject = JSON.parseObject(orderId);
+        Integer oid = jsonObject.getInteger("orderId");
+        //根据oid分别删除order表和orderGoods里的订单
+        int de1 = orderService.deleteByPrimaryKey(oid);
+        int de2 = orderGoodsService.deleteByOid(oid);
+        if (de1 == 1 && de2 >= 1) {
+            CreatVO creatVO = new CreatVO(0, "成功");
+            return creatVO;
+        } else {
+            CreatVO creatVO = new CreatVO(-1, "失败");
+            return creatVO;
+        }
+    }
 }
