@@ -1,4 +1,4 @@
-package com.cskaoyan.project.mall.controller.controllerWx.GrouponRulesWx;
+package com.cskaoyan.project.mall.controllerwx.GrouponRulesWx;
 
 public class UserVo {
     private String nickname;

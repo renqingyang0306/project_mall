@@ -9,6 +9,15 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="deleted" jdbcType="BIT" property="deleted" />
   </resultMap>
+  <resultMap id="EchoFootprintMap" type="com.cskaoyan.project.mall.controllerwx.orders.vo.EchoFootprint">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="add_time" property="addTime" />
+    <result column="brief" property="brief" />
+    <result column="goods_id" property="goodsId" />
+    <result column="name" property="name" />
+    <result column="pic_url" property="picUrl" />
+    <result column="retail_price" property="retailPrice" />
+  </resultMap>
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -70,6 +79,16 @@
   <sql id="Base_Column_List">
     id, user_id, goods_id, add_time, update_time, deleted
   </sql>
+  <!--左连接多表查询-->
+  <select id="echoFootprintListByUid" parameterType="java.lang.Integer" resultMap="EchoFootprintMap">
+    SELECT
+    fp.add_time,g.brief,fp.goods_id,fp.id,g.name,g.pic_url,
+    g.retail_price
+    from footprint fp
+    LEFT JOIN goods g
+    ON fp.goods_id = g.id
+    where fp.user_id = #{userId}
+  </select>
   <select id="selectByExample" parameterType="com.cskaoyan.project.mall.domain.FootprintExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
