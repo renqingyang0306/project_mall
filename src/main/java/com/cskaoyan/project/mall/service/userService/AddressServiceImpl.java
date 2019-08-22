@@ -58,4 +58,22 @@ public class AddressServiceImpl implements AddressService{
         List<Address> addresses = addressMapper.selectByExample(addressExample);
         return addresses;
     }
+
+    /*
+     * description: queryAddressByUidAndAddressId
+     * version: 1.0
+     * date: 2019/8/22 17:01
+     * author: du
+     * @Param: [uid, addressId]
+     * @return: com.cskaoyan.project.mall.domain.Address
+     */
+    @Override
+    public Address queryAddressByUidAndAddressId(Integer uid, int addressId) {
+        AddressExample addressExample = new AddressExample();
+        AddressExample.Criteria criteria = addressExample.createCriteria();
+        criteria.andIdEqualTo(addressId).andUserIdEqualTo(uid).andDeletedEqualTo(false);
+        List<Address> addresses = addressMapper.selectByExample(addressExample);
+        Address address = addresses.get(0);
+        return address;
+    }
 }

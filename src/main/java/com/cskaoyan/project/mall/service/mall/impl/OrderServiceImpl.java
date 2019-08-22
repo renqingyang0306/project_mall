@@ -14,8 +14,11 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * @author 申涛涛
@@ -464,5 +467,41 @@ public class OrderServiceImpl implements OrderService {
         ResponseVO responseVO = new ResponseVO(responDataVO, "成功", 0);
         return responseVO;
 
+    }
+
+    /*
+     * description: 生成唯一的orderSn
+     * version: 1.0
+     * date: 2019/8/22 17:25
+     * author: du
+     * @Param: [userId]
+     * @return: java.lang.String
+     */
+    @Override
+    public String generateOrderSn(Integer userId) {
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String now = df.format(LocalDate.now());
+        String orderSn = now + getRandomNum(6);
+        while (countByOrderSn(userId, orderSn) != 0) {
+            orderSn = now + getRandomNum(6);
+        }
+        return orderSn;
+    }
+    private String getRandomNum(Integer num) {
+        String base = "0123456789";
+        Random random = new Random();
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < num; i++) {
+            int number = random.nextInt(base.length());
+            sb.append(base.charAt(number));
+        }
+        return sb.toString();
+    }
+
+    public int countByOrderSn(Integer userId, String orderSn) {
+        OrderExample example = new OrderExample();
+        example.or().andUserIdEqualTo(userId).andOrderSnEqualTo(orderSn).andDeletedEqualTo(false);
+        int i = (int) orderMapper.countByExample(example);
+        return i;
     }
 }

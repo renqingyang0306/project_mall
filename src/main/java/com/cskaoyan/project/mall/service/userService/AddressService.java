@@ -13,4 +13,6 @@ public interface AddressService {
 
     List<Address> queryAllAddressByUserId(Integer userId);
 
+    Address queryAddressByUidAndAddressId(Integer uid, int addressId);
+
 }
