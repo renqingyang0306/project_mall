@@ -25,4 +25,6 @@ public interface RegionService {
     List<Region> selectByExample(RegionExample example);
 
     int updateByPrimaryKey(Region record);
+
+    Region queryRegionById(Integer id);
 }

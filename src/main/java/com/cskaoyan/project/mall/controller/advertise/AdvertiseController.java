@@ -29,8 +29,7 @@ public class AdvertiseController {
 
 @Autowired
   AdvertiseService advertiseService;
-@Autowired
-RedisUtil redisUtil;
+
  @ResponseBody
  @RequestMapping("admin/ad/list")
     public ResponseUtils<PageBean>  list(int page,

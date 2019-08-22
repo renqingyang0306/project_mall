@@ -50,6 +50,19 @@ public class AddressServiceImpl implements AddressService{
     }
 
     @Override
+    public Address queryAddressById(Integer id) {
+        AddressExample addressExample = new AddressExample();
+        AddressExample.Criteria criteria = addressExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        criteria.andIdEqualTo(id);
+        List<Address> addresses = addressMapper.selectByExample(addressExample);
+        if (addresses.size() > 0) {
+            return addresses.get(0);
+        }
+        return null;
+    }
+
+    @Override
     public List<Address> queryAllAddressByUserId(Integer userId) {
         AddressExample addressExample = new AddressExample();
         AddressExample.Criteria criteria = addressExample.createCriteria();
@@ -57,5 +70,27 @@ public class AddressServiceImpl implements AddressService{
         criteria.andUserIdEqualTo(userId);
         List<Address> addresses = addressMapper.selectByExample(addressExample);
         return addresses;
+    }
+
+    @Override
+    public int insertAddress(Address address) {
+        int insert = addressMapper.insert(address);
+        return insert;
+    }
+
+    @Override
+    public int updateAddress(Address address) {
+        return addressMapper.updateByPrimaryKey(address);
+    }
+
+    @Override
+    public int deleteRealAddressById(Integer id) {
+        return addressMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public int deleteLogicAddressByDeleted(Address address) {
+        address.setDeleted(true);
+        return addressMapper.updateByPrimaryKey(address);
     }
 }

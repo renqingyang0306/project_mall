@@ -32,8 +32,7 @@ public class CouponController {
     CouponService couponService;
 @Autowired
     CouponUserService couponUserService;
-@Autowired
-RedisUtil redisUtil;
+
  @ResponseBody
  @RequestMapping("admin/coupon/list")
     public ResponseUtils<PageBean>  list( int page,
