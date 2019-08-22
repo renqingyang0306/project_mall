@@ -1,7 +1,9 @@
 package com.cskaoyan.project.mall.controllerwx.goodsdetail;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cskaoyan.project.mall.domain.*;
 import com.cskaoyan.project.mall.mapper.*;
 import com.cskaoyan.project.mall.service.advertiseService.GroupRulesService;
@@ -9,6 +11,7 @@ import com.cskaoyan.project.mall.service.goods.*;
 import com.cskaoyan.project.mall.service.mall.BrandService;
 import com.cskaoyan.project.mall.service.mall.IssueService;
 import com.cskaoyan.project.mall.service.userService.UserService;
+import com.cskaoyan.project.mall.utils.RedisUtil;
 import com.cskaoyan.project.mall.utils.ResponseUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -18,10 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.System;
+import java.util.*;
 
 @Controller
 public class GoodsDetailController {
@@ -56,6 +57,8 @@ public class GoodsDetailController {
     UserService userService;
     @Autowired
     CartMapper cartMapper;
+    @Autowired
+    RedisUtil redisUtil;
 
 
 
@@ -65,7 +68,17 @@ public class GoodsDetailController {
     @ResponseBody
     public ResponseUtils<HashMap> detailesd( Integer id)//UserId// )
     {
-
+        /*if(redisUtil.hasKey("detail" + id)){*/
+           /* JSONObject o = (JSONObject) redisUtil.get("detail" + id);
+            String string = o.getString("detail" + id);
+            Map dataredis = JSON.parseObject( string,Map.class);*/
+     /*       ResponseUtils pageBeanResponseUtils = new ResponseUtils<>();
+            System.out.println("redis");
+            pageBeanResponseUtils.setData(dataredis);
+            pageBeanResponseUtils.setErrno(0);
+            pageBeanResponseUtils.setErrmsg("成功");
+            return pageBeanResponseUtils;
+        }*/
 
         Subject subject = SecurityUtils.getSubject();
         subject = SecurityUtils.getSubject();
@@ -156,6 +169,7 @@ public class GoodsDetailController {
                 Footprint footprint = new Footprint();
                 footprint.setUserId(user.getId());
                 footprint.setGoodsId(id);
+                footprint.setAddTime(new Date());
                 footprintMapper.insert(footprint);
             }
         }
@@ -178,8 +192,13 @@ public class GoodsDetailController {
             e.printStackTrace();
         }
 
+
         //商品分享图片地址
         data.put("shareImage", goods.getShareUrl());
+
+
+      /*  redisUtil.set("detail"+id,data);*/
+
         ResponseUtils pageBeanResponseUtils = new ResponseUtils<>();
         pageBeanResponseUtils.setData(data);
         pageBeanResponseUtils.setErrno(0);

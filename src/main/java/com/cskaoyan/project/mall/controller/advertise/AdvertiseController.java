@@ -7,6 +7,7 @@ import com.cskaoyan.project.mall.domain.AdExample;
 import com.cskaoyan.project.mall.service.advertiseService.AdvertiseService;
 import com.cskaoyan.project.mall.service.advertiseService.impl.AdvertiseServiceImpl;
 import com.cskaoyan.project.mall.utils.PageBean;
+import com.cskaoyan.project.mall.utils.RedisUtil;
 import com.cskaoyan.project.mall.utils.ResponseUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
