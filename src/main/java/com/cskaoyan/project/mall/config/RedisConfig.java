@@ -1,4 +1,4 @@
-package com.cskaoyan.project.mall.controller.advertise;
+package com.cskaoyan.project.mall.config;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -12,17 +12,19 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
  * redis配置类
- *
+ * @author ZENG.XIAO.YAN
+ * @date   2018年6月6日
+ * 
  */
 @Configuration
 public class RedisConfig {
-
-    @Bean
-    @SuppressWarnings("all")
+    
+	@Bean
+	@SuppressWarnings("all")
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
-        template.setConnectionFactory(factory);
-        Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+    	RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
+    	template.setConnectionFactory(factory);
+		Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
         ObjectMapper om = new ObjectMapper();
         om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
         om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);

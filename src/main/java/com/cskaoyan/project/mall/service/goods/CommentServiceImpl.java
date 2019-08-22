@@ -72,25 +72,27 @@ public class CommentServiceImpl implements CommentService{
         return commentMapper.selectByExample(example);
     }
 
+
     @Override
-    public ResponseVO<PageVO<Comment>> queryAllComment(int page, int size) {
+    public List<Comment> query(int page, int size, Byte type, Integer valueId, Integer showType) {
         PageHelper.startPage(page,size);
-        List<Comment> comments = commentMapper.queryAll();
-        //查询total
-        PageInfo<Comment> pageInfo = new PageInfo<>(comments);
-        //把total，list<comment>放到pageVO中
-        PageVO<Comment> pageVO = new PageVO<>(pageInfo.getTotal(), pageInfo.getList());
-        ResponseVO<PageVO<Comment>> responseVO = new ResponseVO<>(pageVO, "成功", 0);
-        return responseVO;
+        CommentExample example = new CommentExample();
+        if (type==1){
+            example.createCriteria().andTypeEqualTo(type).andValueIdEqualTo(valueId);
+        }else {
+            if(showType == 0){
+                example.createCriteria().andValueIdEqualTo(valueId).andTypeEqualTo(type).andDeletedEqualTo(false);
+            }else if(showType == 1){
+                example.createCriteria().andValueIdEqualTo(valueId).andTypeEqualTo(type).andHasPictureEqualTo(true).andDeletedEqualTo(false);
+            } else {
+                throw new RuntimeException("showType不支持");
+            }
+        }
+        return commentMapper.selectByExample(example);
     }
 
     @Override
-    public ResponseVO<PageVO<Comment>> fuzzyQueryAll(int page, int size, String type, String valueId, String showType) {
-        PageHelper.startPage(page, size);
-        List<Comment> goods = commentMapper.fuzzyQueryAll("%" + type + "%", "%" + valueId + "%","%" + showType + "%");
-        PageInfo<Comment> pageInfo = new PageInfo<>(goods);
-        PageVO<Comment> pageVO = new PageVO<>(pageInfo.getTotal(), pageInfo.getList());
-        ResponseVO<PageVO<Comment>> responseVO = new ResponseVO<>(pageVO, "成功", 0);
-        return responseVO;
+    public int insertSelective(Comment record) {
+        return commentMapper.insertSelective(record);
     }
 }

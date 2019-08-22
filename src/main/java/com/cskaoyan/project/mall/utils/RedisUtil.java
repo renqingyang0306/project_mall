@@ -1,4 +1,4 @@
-package com.cskaoyan.project.mall.controller.advertise;
+package com.cskaoyan.project.mall.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Redis工具类
+ * @author ZENG.XIAO.YAN
+ * @date   2018年6月7日
  */
 @Component
 public final class RedisUtil {

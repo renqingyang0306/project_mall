@@ -10,6 +10,10 @@ public interface CouponUserService {
 
     List<CouponUser> selectByExample(CouponUserExample example);
 
+    List<CouponUser> queryCouponUserByUserId(Integer userId);
+
+    CouponUser queryCouponUserById(Integer id);
+
     int insert(CouponUser record);
 
     int updateByPrimaryKey(CouponUser record);

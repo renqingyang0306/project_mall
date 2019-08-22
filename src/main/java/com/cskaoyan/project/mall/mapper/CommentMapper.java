@@ -34,5 +34,4 @@ public interface CommentMapper {
 
     List<Comment> fuzzyQuery(@Param("userId") String userId, @Param("valueId") String valueId);
 
-    List<Comment> fuzzyQueryAll(@Param("type") String type, @Param("valueId") String valueId,@Param("hasPicture") String showType);
 }

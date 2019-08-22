@@ -13,6 +13,12 @@ public interface AddressService {
 
     List<Address> queryAllAddressByUserId(Integer userId);
 
+    int insertAddress(Address address);
+    int updateAddress(Address address);
+    int deleteRealAddressById(Integer id);
+    int deleteLogicAddressByDeleted(Address address);
+
     Address queryAddressByUidAndAddressId(Integer uid, int addressId);
 
+    Address queryAddressById(Integer id);
 }
