@@ -1,24 +1,19 @@
-package com.cskaoyan.project.mall.controller.controllerWx.goodsdetail;
+package com.cskaoyan.project.mall.controllerwx.goodsdetail;
 
 
 import com.cskaoyan.project.mall.domain.*;
-import com.cskaoyan.project.mall.mapper.CollectMapper;
-import com.cskaoyan.project.mall.mapper.CommentMapper;
-import com.cskaoyan.project.mall.mapper.FootprintMapper;
+import com.cskaoyan.project.mall.mapper.*;
 import com.cskaoyan.project.mall.service.advertiseService.GroupRulesService;
 import com.cskaoyan.project.mall.service.goods.*;
 import com.cskaoyan.project.mall.service.mall.BrandService;
 import com.cskaoyan.project.mall.service.mall.IssueService;
-import com.cskaoyan.project.mall.service.userService.CollectService;
-import com.cskaoyan.project.mall.service.userService.FootprintService;
 import com.cskaoyan.project.mall.service.userService.UserService;
-import com.cskaoyan.project.mall.utils.PageBean;
 import com.cskaoyan.project.mall.utils.ResponseUtils;
-import org.apache.tomcat.util.http.ResponseUtil;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
@@ -32,6 +27,10 @@ public class GoodsDetailController {
     @Autowired
     GoodsService goodsService;
     @Autowired
+    GoodsMapper goodsMapper;
+
+
+    @Autowired
     GoodsAttributeService goodsAttributeService;
     @Autowired
     GoodsProductService goodsProductService;
@@ -39,6 +38,8 @@ public class GoodsDetailController {
     IssueService issueService;
     @Autowired
     BrandService brandService;
+    @Autowired
+    BrandMapper brandMapper;
     @Autowired
     CommentMapper commentMapper;
     @Autowired
@@ -58,9 +59,16 @@ public class GoodsDetailController {
 
     @RequestMapping("wx/goods/detail")
     @ResponseBody
-    public ResponseUtils<HashMap> detailesd(@RequestParam(defaultValue = "1") Integer userId, Integer id)//UserId// )
+    public ResponseUtils<HashMap> detailesd( Integer id)//UserId// )
     {
-        Goods goods = goodsService.queryById(id);
+
+        Subject subject = SecurityUtils.getSubject();
+        subject = SecurityUtils.getSubject();
+        //获取认证后的用户信息，通过Realm进行封装的
+        User user = (User) subject.getPrincipal();
+        int userId = user.getId();
+
+        Goods goods = goodsMapper.selectByPrimaryKey(id);
         //Attribute
         List<GoodsAttribute> goodsAttributes = goodsAttributeService.queryByGoodsId(id);
         //
@@ -68,7 +76,8 @@ public class GoodsDetailController {
         List<Map<String, Object>> goodsSpecificationVo = new ArrayList<>(goodsSpecifications.size());
         for (GoodsSpecification goodsSpecification : goodsSpecifications) {
             Map<String, Object> item = new HashMap<>();
-            item.put("规格",goodsSpecification);
+            item.put("name","规格");
+            item.put("valueList",goodsSpecifications);
             goodsSpecificationVo.add(item);
         }
 
@@ -86,45 +95,63 @@ public class GoodsDetailController {
         CommentExample.Criteria criteria = commentExample.createCriteria();
         criteria.andValueIdEqualTo(id);
         List<Comment> comments = commentMapper.selectByExample(commentExample);
+        List<HashMap> commentVo = new ArrayList<HashMap>();
+        HashMap<String, Object> commentsVo = new HashMap<String, Object>();
 
-        List<Map<String, Object>> commentsVo = new ArrayList<>(comments.size());
         for (Comment comment : comments) {
-            Map<String, Object> c = new HashMap<>();
+            HashMap<String, Object> c = new HashMap<>();
             c.put("id", comment.getId());
             c.put("addTime", comment.getAddTime());
             c.put("content", comment.getContent());
-            User user = userService.selectByPrimaryKey(comment.getUserId());
-            c.put("nickname", user == null ? "" : user.getNickname());
-            c.put("avatar", user == null ? "" : user.getAvatar());
+            User user1 = userService.selectByPrimaryKey(comment.getUserId());
+            c.put("nickname", user1 == null ? "" : user1.getNickname());
+            c.put("avatar", user1 == null ? "" : user1.getAvatar());
             c.put("picList", comment.getPicUrls());
-            commentsVo.add(c);
+            commentVo.add(c);
         }
-        Map<String, Object> commentList = new HashMap<>();
-        commentList.put("count", comments.size());
-        commentList.put("data", commentsVo);
+
+
+        commentsVo.put("count",comments.size());
+        if(comments.size() > 3) {
+            commentsVo.put("data", commentVo.subList(0, 2));
+        }else {
+            commentsVo.put("data", null);
+        }
         Brand brand = new Brand();
-    if(brandService.queryBrandById(goods.getBrandId())!= null) {
-        brand = brandService.queryBrandById(goods.getBrandId());
+    if(goods.getBrandId()!= null) {
+        brand = brandMapper.selectByPrimaryKey(goods.getBrandId());
     }
 
     // 用户收藏
         int userHasCollect = 0;
-        if (userId != null) {
+        if (user != null) {
             CollectExample collectExample = new CollectExample();
             CollectExample.Criteria criteria2 = collectExample.createCriteria();
             criteria2.andUserIdEqualTo(userId);
             criteria2.andValueIdEqualTo(id);
             List<Collect> collects = collectMapper.selectByExample(collectExample);
-            userHasCollect = collects.get(0).getType();
+           if(collects.size() != 0){
+               userHasCollect = collects.get(0).getType();
+           }else {
+             userHasCollect = 0;
+           }
         }
 
         // 记录用户的足迹 异步处理
-        if (userId != null) {
+        if (user != null) {
               //记录用户足迹
+            FootprintExample footprintExample = new FootprintExample();
+            FootprintExample.Criteria criteria2 = footprintExample.createCriteria();
+            criteria2.andUserIdEqualTo(user.getId());
+            criteria2.andGoodsIdEqualTo(id);
+            long l = footprintMapper.countByExample(footprintExample);
+            //去重
+            if(l == 0) {
                 Footprint footprint = new Footprint();
                 footprint.setUserId(userId);
                 footprint.setGoodsId(id);
                 footprintMapper.insert(footprint);
+            }
         }
 
 
@@ -140,7 +167,6 @@ public class GoodsDetailController {
             data.put("brand", brand);
             data.put("groupon", grouponRules);
             //SystemConfig.isAutoCreateShareImage()
-            data.put("share", "");
 
         }
         catch (Exception e) {
@@ -158,16 +184,25 @@ public class GoodsDetailController {
 
     @RequestMapping("wx/goods/related")
     @ResponseBody
-    public ResponseUtils<List> detailed( @RequestParam(defaultValue = "1") Integer userId,Integer id)//UserId// )
+    public ResponseUtils detailed(Integer id)//UserId// )
     {
+
+        Subject subject = SecurityUtils.getSubject();
+        subject = SecurityUtils.getSubject();
+        //获取认证后的用户信息，通过Realm进行封装的
+        User user = (User) subject.getPrincipal();
+        int userId = user.getId();
         //查相关商品
         Goods goods = goodsService.queryById(id);
         GoodsExample goodsExample = new GoodsExample();
         GoodsExample.Criteria criteria = goodsExample.createCriteria();
         criteria.andCategoryIdEqualTo(goods.getCategoryId());
+
         List<Goods> goodsList = goodsService.selectByExample(goodsExample);
-        ResponseUtils<List> pageBeanResponseUtils = new ResponseUtils<List>();
-        pageBeanResponseUtils.setData(goodsList);
+        HashMap<String, List> item = new HashMap<>();
+        item.put("goodsList",goodsList);
+        ResponseUtils pageBeanResponseUtils = new ResponseUtils<>();
+        pageBeanResponseUtils.setData(item);
         pageBeanResponseUtils.setErrno(0);
         pageBeanResponseUtils.setErrmsg("成功");
         return pageBeanResponseUtils;

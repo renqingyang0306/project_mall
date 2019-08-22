@@ -1,4 +1,4 @@
-package com.cskaoyan.project.mall.controller.controllerWx.GrouponRulesWx;
+package com.cskaoyan.project.mall.controllerwx.GrouponRulesWx;
 
 import com.cskaoyan.project.mall.domain.*;
 import com.cskaoyan.project.mall.mapper.OrderMapper;
@@ -7,13 +7,13 @@ import com.cskaoyan.project.mall.service.advertiseService.GroupRulesService;
 import com.cskaoyan.project.mall.service.mall.OrderGoodsService;
 import com.cskaoyan.project.mall.service.userService.UserService;
 import com.cskaoyan.project.mall.utils.ResponseUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +34,13 @@ GroupOnService groupOnService;
 
 @RequestMapping("wx/groupon/my")
 @ResponseBody
-    public ResponseUtils<HashMap> groupRules(Integer showType,@RequestParam(defaultValue = "1") Integer userId){
+    public ResponseUtils<HashMap> groupRules(Integer showType){
+    Subject subject = SecurityUtils.getSubject();
+    subject = SecurityUtils.getSubject();
+    //获取认证后的用户信息，通过Realm进行封装的
+    User user = (User) subject.getPrincipal();
+    int userId = user.getId();
+
     GrouponExample grouponExample = new GrouponExample();
     GrouponExample.Criteria criteria = grouponExample.createCriteria();
     criteria.andGrouponIdEqualTo(showType);
@@ -117,9 +123,14 @@ GroupOnService groupOnService;
 
     @RequestMapping("wx/groupon/detail")
     @ResponseBody
-    public ResponseUtils<HashMap> groupRulesIs(Integer grouponId,@RequestParam(defaultValue = "1") Integer userId){
+    public ResponseUtils<HashMap> groupRulesIs(Integer grouponId){
 
 
+        Subject subject = SecurityUtils.getSubject();
+        subject = SecurityUtils.getSubject();
+        //获取认证后的用户信息，通过Realm进行封装的
+        User user = (User) subject.getPrincipal();
+        int userId = user.getId();
 
             Groupon groupon = groupOnService.selectByPrimaryKey(grouponId);
           GrouponRules rules = groupRulesService.selectByPrimaryKey(groupon.getRulesId());
@@ -191,9 +202,9 @@ GroupOnService groupOnService;
 
             UserVo joiner = new UserVo();
             for (Groupon grouponItem : groupons) {
-                User user= userService.selectByPrimaryKey(grouponItem.getUserId());
-                joiner.setAvatar(user.getAvatar());
-                joiner.setNickname(user.getNickname());
+                User user1= userService.selectByPrimaryKey(grouponItem.getUserId());
+                joiner.setAvatar(user1.getAvatar());
+                joiner.setNickname(user1.getNickname());
                 joiners.add(joiner);
             }
 
