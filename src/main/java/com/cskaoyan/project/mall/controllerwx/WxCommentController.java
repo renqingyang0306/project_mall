@@ -20,18 +20,20 @@ public class WxCommentController {
     CommentService commentService;
 
     @RequestMapping("comment/list")
-    public ResponseVO list(int page, int limit, String userId, String valueId, String sort, String order){
+    public ResponseVO list(int page, int size, String type, String valueId, String showType){
 
-        if ((userId == null)&&(valueId ==null)){
-            ResponseVO<PageVO<Comment>> responseVO = commentService.queryAll(page,limit);
+        if ((type == null)&&(valueId ==null)&&(showType == null)){
+            ResponseVO<PageVO<Comment>> responseVO = commentService.queryAll(page,size);
             return responseVO;
         }else {
-            if (userId == null){
-                userId = "";
+            if (type == null){
+                type = "";
             }else if (valueId == null){
                 valueId = "";
+            }else if (showType == null){
+                showType = "";
             }
-            ResponseVO<PageVO<Comment>> responseVO = commentService.fuzzyQuery(page,limit,userId,valueId);
+            ResponseVO<PageVO<Comment>> responseVO = commentService.fuzzyQueryAll(page,size,type,valueId,showType);
             return responseVO;
         }
     }
@@ -40,7 +42,8 @@ public class WxCommentController {
     @ResponseBody
     public ResponseUtils<List> comment(){
         List<Comment> commentList = commentService.selectByExample(new CommentExample());
-        ResponseUtils<List> responseUtils = new ResponseUtils<>(0, commentList, "成功");
+        List<Comment> commentList1 = commentList.subList(0, 4);
+        ResponseUtils<List> responseUtils = new ResponseUtils<>(0, commentList1, "成功");
         return responseUtils;
 
     }
