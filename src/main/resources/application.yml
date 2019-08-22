@@ -7,6 +7,14 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
+
+  redis:
+    database: 0
+    host: 106.15.200.96
+    port: 6379
+    password: 8956230/
+    timeout: 1000
+
 #pageHelper配置
 pagehelper:
   helperDialect: mysql

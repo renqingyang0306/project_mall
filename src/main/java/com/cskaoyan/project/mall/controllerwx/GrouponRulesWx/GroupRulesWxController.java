@@ -207,7 +207,6 @@ GroupOnService groupOnService;
                 joiner.setNickname(user1.getNickname());
                 joiners.add(joiner);
             }
-
             result.put("linkGrouponId", linkGrouponId);
             result.put("creator", creator);
             result.put("joiners", joiners);
@@ -220,6 +219,7 @@ GroupOnService groupOnService;
         pageBeanResponseUtils.setErrno(0);
         pageBeanResponseUtils.setErrmsg("成功");
         return pageBeanResponseUtils;
+
         }
 
 }
