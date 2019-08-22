@@ -58,4 +58,31 @@ public class PermissionServiceImpl implements  PermissionService {
 
         return permissions;
     }
+
+    @Override
+    public int insertSelective(Permission record) {
+        return permissionMapper.insertSelective(record);
+    }
+
+    @Override
+    public List<Permission> selectByExample(PermissionExample example) {
+        return permissionMapper.selectByExample(example);
+    }
+
+    @Override
+    public boolean checkSuperPermission(Integer roleId) {
+        if(roleId == null){
+            return false;
+        }
+       PermissionExample example = new PermissionExample();
+        example.or().andRoleIdEqualTo(roleId).andPermissionEqualTo("*").andDeletedEqualTo(false);
+        return permissionMapper.countByExample(example) != 0;
+    }
+
+    @Override
+    public int deleteByExample(int roleId) {
+        PermissionExample permissionExample = new PermissionExample();
+        permissionExample.createCriteria().andRoleIdEqualTo(roleId);
+        return permissionMapper.deleteByExample(permissionExample);
+    }
 }
