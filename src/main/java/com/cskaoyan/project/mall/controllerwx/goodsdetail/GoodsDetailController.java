@@ -13,14 +13,18 @@ import com.cskaoyan.project.mall.service.mall.IssueService;
 import com.cskaoyan.project.mall.service.userService.UserService;
 import com.cskaoyan.project.mall.utils.RedisUtil;
 import com.cskaoyan.project.mall.utils.ResponseUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
 import java.lang.System;
 import java.util.*;
 
@@ -87,6 +91,57 @@ public class GoodsDetailController {
         if(subject!=null) {
             user = (User) subject.getPrincipal();
         }
+
+
+
+        // 用户收藏
+        int userHasCollect = 0;
+        if (user != null) {
+            CollectExample collectExample = new CollectExample();
+            CollectExample.Criteria criteria2 = collectExample.createCriteria();
+            criteria2.andUserIdEqualTo(user.getId());
+            criteria2.andValueIdEqualTo(id);
+            List<Collect> collects = collectMapper.selectByExample(collectExample);
+            if(collects.size() != 0){
+                userHasCollect = collects.get(0).getType();
+            }else {
+                userHasCollect = 0;
+            }
+        }
+
+        // 记录用户的足迹 异步处理
+        if (user != null) {
+            //记录用户足迹
+            FootprintExample footprintExample = new FootprintExample();
+            FootprintExample.Criteria criteria2 = footprintExample.createCriteria();
+            criteria2.andUserIdEqualTo(user.getId());
+            criteria2.andGoodsIdEqualTo(id);
+            long l = footprintMapper.countByExample(footprintExample);
+            //去重
+            if(l == 0) {
+                Footprint footprint = new Footprint();
+                footprint.setUserId(user.getId());
+                footprint.setGoodsId(id);
+                footprint.setAddTime(new Date());
+                footprintMapper.insert(footprint);
+            }
+        }
+
+
+      /*  ObjectMapper objectMapper = new ObjectMapper();
+        String o = (String) redisUtil.get("detail"+id);
+        if(!StringUtils.isEmpty(o)){
+            try {
+                ResponseUtils responseUtils = objectMapper.readValue(o, ResponseUtils.class);
+                System.out.println("redis");
+                return responseUtils;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }*/
+
+
+
         Goods goods = goodsMapper.selectByPrimaryKey(id);
         //Attribute
         List<GoodsAttribute> goodsAttributes = goodsAttributeService.queryByGoodsId(id);
@@ -141,38 +196,7 @@ public class GoodsDetailController {
         brand = brandMapper.selectByPrimaryKey(goods.getBrandId());
     }
 
-    // 用户收藏
-        int userHasCollect = 0;
-        if (user != null) {
-            CollectExample collectExample = new CollectExample();
-            CollectExample.Criteria criteria2 = collectExample.createCriteria();
-            criteria2.andUserIdEqualTo(user.getId());
-            criteria2.andValueIdEqualTo(id);
-            List<Collect> collects = collectMapper.selectByExample(collectExample);
-           if(collects.size() != 0){
-               userHasCollect = collects.get(0).getType();
-           }else {
-             userHasCollect = 0;
-           }
-        }
 
-        // 记录用户的足迹 异步处理
-        if (user != null) {
-              //记录用户足迹
-            FootprintExample footprintExample = new FootprintExample();
-            FootprintExample.Criteria criteria2 = footprintExample.createCriteria();
-            criteria2.andUserIdEqualTo(user.getId());
-            criteria2.andGoodsIdEqualTo(id);
-            long l = footprintMapper.countByExample(footprintExample);
-            //去重
-            if(l == 0) {
-                Footprint footprint = new Footprint();
-                footprint.setUserId(user.getId());
-                footprint.setGoodsId(id);
-                footprint.setAddTime(new Date());
-                footprintMapper.insert(footprint);
-            }
-        }
 
 
         Map<String, Object> data = new HashMap<>();
@@ -203,6 +227,16 @@ public class GoodsDetailController {
         pageBeanResponseUtils.setData(data);
         pageBeanResponseUtils.setErrno(0);
         pageBeanResponseUtils.setErrmsg("成功");
+
+      /*  String json = null;
+        try {
+            json = objectMapper.writeValueAsString(pageBeanResponseUtils);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+
+        redisUtil.set("detail"+id,json);*/
         return pageBeanResponseUtils;
     }
 
