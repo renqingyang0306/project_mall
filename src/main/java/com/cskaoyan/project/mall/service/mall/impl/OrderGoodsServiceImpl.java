@@ -69,4 +69,21 @@ public class OrderGoodsServiceImpl implements OrderGoodsService {
         orderGoods.setDeleted(true);
         return orderGoodsMapper.updateByPrimaryKey(orderGoods);
     }
+
+    /*
+     * description: deleteByOid
+     * version: 1.0
+     * date: 2019/8/22 11:16
+     * author: du
+     * @Param: [oid]
+     * @return: int
+     */
+    @Override
+    public int deleteByOid(Integer oid) {
+        OrderGoodsExample orderGoodsExample = new OrderGoodsExample();
+        OrderGoodsExample.Criteria criteria = orderGoodsExample.createCriteria();
+        criteria.andOrderIdEqualTo(oid);
+        int i = orderGoodsMapper.deleteByExample(orderGoodsExample);
+        return i;
+    }
 }

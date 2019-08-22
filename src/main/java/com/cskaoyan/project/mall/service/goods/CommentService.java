@@ -28,7 +28,6 @@ public interface CommentService {
 
     List<Comment> selectByExample(CommentExample example);
 
-    ResponseVO<PageVO<Comment>> queryAllComment(int page, int size);
-
-    ResponseVO<PageVO<Comment>> fuzzyQueryAll(int page, int size, String type, String valueId,String showType);
+    List<Comment> query(int page, int size, Byte type, Integer valueId,Integer showType);
+    int insertSelective(Comment record);
 }

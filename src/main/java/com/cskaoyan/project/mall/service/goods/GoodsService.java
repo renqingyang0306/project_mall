@@ -36,4 +36,6 @@ public interface GoodsService {
     List<Goods> queryPageOrderByExample(String keyword, Integer categoryId, Integer page, Integer size, String sort, String order);
     long selectCountGoods();
 
+    Goods findById(Integer valueId);
+
 }
