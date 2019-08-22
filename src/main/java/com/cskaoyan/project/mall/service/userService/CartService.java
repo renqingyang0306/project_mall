@@ -15,10 +15,11 @@ public interface CartService {
     List<Cart> queryCartByUserIdAndChecked(Integer userId, Boolean checked);
 
     Cart queryCart(Integer id);
-
     int insertCart(Cart cart);
     int updateCart(Cart cart);
     int deleteRealCart(Integer id);
     int deleteLogicCart(Cart cart);
+
+    Cart selectByPrimaryKey(Integer id);
 
 }

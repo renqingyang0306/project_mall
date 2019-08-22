@@ -91,4 +91,9 @@ public class CartServiceImpl implements CartService {
         cart.setDeleted(true);
         return cartMapper.updateByPrimaryKey(cart);
     }
+
+    @Override
+    public Cart selectByPrimaryKey(Integer id) {
+        return cartMapper.selectByPrimaryKey(id);
+    }
 }

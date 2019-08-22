@@ -1,11 +1,9 @@
 package com.cskaoyan.project.mall.controller.advertise;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
+
 import com.cskaoyan.project.mall.domain.Ad;
 import com.cskaoyan.project.mall.domain.AdExample;
 import com.cskaoyan.project.mall.service.advertiseService.AdvertiseService;
-import com.cskaoyan.project.mall.service.advertiseService.impl.AdvertiseServiceImpl;
 import com.cskaoyan.project.mall.utils.PageBean;
 import com.cskaoyan.project.mall.utils.RedisUtil;
 import com.cskaoyan.project.mall.utils.ResponseUtils;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import static org.apache.ibatis.ognl.OgnlOps.longValue;
 
 @Controller
 public class AdvertiseController {

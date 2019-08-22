@@ -50,19 +50,6 @@ public class AddressServiceImpl implements AddressService{
     }
 
     @Override
-    public Address queryAddressById(Integer id) {
-        AddressExample addressExample = new AddressExample();
-        AddressExample.Criteria criteria = addressExample.createCriteria();
-        criteria.andDeletedEqualTo(false);
-        criteria.andIdEqualTo(id);
-        List<Address> addresses = addressMapper.selectByExample(addressExample);
-        if (addresses.size() > 0) {
-            return addresses.get(0);
-        }
-        return null;
-    }
-
-    @Override
     public List<Address> queryAllAddressByUserId(Integer userId) {
         AddressExample addressExample = new AddressExample();
         AddressExample.Criteria criteria = addressExample.createCriteria();
@@ -92,5 +79,38 @@ public class AddressServiceImpl implements AddressService{
     public int deleteLogicAddressByDeleted(Address address) {
         address.setDeleted(true);
         return addressMapper.updateByPrimaryKey(address);
+    }
+
+    /*
+     * description: queryAddressByUidAndAddressId
+     * version: 1.0
+     * date: 2019/8/22 17:01
+     * author: du
+     * @Param: [uid, addressId]
+     * @return: com.cskaoyan.project.mall.domain.Address
+     */
+    @Override
+    public Address queryAddressByUidAndAddressId(Integer uid, int addressId) {
+        AddressExample addressExample = new AddressExample();
+        AddressExample.Criteria criteria = addressExample.createCriteria();
+        criteria.andIdEqualTo(addressId).andUserIdEqualTo(uid).andDeletedEqualTo(false);
+        List<Address> addresses = addressMapper.selectByExample(addressExample);
+        if(addresses.size() > 0){
+            return addresses.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public Address queryAddressById(Integer id) {
+        AddressExample addressExample = new AddressExample();
+        AddressExample.Criteria criteria = addressExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        criteria.andIdEqualTo(id);
+        List<Address> addresses = addressMapper.selectByExample(addressExample);
+        if(addresses.size() > 0){
+            return addresses.get(0);
+        }
+        return null;
     }
 }
