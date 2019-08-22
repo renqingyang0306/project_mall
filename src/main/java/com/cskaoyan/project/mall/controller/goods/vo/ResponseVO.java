@@ -14,6 +14,9 @@ public class ResponseVO<T> {
     String errmsg;
     int errno;
 
+    public ResponseVO() {
+    }
+
     public ResponseVO(PageVO<Comment> pageVO, String 成功, String s) {
     }
 

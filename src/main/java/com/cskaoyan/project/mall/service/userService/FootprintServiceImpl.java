@@ -1,9 +1,13 @@
 package com.cskaoyan.project.mall.service.userService;
 
+import com.cskaoyan.project.mall.controller.goods.vo.ResponseVO;
+import com.cskaoyan.project.mall.controllerwx.orders.vo.EchoFootprint;
+import com.cskaoyan.project.mall.controllerwx.orders.vo.FootprintVO;
 import com.cskaoyan.project.mall.domain.Footprint;
 import com.cskaoyan.project.mall.domain.FootprintExample;
 import com.cskaoyan.project.mall.mapper.FootprintMapper;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,4 +42,15 @@ public class FootprintServiceImpl implements FootprintService {
         }
         return footprints;
     }
+
+    @Override
+    public ResponseVO<FootprintVO> findFootprintByUid(int page, int size, Integer uid) {
+        PageHelper.startPage(page, size);
+        List<EchoFootprint> echoFootprints = footprintMapper.echoFootprintListByUid(uid);
+        PageInfo<EchoFootprint> pageInfo = new PageInfo<>(echoFootprints);
+        FootprintVO footprintVO = new FootprintVO(pageInfo.getList(), pageInfo.getTotal());
+        ResponseVO responseVO = new ResponseVO(footprintVO, "成功", 0);
+        return responseVO;
+    }
+
 }

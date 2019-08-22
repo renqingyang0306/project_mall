@@ -27,4 +27,8 @@ public interface CommentService {
     ResponseVO<PageVO<Comment>> fuzzyQuery(int page, int limit, String userId, String valueId);
 
     List<Comment> selectByExample(CommentExample example);
+
+    ResponseVO<PageVO<Comment>> queryAllComment(int page, int size);
+
+    ResponseVO<PageVO<Comment>> fuzzyQueryAll(int page, int size, String type, String valueId,String showType);
 }
