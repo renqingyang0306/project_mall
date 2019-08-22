@@ -32,4 +32,8 @@ public interface GoodsService {
     int updateByPrimaryKey(Goods goods);
 
     ResponseVO<PageVO<Goods>> fuzzyQuery(int page, int limit, String goodsSn, String name);
+    //2019/08/21 13:35 申涛涛
+    List<Goods> queryPageOrderByExample(String keyword, Integer categoryId, Integer page, Integer size, String sort, String order);
+    long selectCountGoods();
+
 }

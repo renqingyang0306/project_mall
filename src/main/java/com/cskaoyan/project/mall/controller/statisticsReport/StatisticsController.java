@@ -85,6 +85,7 @@ public class StatisticsController
         columns.add("orders");
         columns.add("products");
         columns.add("amount");
+        //添加columns:
         orderTableBean.setColumns(columns);
 
         //准备rows:

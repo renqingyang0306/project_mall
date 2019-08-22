@@ -108,6 +108,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.cskaoyan.project.mall.domain.Ad">
+    <selectKey keyProperty="id" order="AFTER"
+               resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into ad (id, name, link, 
       url, position, content, 
       start_time, end_time, enabled, 

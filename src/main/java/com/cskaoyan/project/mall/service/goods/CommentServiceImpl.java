@@ -3,6 +3,7 @@ package com.cskaoyan.project.mall.service.goods;
 import com.cskaoyan.project.mall.controller.goods.vo.PageVO;
 import com.cskaoyan.project.mall.controller.goods.vo.ResponseVO;
 import com.cskaoyan.project.mall.domain.Comment;
+import com.cskaoyan.project.mall.domain.CommentExample;
 import com.cskaoyan.project.mall.domain.Goods;
 import com.cskaoyan.project.mall.mapper.CommentMapper;
 import com.github.pagehelper.Page;
@@ -64,5 +65,32 @@ public class CommentServiceImpl implements CommentService{
         ResponseVO<PageVO<Comment>> responseVO = new ResponseVO<>(pageVO, "成功", 0);
         return responseVO;
 
+    }
+
+    @Override
+    public List<Comment> selectByExample(CommentExample example) {
+        return commentMapper.selectByExample(example);
+    }
+
+    @Override
+    public ResponseVO<PageVO<Comment>> queryAllComment(int page, int size) {
+        PageHelper.startPage(page,size);
+        List<Comment> comments = commentMapper.queryAll();
+        //查询total
+        PageInfo<Comment> pageInfo = new PageInfo<>(comments);
+        //把total，list<comment>放到pageVO中
+        PageVO<Comment> pageVO = new PageVO<>(pageInfo.getTotal(), pageInfo.getList());
+        ResponseVO<PageVO<Comment>> responseVO = new ResponseVO<>(pageVO, "成功", 0);
+        return responseVO;
+    }
+
+    @Override
+    public ResponseVO<PageVO<Comment>> fuzzyQueryAll(int page, int size, String type, String valueId, String showType) {
+        PageHelper.startPage(page, size);
+        List<Comment> goods = commentMapper.fuzzyQueryAll("%" + type + "%", "%" + valueId + "%","%" + showType + "%");
+        PageInfo<Comment> pageInfo = new PageInfo<>(goods);
+        PageVO<Comment> pageVO = new PageVO<>(pageInfo.getTotal(), pageInfo.getList());
+        ResponseVO<PageVO<Comment>> responseVO = new ResponseVO<>(pageVO, "成功", 0);
+        return responseVO;
     }
 }

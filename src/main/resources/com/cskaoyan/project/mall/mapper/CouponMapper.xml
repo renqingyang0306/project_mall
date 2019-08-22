@@ -82,7 +82,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, desc, tag, total, discount, min, limit, type, status, goods_type, goods_value, 
+    id, coupon.name, coupon.desc, tag, total, discount, coupon.min, coupon.limit, coupon.type, coupon.status, goods_type, goods_value,
     code, time_type, days, start_time, end_time, add_time, update_time, deleted
   </sql>
   <select id="selectByExample" parameterType="com.cskaoyan.project.mall.domain.CouponExample" resultMap="BaseResultMap">
@@ -116,11 +116,15 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.cskaoyan.project.mall.domain.Coupon">
-    insert into coupon (id, name, desc, 
+    <selectKey keyProperty="id" order="AFTER"
+               resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into coupon (id, coupon.name, coupon.desc,
       tag, total, discount, 
-      min, limit, type, 
-      status, goods_type, goods_value, 
-      code, time_type, days, 
+      min, coupon.limit, type,
+      coupon.status, goods_type, goods_value,
+      coupon.code, time_type, days,
       start_time, end_time, add_time, 
       update_time, deleted)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, 
@@ -138,10 +142,10 @@
         id,
       </if>
       <if test="name != null">
-        name,
+        coupon.name,
       </if>
       <if test="desc != null">
-        desc,
+        coupon.desc,
       </if>
       <if test="tag != null">
         tag,
@@ -156,13 +160,13 @@
         min,
       </if>
       <if test="limit != null">
-        limit,
+        coupon.limit,
       </if>
       <if test="type != null">
         type,
       </if>
       <if test="status != null">
-        status,
+        coupon.status,
       </if>
       <if test="goodsType != null">
         goods_type,
@@ -171,7 +175,7 @@
         goods_value,
       </if>
       <if test="code != null">
-        code,
+        coupon.code,
       </if>
       <if test="timeType != null">
         time_type,
@@ -271,10 +275,10 @@
         id = #{record.id,jdbcType=INTEGER},
       </if>
       <if test="record.name != null">
-        name = #{record.name,jdbcType=VARCHAR},
+        coupon.name = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.desc != null">
-        desc = #{record.desc,jdbcType=VARCHAR},
+        coupon.desc = #{record.desc,jdbcType=VARCHAR},
       </if>
       <if test="record.tag != null">
         tag = #{record.tag,jdbcType=VARCHAR},
@@ -289,13 +293,13 @@
         min = #{record.min,jdbcType=DECIMAL},
       </if>
       <if test="record.limit != null">
-        limit = #{record.limit,jdbcType=SMALLINT},
+        coupon.limit = #{record.limit,jdbcType=SMALLINT},
       </if>
       <if test="record.type != null">
         type = #{record.type,jdbcType=SMALLINT},
       </if>
       <if test="record.status != null">
-        status = #{record.status,jdbcType=SMALLINT},
+        coupon.status = #{record.status,jdbcType=SMALLINT},
       </if>
       <if test="record.goodsType != null">
         goods_type = #{record.goodsType,jdbcType=SMALLINT},
@@ -304,7 +308,7 @@
         goods_value = #{record.goodsValue,jdbcType=VARCHAR},
       </if>
       <if test="record.code != null">
-        code = #{record.code,jdbcType=VARCHAR},
+        coupon.code = #{record.code,jdbcType=VARCHAR},
       </if>
       <if test="record.timeType != null">
         time_type = #{record.timeType,jdbcType=SMALLINT},
@@ -341,12 +345,12 @@
       total = #{record.total,jdbcType=INTEGER},
       discount = #{record.discount,jdbcType=DECIMAL},
       min = #{record.min,jdbcType=DECIMAL},
-      limit = #{record.limit,jdbcType=SMALLINT},
+    coupon.limit = #{record.limit,jdbcType=SMALLINT},
       type = #{record.type,jdbcType=SMALLINT},
-      status = #{record.status,jdbcType=SMALLINT},
+    coupon.status = #{record.status,jdbcType=SMALLINT},
       goods_type = #{record.goodsType,jdbcType=SMALLINT},
       goods_value = #{record.goodsValue,jdbcType=VARCHAR},
-      code = #{record.code,jdbcType=VARCHAR},
+    coupon.code = #{record.code,jdbcType=VARCHAR},
       time_type = #{record.timeType,jdbcType=SMALLINT},
       days = #{record.days,jdbcType=SMALLINT},
       start_time = #{record.startTime,jdbcType=TIMESTAMP},
@@ -362,7 +366,7 @@
     update coupon
     <set>
       <if test="name != null">
-        name = #{name,jdbcType=VARCHAR},
+        coupon.name = #{name,jdbcType=VARCHAR},
       </if>
       <if test="desc != null">
         desc = #{desc,jdbcType=VARCHAR},
@@ -424,17 +428,17 @@
   <update id="updateByPrimaryKey" parameterType="com.cskaoyan.project.mall.domain.Coupon">
     update coupon
     set name = #{name,jdbcType=VARCHAR},
-      desc = #{desc,jdbcType=VARCHAR},
+        coupon.desc = #{desc,jdbcType=VARCHAR},
       tag = #{tag,jdbcType=VARCHAR},
       total = #{total,jdbcType=INTEGER},
       discount = #{discount,jdbcType=DECIMAL},
       min = #{min,jdbcType=DECIMAL},
-      limit = #{limit,jdbcType=SMALLINT},
+        coupon.limit = #{limit,jdbcType=SMALLINT},
       type = #{type,jdbcType=SMALLINT},
-      status = #{status,jdbcType=SMALLINT},
+        coupon.status = #{status,jdbcType=SMALLINT},
       goods_type = #{goodsType,jdbcType=SMALLINT},
       goods_value = #{goodsValue,jdbcType=VARCHAR},
-      code = #{code,jdbcType=VARCHAR},
+        coupon.code = #{code,jdbcType=VARCHAR},
       time_type = #{timeType,jdbcType=SMALLINT},
       days = #{days,jdbcType=SMALLINT},
       start_time = #{startTime,jdbcType=TIMESTAMP},

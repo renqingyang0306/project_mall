@@ -7,6 +7,7 @@ import com.cskaoyan.project.mall.service.adminService.AdminService;
 import com.cskaoyan.project.mall.service.logService.LogHelper;
 import com.cskaoyan.project.mall.service.permissionService.PermissionService;
 import com.cskaoyan.project.mall.service.roleService.RoleService;
+import com.cskaoyan.project.mall.shiro.MallToken;
 import com.cskaoyan.project.mall.utils.*;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
@@ -61,8 +62,10 @@ public class AuthController {
             return ResponseUtils.badArgument();
         }
         Subject subject = SecurityUtils.getSubject();
+        MallToken mallToken=new MallToken(admin.getUsername(), admin.getPassword(),"admin");
+        logger.info("正在使用微信登陆");
         try {
-            subject.login(new UsernamePasswordToken(admin.getUsername(), admin.getPassword()));
+            subject.login(mallToken);
         } catch (UnknownAccountException uae) {
             logHelper.logAuthFail("登录", "用户帐号或密码不正确");
             return ResponseUtils.fail(605, "用户帐号或密码不正确");
@@ -93,6 +96,7 @@ public class AuthController {
     @RequestMapping("auth/logout")
     public Object logout() {
         Subject currentUser = SecurityUtils.getSubject();
+
         logHelper.logAuthSucceed("退出");
         currentUser.logout();
         return ResponseUtils.ok();

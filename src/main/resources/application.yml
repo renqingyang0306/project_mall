@@ -21,3 +21,7 @@ myoss:
   endpoint: oss-cn-beijing.aliyuncs.com
   access-key: LTAIEMSP2GXEIDZV
   secret: lLDimhx0A9Bqa3RKgQIFLc2kOEXBns
+logging:
+  path: /spring/log
+  level:
+    com.cskaoyan.mall.mapper: debug
