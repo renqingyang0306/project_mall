@@ -48,6 +48,17 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    public List<Cart> queryCartByUserIdAndChecked(Integer userId, Boolean checked) {
+        CartExample cartExample = new CartExample();
+        CartExample.Criteria criteria = cartExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        criteria.andUserIdEqualTo(userId);
+        criteria.andCheckedEqualTo(checked);
+        List<Cart> carts = cartMapper.selectByExample(cartExample);
+        return carts;
+    }
+
+    @Override
     public Cart queryCart(Integer id) {
         CartExample cartExample = new CartExample();
         CartExample.Criteria criteria = cartExample.createCriteria();

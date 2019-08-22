@@ -94,12 +94,14 @@ public class WxGoodsController {
             responseUtils.setErrmsg("categoryId不能为null");
             return responseUtils;
         }
+        //用于查询保存关键字查询的 categpryId
+        List<Goods> tempGoodsList = goodsService.queryPageOrderByExample(keyword, null, page, size, sort, order);
         //通过keyword模糊查询所有商品
         List<Goods> goodsList = goodsService.queryPageOrderByExample(keyword, categoryId, page, size, sort, order);
 
         //保存商品中的 categoryId
         List<Integer> tempList = new ArrayList();
-        for (Goods goods : goodsList) {
+        for (Goods goods : tempGoodsList) {
             Goods goods1 = goodsService.queryById(goods.getId());
             if (tempList.size() == 0) {
                 tempList.add(goods1.getCategoryId());
@@ -122,12 +124,12 @@ public class WxGoodsController {
             Category category = categoryService.queryCategory((Integer) tempList.get(i));
             filterCategoryList.add(category);
         }
-        if (categoryId != 0) {
+        /*if (categoryId != 0) {
             //查询该 category 的信息
             Category category = categoryService.queryCategory(categoryId);
             //查询与该 categoryid 同级的类目
             filterCategoryList = categoryService.queryAllCategoryByPid(category.getPid());
-        }
+        }*/
         Map<String, Object> map = new HashMap();
         map.put("count",goodsList.size());
         map.put("filterCategoryList",filterCategoryList);

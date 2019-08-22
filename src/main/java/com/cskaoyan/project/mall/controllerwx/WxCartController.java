@@ -1,12 +1,12 @@
 package com.cskaoyan.project.mall.controllerwx;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cskaoyan.project.mall.domain.Cart;
-import com.cskaoyan.project.mall.domain.Goods;
-import com.cskaoyan.project.mall.domain.GoodsProduct;
-import com.cskaoyan.project.mall.domain.User;
+import com.cskaoyan.project.mall.domain.*;
+import com.cskaoyan.project.mall.service.advertiseService.CouponService;
+import com.cskaoyan.project.mall.service.advertiseService.CouponUserService;
 import com.cskaoyan.project.mall.service.goods.GoodsProductService;
 import com.cskaoyan.project.mall.service.goods.GoodsService;
+import com.cskaoyan.project.mall.service.userService.AddressService;
 import com.cskaoyan.project.mall.service.userService.CartService;
 import com.cskaoyan.project.mall.utils.ResponseUtils;
 import org.apache.shiro.SecurityUtils;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -31,6 +32,12 @@ public class WxCartController {
     GoodsService goodsService;
     @Autowired
     GoodsProductService goodsProductService;
+    @Autowired
+    AddressService addressService;
+    @Autowired
+    CouponUserService couponUserService;
+    @Autowired
+    CouponService couponService;
 
     @RequestMapping("/wx/cart/index")
     @ResponseBody
@@ -83,9 +90,17 @@ public class WxCartController {
         return responseUtils;
     }
 
+    /**
+     * @creator shentaotao
+     * @creat date 2019/8/22 15:06
+     * @param jsonObject    Integer isChecked, Integer[] productIds
+     * @return com.cskaoyan.project.mall.utils.ResponseUtils
+     * @throws
+     * @since
+     */
     @RequestMapping("/wx/cart/checked")
     @ResponseBody
-    public ResponseUtils queryCartChecked(Integer isChecked, Integer[] productIds) {
+    public ResponseUtils queryCartChecked(@RequestBody JSONObject jsonObject) {
         ResponseUtils responseUtils = new ResponseUtils();
         //获取当前登录的用户信息
         Subject subject = SecurityUtils.getSubject();
@@ -95,26 +110,119 @@ public class WxCartController {
             responseUtils.setErrmsg("用户未登录");
             return responseUtils;
         }
-        if (productIds == null) {
+        Integer isChecked = (Integer) jsonObject.get("isChecked");
+        List productIds = (List) jsonObject.get("productIds");
+        if (productIds == null || isChecked == null) {
             responseUtils.setErrno(401);
             responseUtils.setErrmsg("productIds 信息丢失");
             return responseUtils;
         }
-        for (Integer productId : productIds) {
+        for (int i = 0; i < productIds.size(); i++) {
+            Integer productId = (Integer) productIds.get(i);
             List<Cart> carts = cartService.queryCartByUserIdAndProductId(user.getId(), productId);
             //查到结果
-            if (carts.size() != 0) {
+            if (carts.size() > 0) {
+                Cart cart = carts.get(0);
                 //设置选中状态
                 if (isChecked == 1) {
-                    carts.get(0).setChecked(true);
+                    cart.setChecked(true);
                 } else if (isChecked == 0) {
-                    carts.get(0).setChecked(false);
+                    cart.setChecked(false);
+                }
+                int updateCart = cartService.updateCart(cart);
+                if (updateCart == 0) {
+                    responseUtils.setErrno(401);
+                    responseUtils.setErrmsg("选中失败");
+                    return responseUtils;
                 }
             }
         }
         return queryCartIndex();
     }
-    /*
+
+    /**
+     * @creator shentaotao
+     * @creat date 2019/8/22 15:52
+     * @param cartId
+     * @param addressId     用户地址
+     * @param couponId
+     * @param grouponRulesId
+     * @return com.cskaoyan.project.mall.utils.ResponseUtils
+     * @throws
+     * @since
+     */
+    @RequestMapping("/wx/cart/checkout")
+    @ResponseBody
+    public ResponseUtils queryCartChecked(Integer cartId, Integer addressId, Integer couponId, Integer grouponRulesId) {
+        ResponseUtils responseUtils = new ResponseUtils();
+        //获取当前登录的用户信息
+        Subject subject = SecurityUtils.getSubject();
+        User user = (User) subject.getPrincipal();
+        if (user == null) {
+            responseUtils.setErrno(401);
+            responseUtils.setErrmsg("用户未登录");
+            return responseUtils;
+        }
+        Address checkedAddress = null;
+        if (addressId != null && addressId > 0) {
+            checkedAddress = addressService.queryAddressById(addressId);
+        }
+        List<Cart> carts = cartService.queryCartByUserIdAndChecked(user.getId(), true);
+        List<Goods> checkedGoodsList = new ArrayList<>();
+        if (carts != null) {
+            for (Cart cart : carts) {
+                Goods goods = goodsService.queryById(cart.getId());
+                checkedGoodsList.add(goods);
+            }
+        }
+        Cart cart = new Cart();
+        if (cartId != null && cartId > 0) {
+            cart = cartService.queryCart(cartId);
+        }
+        Coupon coupon = new Coupon();
+        if (couponId != null && couponId > 0) {
+            //查询当前优惠券的详情
+            coupon = couponService.selectByPrimaryKey(couponId);
+        }
+        //查询所有可用的优惠券
+        List<CouponUser> couponUsers = couponUserService.queryCouponUserByUserId(user.getId());
+        //可用优惠券数量
+        Integer availableCouponLength = couponUsers.size();
+        //优惠金额
+        BigDecimal couponPrice = BigDecimal.valueOf(0);
+        couponPrice = coupon.getDiscount();
+
+        //实付金额
+        BigDecimal actualPrice = BigDecimal.valueOf(0);
+
+
+        //运费
+        Integer freightPrice = 0;
+        //商品总价
+        BigDecimal goodsTotalPrice = BigDecimal.valueOf(0);
+        //团购金额
+        BigDecimal grouponPrice = BigDecimal.valueOf(0);
+        //订单金额
+        BigDecimal orderTotalPrice = BigDecimal.valueOf(0);
+
+        Map<String,Object> map = new HashMap<>();
+
+        map.put("checkedGoodsList",checkedGoodsList);
+        map.put("availableCouponLength",availableCouponLength);
+        map.put("couponId",couponId);
+        map.put("couponPrice",couponPrice);
+        map.put("actualPrice",actualPrice);
+        map.put("freightPrice",freightPrice);
+        map.put("goodsTotalPrice",goodsTotalPrice);
+        map.put("grouponPrice",grouponPrice);
+        map.put("orderTotalPrice",orderTotalPrice);
+        map.put("grouponRulesId",grouponRulesId);
+
+        return responseUtils;
+    }
+
+
+    /**
      * @creator shentaotao
      * @creat date 2019/8/22 14:08
      * @param jsonObject    key： goodsId ; number ; productId
@@ -135,35 +243,45 @@ public class WxCartController {
             return responseUtils;
         }
         Integer goodsId = (Integer) jsonObject.get("goodsId");
-        Short number = (Short) jsonObject.get("number");
+        Integer number = (Integer) jsonObject.get("number");
         Integer productId = (Integer) jsonObject.get("productId");
         if (number == null || productId == null) {
             responseUtils.setErrno(401);
             responseUtils.setErrmsg("参数格式不正确");
             return responseUtils;
         }
-        Goods goods = goodsService.queryById(goodsId);
-        GoodsProduct goodsProduct = goodsProductService.queryGoodsProductById(productId);
-        Date date = new Date();
         Cart cart = new Cart();
-        cart.setNumber(number);
-        cart.setUserId(user.getId());
-        cart.setGoodsId(goodsId);
-        cart.setGoodsSn(goods.getGoodsSn());
-        cart.setGoodsName(goods.getName());
-        cart.setProductId(productId);
-        cart.setPrice(goodsProduct.getPrice());
-        cart.setSpecifications(goodsProduct.getSpecifications());
-        //默认不被选中
-        cart.setChecked(false);
-        cart.setPicUrl(goods.getPicUrl());
-        cart.setAddTime(date);
-        cart.setUpdateTime(date);
-        cart.setDeleted(false);
+        //查询数据库 cart 是否已存在该条购物信息
+        List<Cart> carts = cartService.queryCartByUserIdAndProductId(user.getId(), productId);
+        int falg = 0;
+        if (carts.size() > 0) {
+              cart = carts.get(0);
+              number += cart.getNumber();
+              cart.setNumber(number.shortValue());
+            falg = cartService.updateCart(cart);
 
-        int insert = cartService.insertCart(cart);
+        } else {
+            Goods goods = goodsService.queryById(goodsId);
+            GoodsProduct goodsProduct = goodsProductService.queryGoodsProductById(productId);
+            Date date = new Date();
+            cart.setNumber(number.shortValue());
+            cart.setUserId(user.getId());
+            cart.setGoodsId(goodsId);
+            cart.setGoodsSn(goods.getGoodsSn());
+            cart.setGoodsName(goods.getName());
+            cart.setProductId(productId);
+            cart.setPrice(goodsProduct.getPrice());
+            cart.setSpecifications(Arrays.toString(goodsProduct.getSpecifications()));
+            //默认不被选中
+            cart.setChecked(false);
+            cart.setPicUrl(goods.getPicUrl());
+            cart.setAddTime(date);
+            cart.setUpdateTime(date);
+            cart.setDeleted(false);
 
-        if (insert == 0) {
+            falg = cartService.insertCart(cart);
+        }
+        if (falg == 0) {
             responseUtils.setErrno(401);
             responseUtils.setErrmsg("添加失败");
         } else {
@@ -174,7 +292,7 @@ public class WxCartController {
         return responseUtils;
     }
 
-    /*
+    /**
      * @creator shentaotao
      * @creat date 2019/8/22 13:18
      * @param jsonObject    key： goodsId ; id ; number ; productId
@@ -196,7 +314,7 @@ public class WxCartController {
         }
         Integer goodsId = (Integer) jsonObject.get("goodsId");
         Integer id = (Integer) jsonObject.get("id");
-        Short number = (Short) jsonObject.get("number");
+        Integer number = (Integer) jsonObject.get("number");
         Integer productId = (Integer) jsonObject.get("productId");
         if (id == null || number == null) {
             responseUtils.setErrno(401);
@@ -205,7 +323,7 @@ public class WxCartController {
         }
         Cart cart = cartService.queryCart(id);
         //更新购物车中的商品数量
-        cart.setNumber(number);
+        cart.setNumber(number.shortValue());
         int update = cartService.updateCart(cart);
 
         if (update == 0) {
@@ -219,7 +337,7 @@ public class WxCartController {
         return responseUtils;
     }
 
-    /*
+    /**
      * @creator shentaotao
      * @creat date 2019/8/22 14:35
      * @param productIds

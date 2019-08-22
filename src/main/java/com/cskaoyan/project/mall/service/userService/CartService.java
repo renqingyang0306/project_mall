@@ -12,6 +12,7 @@ public interface CartService {
     List<Cart> queryAllCart();
     List<Cart> queryAllCartByUserId(Integer userId);
     List<Cart> queryCartByUserIdAndProductId(Integer userId, Integer productId);
+    List<Cart> queryCartByUserIdAndChecked(Integer userId, Boolean checked);
 
     Cart queryCart(Integer id);
 
