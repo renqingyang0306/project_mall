@@ -1,6 +1,7 @@
 package com.cskaoyan.project.mall.controllerwx;
 
 import com.cskaoyan.project.mall.domain.Comment;
+import com.cskaoyan.project.mall.domain.Topic;
 import com.cskaoyan.project.mall.domain.User;
 import com.cskaoyan.project.mall.service.advertiseService.TopicService;
 import com.cskaoyan.project.mall.service.goods.CommentService;
@@ -16,10 +17,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
-@Controller
+@RestController
 @RequestMapping("wx")
 public class WxCommentController {
     @Autowired
@@ -41,7 +43,6 @@ public class WxCommentController {
      * @return 评论列表
      */
     @RequestMapping("comment/list")
-    @ResponseBody
     public Object list(int page, int size, Byte type, Integer valueId, Integer showType){
         List<Comment> commentList = commentService.query(page, size, type, valueId, showType);
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -73,7 +74,6 @@ public class WxCommentController {
      * @return 发表评论操作结果
      */
     @RequestMapping("comment/post")
-    @ResponseBody
     public Object comment(@RequestBody Comment comment){
         Subject subject = SecurityUtils.getSubject();
         User user = (User)subject.getPrincipal();
@@ -130,5 +130,20 @@ public class WxCommentController {
         comment.setUpdateTime(new Date());
 
         return null;
+    }
+   //查询专题的详细信息
+    @RequestMapping("topic/related")
+    public Object queryTopic(int id){
+        Topic topic = topicService.selectByPrimaryKey(id);
+
+        return ResponseUtils.ok(topic);
+    }
+    @RequestMapping("topic/detail")
+    public Object queryDetail(int id){
+        Map<String,Object> map=new HashMap<>();
+        Topic topic = topicService.selectByPrimaryKey(id);
+        map.put("goods",new String[]{});
+        map.put("topic",topic);
+        return ResponseUtils.ok(map);
     }
 }
