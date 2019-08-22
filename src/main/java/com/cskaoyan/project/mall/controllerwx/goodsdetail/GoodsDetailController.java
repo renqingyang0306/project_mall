@@ -222,6 +222,7 @@ public class GoodsDetailController {
         CartExample cartExample = new CartExample();
         CartExample.Criteria criteria = cartExample.createCriteria();
         criteria.andUserIdEqualTo(user.getId());
+        criteria.andDeletedEqualTo(false);
         long l = cartMapper.countByExample(cartExample);
         ResponseUtils pageBeanResponseUtils = new ResponseUtils<>();
         pageBeanResponseUtils.setData(l);
