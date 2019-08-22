@@ -1,4 +1,4 @@
-package com.cskaoyan.project.mall.controller.controllerWx.couponWx;
+package com.cskaoyan.project.mall.controllerwx.couponWx;
 
 import java.time.LocalDateTime;
 

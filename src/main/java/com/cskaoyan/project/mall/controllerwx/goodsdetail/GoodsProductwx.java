@@ -1,9 +1,9 @@
-package com.cskaoyan.project.mall.domain;
+package com.cskaoyan.project.mall.controllerwx.goodsdetail;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class GoodsProduct {
+public class GoodsProductwx {
     private Integer id;
 
     private Integer goodsId;

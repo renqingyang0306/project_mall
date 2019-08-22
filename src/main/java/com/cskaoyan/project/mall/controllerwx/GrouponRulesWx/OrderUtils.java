@@ -1,4 +1,4 @@
-package com.cskaoyan.project.mall.controller.controllerWx.GrouponRulesWx;
+package com.cskaoyan.project.mall.controllerwx.GrouponRulesWx;
 
 import com.cskaoyan.project.mall.domain.Order;
 
