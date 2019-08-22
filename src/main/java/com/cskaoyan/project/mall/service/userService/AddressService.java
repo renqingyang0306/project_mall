@@ -10,7 +10,13 @@ public interface AddressService {
 
     List<Address> findAllAddress(int page,int limit,String name,Integer userId);
     List<Address> findAllAddress();
+    Address queryAddressById(Integer id);
 
     List<Address> queryAllAddressByUserId(Integer userId);
+
+    int insertAddress(Address address);
+    int updateAddress(Address address);
+    int deleteRealAddressById(Integer id);
+    int deleteLogicAddressByDeleted(Address address);
 
 }

@@ -104,13 +104,17 @@ public class WxGoodsController {
             if (tempList.size() == 0) {
                 tempList.add(goods1.getCategoryId());
             }
-            for (int i = 0; i < tempList.size(); i++) {
+            //查看缓存的 tempList 中是否有重复的 categoryId
+            if (! tempList.contains(goods.getCategoryId())) {
+                tempList.add(goods.getCategoryId());
+            }
+            /*for (int i = 0; i < tempList.size(); i++) {
                 Integer integer = tempList.get(i);
                 if (goods1.getCategoryId().equals(integer)) {
                     continue;
                 }
                 tempList.add(goods1.getCategoryId());
-            }
+            }*/
         }
         List<Category> filterCategoryList = new ArrayList<>();
         //通过 categoryId 查询对应的 category

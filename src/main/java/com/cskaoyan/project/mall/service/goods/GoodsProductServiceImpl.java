@@ -35,4 +35,9 @@ public class GoodsProductServiceImpl implements GoodsProductService{
         int i = goodsProductMapper.updateByPrimaryKey(goodsProduct);
         return i;
     }
+
+    @Override
+    public GoodsProduct queryGoodsProductById(Integer id) {
+        return goodsProductMapper.selectByPrimaryKey(id);
+    }
 }

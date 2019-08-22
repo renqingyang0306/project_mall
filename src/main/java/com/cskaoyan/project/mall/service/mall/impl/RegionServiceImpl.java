@@ -67,4 +67,9 @@ public class RegionServiceImpl implements RegionService {
     public int updateByPrimaryKey(Region record) {
         return regionMapper.updateByPrimaryKey(record);
     }
+
+    @Override
+    public Region queryRegionById(Integer id) {
+        return regionMapper.selectByPrimaryKey(id);
+    }
 }
