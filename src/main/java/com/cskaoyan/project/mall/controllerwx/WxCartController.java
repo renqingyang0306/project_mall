@@ -167,19 +167,25 @@ public class WxCartController {
         if (addressId != null && addressId > 0) {
             checkedAddress = addressService.queryAddressById(addressId);
         }
-        List<Cart> carts = cartService.queryCartByUserIdAndChecked(user.getId(), true);
-        List<Goods> checkedGoodsList = new ArrayList<>();
-        if (carts != null) {
-            for (Cart cart : carts) {
-                Goods goods = goodsService.queryById(cart.getId());
-                checkedGoodsList.add(goods);
+        //订单金额
+        BigDecimal orderTotalPrice = new BigDecimal(0);
+        //购物车中选中的商品
+        List<Cart> checkedGoodsList = cartService.queryCartByUserIdAndChecked(user.getId(), true);
+        if (checkedGoodsList != null) {
+            for (Cart cart : checkedGoodsList) {
+                Goods goods = goodsService.queryById(cart.getGoodsId());
+                if (goods != null) {
+                    BigDecimal retailPrice = (goods.getRetailPrice()).multiply(BigDecimal.valueOf(cart.getNumber()));
+                    orderTotalPrice = orderTotalPrice.add(retailPrice);
+                }
             }
         }
+        // 什么？ cart 没用上？ 我咋知道这是干嘛的，传进来了不能浪费，给个查询吧
         Cart cart = new Cart();
         if (cartId != null && cartId > 0) {
             cart = cartService.queryCart(cartId);
         }
-        Coupon coupon = new Coupon();
+        Coupon coupon = null;
         if (couponId != null && couponId > 0) {
             //查询当前优惠券的详情
             coupon = couponService.selectByPrimaryKey(couponId);
@@ -189,25 +195,28 @@ public class WxCartController {
         //可用优惠券数量
         Integer availableCouponLength = couponUsers.size();
         //优惠金额
-        BigDecimal couponPrice = BigDecimal.valueOf(0);
-        couponPrice = coupon.getDiscount();
+        BigDecimal couponPrice = new BigDecimal(0);
+        if (coupon != null) {
+            BigDecimal discount = coupon.getDiscount();
+            couponPrice = discount;
+        }
 
-        //实付金额
-        BigDecimal actualPrice = BigDecimal.valueOf(0);
-
-
+        //实付金额  subtract 是减法
+        BigDecimal actualPrice = new BigDecimal(0);
+        if (orderTotalPrice != null) {
+            actualPrice = orderTotalPrice.subtract(couponPrice);
+        }
         //运费
         Integer freightPrice = 0;
         //商品总价
-        BigDecimal goodsTotalPrice = BigDecimal.valueOf(0);
+        BigDecimal goodsTotalPrice = orderTotalPrice;
         //团购金额
-        BigDecimal grouponPrice = BigDecimal.valueOf(0);
-        //订单金额
-        BigDecimal orderTotalPrice = BigDecimal.valueOf(0);
+        BigDecimal grouponPrice = new BigDecimal(0);
 
         Map<String,Object> map = new HashMap<>();
 
         map.put("checkedGoodsList",checkedGoodsList);
+        map.put("checkedAddress",checkedAddress);
         map.put("availableCouponLength",availableCouponLength);
         map.put("couponId",couponId);
         map.put("couponPrice",couponPrice);
@@ -217,7 +226,15 @@ public class WxCartController {
         map.put("grouponPrice",grouponPrice);
         map.put("orderTotalPrice",orderTotalPrice);
         map.put("grouponRulesId",grouponRulesId);
-
+        //为什么还要判断 user ？ 因为不知道判断什么了
+        if (user == null) {
+            responseUtils.setErrno(401);
+            responseUtils.setErrmsg("用户信息丢失");
+        } else {
+            responseUtils.setErrno(0);
+        responseUtils.setErrmsg("成功");
+        responseUtils.setData(map);
+    }
         return responseUtils;
     }
 

@@ -120,6 +120,7 @@ public class WxAddressController {
             responseUtils.setErrmsg("id 不能为 null");
         }
         Address address = addressService.queryAddressById(id);
+
         Region province = regionService.queryRegionById(address.getProvinceId());
         String provinceName = province.getName();
         Region city = regionService.queryRegionById(address.getCityId());
@@ -200,7 +201,7 @@ public class WxAddressController {
         return wxRspAddress;
     }
     //将 List<Address> 转换为 List<WxRspAddress>
-    private List<WxRspAddress> transfre(List<Address> addresses) {
+    private List<WxRspAddress> transfer(List<Address> addresses) {
         List<WxRspAddress> wxRspAddressList = new ArrayList<>();
         for (Address address : addresses) {
             WxRspAddress transfer = transfer(address);
