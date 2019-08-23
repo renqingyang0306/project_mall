@@ -12,4 +12,13 @@ public interface SearchHistoryService {
 
     List<SearchHistory> queryAllSearchHistoryByUserId(Integer userId);
     List<SearchHistory> queryAllSearchHistory();
+
+    SearchHistory querySearchHistory(Integer id);
+
+    int insertSearchHistory(SearchHistory searchHistory);
+    int updateSearchHistory(SearchHistory searchHistory);
+    int deleteRealSearchHistoryById(Integer id);
+    int deleteLogicSearchHistoryByDeleted(SearchHistory searchHistory);
+
+    List<SearchHistory> queryAllSearchHistoryByUserIdAndKeyword(Integer userId, String keyword);
 }

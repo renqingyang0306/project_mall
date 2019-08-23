@@ -22,6 +22,7 @@ public class SearchHistoryServiceImpl implements SearchHistoryService {
     public List<SearchHistory> findAllHistory(int page, int limit, Integer userId, String keyword) {
         PageHelper.startPage(page,limit);
         SearchHistoryExample example = new SearchHistoryExample();
+        example.createCriteria().andDeletedEqualTo(false);
         List<SearchHistory> searchHistories = null;
         if(userId == null && keyword == null){
             searchHistories = searchHistoryMapper.selectByExample(example);
@@ -54,6 +55,51 @@ public class SearchHistoryServiceImpl implements SearchHistoryService {
         SearchHistoryExample searchHistoryExample = new SearchHistoryExample();
         SearchHistoryExample.Criteria criteria = searchHistoryExample.createCriteria();
         criteria.andDeletedEqualTo(false);
+        List<SearchHistory> searchHistories = searchHistoryMapper.selectByExample(searchHistoryExample);
+        return searchHistories;
+    }
+
+    @Override
+    public SearchHistory querySearchHistory(Integer id) {
+        SearchHistoryExample searchHistoryExample = new SearchHistoryExample();
+        SearchHistoryExample.Criteria criteria = searchHistoryExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        criteria.andIdEqualTo(id);
+        List<SearchHistory> searchHistories = searchHistoryMapper.selectByExample(searchHistoryExample);
+        if (searchHistories != null && searchHistories.size() > 0) {
+            return searchHistories.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public int insertSearchHistory(SearchHistory searchHistory) {
+        return searchHistoryMapper.insert(searchHistory);
+    }
+
+    @Override
+    public int updateSearchHistory(SearchHistory searchHistory) {
+        return searchHistoryMapper.updateByPrimaryKey(searchHistory);
+    }
+
+    @Override
+    public int deleteRealSearchHistoryById(Integer id) {
+        return searchHistoryMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public int deleteLogicSearchHistoryByDeleted(SearchHistory searchHistory) {
+        searchHistory.setDeleted(true);
+        return searchHistoryMapper.updateByPrimaryKey(searchHistory);
+    }
+
+    @Override
+    public List<SearchHistory> queryAllSearchHistoryByUserIdAndKeyword(Integer userId, String keyword) {
+        SearchHistoryExample searchHistoryExample = new SearchHistoryExample();
+        SearchHistoryExample.Criteria criteria = searchHistoryExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        criteria.andUserIdEqualTo(userId);
+        criteria.andKeywordEqualTo(keyword);
         List<SearchHistory> searchHistories = searchHistoryMapper.selectByExample(searchHistoryExample);
         return searchHistories;
     }

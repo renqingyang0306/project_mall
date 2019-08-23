@@ -16,10 +16,12 @@ public interface KeywordService {
     List<Keyword> queryAllKeyword();
     List<Keyword> selectByExample(KeywordExample example);
     List<Keyword> queryKeywordByIsDefault(Boolean isFefault);
-    List<Keyword> queryKeywordByIsHot(Boolean isFefault);
+    List<Keyword> queryKeywordByIsHot(Boolean isHot);
 
     int insertKeyword(Keyword keyword);
     int updateKeyword(Keyword keyword);
     int deleteRealKeywordById(Integer id);
     int deleteLogicKeywordByDeleted(Keyword keyword);
+
+    List<Keyword> searchKeywordByIsHotAndKeyword(Boolean isHot,String keyword);
 }
