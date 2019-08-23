@@ -35,7 +35,12 @@ public class GoodsServiceImpl implements GoodsService{
         /*使用分页插件查询,必须用在查询语句前面*/
         PageHelper.startPage(page,limit);
         /*查询，返回list类型的数据*/
-        List<Goods> goods =  goodsMapper.queryAll();
+        //List<Goods> goods =  goodsMapper.queryAll();
+        GoodsExample goodsExample = new GoodsExample();
+        GoodsExample.Criteria criteria = goodsExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        goodsExample.setOrderByClause("add_time desc");
+        List<Goods> goods = goodsMapper.selectByExample(goodsExample);
         PageInfo<Goods> pageInfo = new PageInfo<>(goods);
         /*得到total，把得到的list数据塞到items*/
         PageVO<Goods> pageVO = new PageVO<>(pageInfo.getTotal(), pageInfo.getList());
