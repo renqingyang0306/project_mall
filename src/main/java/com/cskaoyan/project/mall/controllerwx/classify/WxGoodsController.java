@@ -165,7 +165,7 @@ public class WxGoodsController {
         ResponseUtils responseUtils = new ResponseUtils<>();
         //查询所有默认关键词
         List<Keyword> defaultKeywords = keywordService.queryKeywordByIsDefault(true);
-        List<Keyword> hotKeywords = keywordService.queryKeywordByIsHot(true);
+        List<Keyword> hotKeywordList = keywordService.queryKeywordByIsHot(true);
         //获取当前登录的用户信息
         Subject subject = SecurityUtils.getSubject();
         User user = (User) subject.getPrincipal();
@@ -178,7 +178,7 @@ public class WxGoodsController {
         Map<String, Object> map = new HashMap();
         //只需要一个关键词
         map.put("defaultKeyword",defaultKeywords.get(0));
-        map.put("hotKeywords",hotKeywords);
+        map.put("hotKeywordList",hotKeywordList);
         map.put("historyKeywordList",historyKeywordList);
 
         if ("" == null) {
