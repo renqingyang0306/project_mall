@@ -2,6 +2,7 @@ package com.cskaoyan.project.mall.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -331,6 +332,123 @@ public final class RedisUtil {
 			return 0;
 		}
 	}
+	/**
+	 * 添加 ZSet 元素
+	 *
+	 * @param key
+	 * @param value
+	 * @param score
+	 */
+	public boolean add(String key, Object value, double score) {
+		return redisTemplate.opsForZSet().add(key, value, score);
+	}
+
+	/**
+	 * 批量添加 Zset
+	 * Set<TypedTuple<Object>> tuples = new HashSet<>()
+	 * TypedTuple<Object> objectTypedTuple1 = new DefaultTypedTuple<Object>("zset-5",9.6);
+	 * tuples.add(objectTypedTuple1);
+	 *
+	 * @param key
+	 * @param tuples
+	 * @return
+	 */
+	public Long batchAddZset(String key,Set<ZSetOperations.TypedTuple<Object>> tuples) {
+		return redisTemplate.opsForZSet().add(key, tuples);
+	}
+
+	/**
+	 * Zset 删除一个或多个元素
+	 *
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	public Long removeZset(String key, String... values) {
+		return redisTemplate.opsForZSet().remove(key, values);
+	}
+
+	/**
+	 * 对指定的 zset 的 value 值 , socre 属性做增减操作
+	 *
+	 * @param key
+	 * @param value
+	 * @param score
+	 * @return
+	 */
+	public Double incrementScore(String key, Object value, double score) {
+		return redisTemplate.opsForZSet().incrementScore(key, value, score);
+	}
+
+	/**
+	 * 获取 key 中指定 value 的排名(从0开始,从小到大排序)
+	 *
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Long rank(String key, Object value) {
+		return redisTemplate.opsForZSet().rank(key, value);
+	}
+
+	/**
+	 * 获取 key 中指定 value 的排名(从0开始,从大到小排序)
+	 *
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Long reverseRank(String key, Object value) {
+		return redisTemplate.opsForZSet().reverseRank(key, value);
+	}
+
+	/**
+	 * 获取索引区间内的排序结果集合(从0开始,从小到大,带上分数)
+	 *
+	 * @param key
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public Set<ZSetOperations.TypedTuple<Object>> rangeWithScores(String key, long start, long end) {
+		return redisTemplate.opsForZSet().rangeWithScores(key, start, end);
+	}
+
+	/**
+	 * 获取索引区间内的排序结果集合(从0开始,从小到大,只有列名)
+	 *
+	 * @param key
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public Set<Object> range(String key, long start, long end) {
+		return redisTemplate.opsForZSet().range(key, start, end);
+	}
+
+	/**
+	 * 获取分数范围内的 [min,max] 的排序结果集合 (从小到大,只有列名)
+	 *
+	 * @param key
+	 * @param min
+	 * @param max
+	 * @return
+	 */
+	public Set<Object> rangeByScore(String key, double min, double max) {
+		return redisTemplate.opsForZSet().rangeByScore(key, min, max);
+	}
+
+	/**
+	 * 获取分数范围内的 [min,max] 的排序结果集合 (从小到大,集合带分数)
+	 *
+	 * @param key
+	 * @param min
+	 * @param max
+	 * @return
+	 */
+	public Set<ZSetOperations.TypedTuple<Object>> rangeByScoreWithScores(String key, double min, double max) {
+		return redisTemplate.opsForZSet().rangeByScoreWithScores(key, min, max);
+	}
 
 	/**
 	 * 将set数据放入缓存
@@ -342,14 +460,15 @@ public final class RedisUtil {
 	public long sSetAndTime(String key, long time, Object... values) {
 		try {
 			Long count = redisTemplate.opsForSet().add(key, values);
-			if (time > 0)
-				expire(key, time);
+			if (time > 0){
+				expire(key, time);}
 			return count;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return 0;
 		}
 	}
+
 
 	/**
 	 * 获取set缓存的长度
@@ -380,6 +499,7 @@ public final class RedisUtil {
 			return 0;
 		}
 	}
+
 	// ===============================list=================================
 
 	/**

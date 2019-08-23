@@ -16,8 +16,6 @@ public class HandleOption {
     boolean rebuy;
     boolean refund;
 
-
-    //
     public static void set101(HandleOption handleOption) {
         handleOption.setCancel(true);
         handleOption.setComment(false);

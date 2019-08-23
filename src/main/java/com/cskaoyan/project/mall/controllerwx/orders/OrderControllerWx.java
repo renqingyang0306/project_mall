@@ -5,14 +5,20 @@ import com.alibaba.fastjson.JSONObject;
 import com.cskaoyan.project.mall.controller.goods.vo.CreatVO;
 import com.cskaoyan.project.mall.controller.goods.vo.ResponseVO;
 import com.cskaoyan.project.mall.controllerwx.orders.vo.OrderMsg;
+import com.cskaoyan.project.mall.controllerwx.orders.vo.RePayVO;
 import com.cskaoyan.project.mall.domain.*;
+import com.cskaoyan.project.mall.service.advertiseService.CouponService;
 import com.cskaoyan.project.mall.service.advertiseService.GroupRulesService;
+import com.cskaoyan.project.mall.service.goods.GoodsService;
 import com.cskaoyan.project.mall.service.mall.CategoryService;
 import com.cskaoyan.project.mall.service.mall.OrderGoodsService;
 import com.cskaoyan.project.mall.service.mall.OrderService;
+import com.cskaoyan.project.mall.service.mall.RegionService;
 import com.cskaoyan.project.mall.service.userService.AddressService;
+import com.cskaoyan.project.mall.service.userService.CartService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.apache.tomcat.util.http.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.stereotype.Controller;
@@ -22,8 +28,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.lang.System;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import static java.lang.System.out;
 
@@ -49,6 +55,14 @@ public class OrderControllerWx {
     GroupRulesService groupRulesService;
     @Autowired
     CategoryService categoryService;
+    @Autowired
+    CartService cartService;
+    @Autowired
+    CouponService couponService;
+    @Autowired
+    GoodsService goodsService;
+    @Autowired
+    RegionService regionService;
 
 
     /*
@@ -219,56 +233,135 @@ public class OrderControllerWx {
         User user = (User) subject.getPrincipal();
         Integer uid = user.getId();
         //订单的详情
-        int addressId = OrderMsg.getAddressId();
-        int cartId = OrderMsg.getCarid();
-        int couponId = OrderMsg.getCouponId();
-        int grouponLinkId = OrderMsg.getGrouponLinkId();
-        int grouponRulesId = OrderMsg.getGrouponRulesId();
+        Integer addressId = OrderMsg.getAddressId();
+        Integer cartId = OrderMsg.getCarid();
+        Integer couponId = OrderMsg.getCouponId();
+        Integer grouponLinkId = OrderMsg.getGrouponLinkId();
+        Integer grouponRulesId = OrderMsg.getGrouponRulesId();
         String message = OrderMsg.getMessage();
-        //塞到order和OrderGood两张表里
-        // 1.收货地址
+
+        //收货地址
         Address address  = addressService.queryAddressByUidAndAddressId(uid,addressId);
 
         Order order = new Order();
+        //uid 用户id
         order.setUserId(uid);
-        //放入订单编号orderSn
+        //orderSn 订单编号
         order.setOrderSn(orderService.generateOrderSn(uid));
-        //放入订单状态码 未付款 102
-        short status = 102;
+        //订单状态码 未付款 101
+        short status = 101;
         order.setOrderStatus(status);
-        //放入订单用户的地址
+        //收货人
         order.setConsignee(address.getName());
-        //放入用户的手机号
+        //用户的手机号
         order.setMobile(address.getMobile());
-        //注入message
+        //message 用户订单留言
         order.setMessage(message);
-
-        //String detailedAddress = address.getProvince() + address.getCity() + address.getCounty() + " " + address.getAddressDetail();
-
-        //order.setAddress(detailedAddress);
-
-        //团购优惠价格
-        BigDecimal grouponPrice = new BigDecimal(0.00);
-        //根据grouponRulesId，查出团购的优惠方案
-        GrouponRules grouponRules = groupRulesService.selectByPrimaryKey(grouponRulesId);
-
-        // 3.货品价格 根据uid查询购物车里的商品列表
-        /*List<Cart> checkedGoodsList = null;
-        if (cartId == 0) {
-            checkedGoodsList = categoryService.(uid);
-        } else {
-            LitemallCart cart = cartService.findById(cartId);
-            checkedGoodsList = new ArrayList<>(1);
-            checkedGoodsList.add(cart);
+        Region region1 = regionService.queryRegionById(address.getProvinceId());
+        String province = null;
+        if (region1 != null){
+            province = region1.getName();
         }
-
-        order.setGoodsPrice(checkedGoodsPrice);
+        Region region2 = regionService.queryRegionById(address.getCityId());
+        String city = null;
+        if (region2 != null){
+            city = region2.getName();
+        }
+        Region region3 = regionService.queryRegionById(address.getAreaId());
+        String area = null;
+        if (region3 != null){
+            area = region3.getName();
+        }
+        String detailedAddress = province + city + area + " " + address.getAddress();
+        //detailedAddress 详细地址
+        order.setAddress(detailedAddress);
+        //freightPrice运费
+        BigDecimal freightPrice = new BigDecimal(0.00);
         order.setFreightPrice(freightPrice);
-        order.setCouponPrice(couponPrice);
+        //积分金额
+        BigDecimal integralPrice = new BigDecimal(0.00);
         order.setIntegralPrice(integralPrice);
+        //orderTotalPrice订单总金额
+        BigDecimal orderTotalPrice = new BigDecimal(0);
+        //购物车中选中的商品
+        List<Cart> checkedGoodsList = cartService.queryCartByUserIdAndChecked(user.getId(), true);
+        if (checkedGoodsList != null) {
+            for (Cart cart : checkedGoodsList) {
+                Goods goods = goodsService.queryById(cart.getGoodsId());
+                if (goods != null) {
+                    BigDecimal retailPrice = (goods.getRetailPrice()).multiply(BigDecimal.valueOf(cart.getNumber()));
+                    orderTotalPrice = orderTotalPrice.add(retailPrice);
+                }
+            }
+        }
+        //优惠的金额
+        //couponPrice优惠金额
+        Coupon coupon = null;
+        if (couponId != null && couponId > 0) {
+            //查询当前优惠券的详情
+            coupon = couponService.selectByPrimaryKey(couponId);
+        }
+        BigDecimal couponPrice = new BigDecimal(0);
+        if (coupon != null) {
+            BigDecimal discount = coupon.getDiscount();
+            couponPrice = discount;
+        }
+        //商品总价
+        BigDecimal goodsTotalPrice = orderTotalPrice;
+        //goodsTotalPrice 商品总价格
+        order.setGoodsPrice(goodsTotalPrice);
+        //orderTotalPrice 订单总费用
         order.setOrderPrice(orderTotalPrice);
-        order.setActualPrice(actualPrice);*/
+        //actualPrice 实付金额
+        BigDecimal actualPrice = new BigDecimal(0);
+        if (orderTotalPrice != null) {
+            actualPrice = orderTotalPrice.subtract(couponPrice);
+        }
+        //添加团购金额
+        BigDecimal grouponPrice = new BigDecimal(0);
+        order.setGrouponPrice(grouponPrice);
+        //添加优惠券金额
+        order.setCouponPrice(couponPrice);
+        //添加实际支付的金额
+        order.setActualPrice(actualPrice);
+        //添加字段
+        order.setDeleted(false);
+        Date now = new Date();
+        order.setAddTime(now);
+        //添加订单表项
+        orderService.add(order);
+        //orderGoods表添加
+        for (Cart cart : checkedGoodsList) {
+            // 订单商品
+            OrderGoods orderGoods = new OrderGoods();
+            orderGoods.setOrderId(order.getId());
+            orderGoods.setGoodsId(cart.getGoodsId());
+            orderGoods.setGoodsSn(cart.getGoodsSn());
+            orderGoods.setProductId(cart.getProductId());
+            orderGoods.setGoodsName(cart.getGoodsName());
+            orderGoods.setPicUrl(cart.getPicUrl());
+            orderGoods.setPrice(cart.getPrice());
+            orderGoods.setNumber(cart.getNumber());
+            orderGoods.setSpecifications(cart.getSpecifications());
+            orderGoods.setAddTime(now);
+            orderGoods.setDeleted(false);
+            orderGoodsService.add(orderGoods);
+        }
+        // 删除购物车里面的商品信息
+        cartService.clearGoods(uid);
+        //返回成功下单的信息
+        Map<String, Object> data = new HashMap<>();
+        Integer orderId = order.getId();
+        data.put("orderId", orderId);
+        ResponseVO responseVO = new ResponseVO(data, "成功", 0);
+        return responseVO;
+    }
 
-        return null;
+    //未付款的信息
+    @RequestMapping("order/prepay")
+    @ResponseBody
+    public RePayVO prepayOrder(@RequestBody OrderMsg OrderMsg){
+        RePayVO rePayVO = new RePayVO("订单不能支付", 742);
+        return rePayVO;
     }
 }
