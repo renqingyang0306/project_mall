@@ -257,17 +257,17 @@ public class OrderControllerWx {
         order.setMobile(address.getMobile());
         //message 用户订单留言
         order.setMessage(message);
-        Region region1 = regionService.queryRegionByCode(address.getProvinceId());
+        Region region1 = regionService.queryRegionById(address.getProvinceId());
         String province = null;
         if (region1 != null){
             province = region1.getName();
         }
-        Region region2 = regionService.queryRegionByCode(address.getCityId());
+        Region region2 = regionService.queryRegionById(address.getCityId());
         String city = null;
         if (region2 != null){
             city = region2.getName();
         }
-        Region region3 = regionService.queryRegionByCode(address.getAreaId());
+        Region region3 = regionService.queryRegionById(address.getAreaId());
         String area = null;
         if (region3 != null){
             area = region3.getName();
