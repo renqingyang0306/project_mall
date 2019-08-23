@@ -112,6 +112,7 @@ public class GoodsController {
         goods.setIsOnSale(true);
         goods.setIsNew(true);
         goods.setIsHot(false);
+        goods.setDeleted(false);
         int insert1 = goodsService.insert(goods);
         int goodsId = goods.getId();
         int insert2 = 0;
