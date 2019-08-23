@@ -44,4 +44,6 @@ public interface OrderService {
     int deleteByPrimaryKey(Integer oid);
 
     String generateOrderSn(Integer userId);
+
+    int add(Order order);
 }
