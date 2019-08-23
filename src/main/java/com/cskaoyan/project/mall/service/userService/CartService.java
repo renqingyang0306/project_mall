@@ -22,4 +22,6 @@ public interface CartService {
     int deleteLogicCart(Cart cart);
 
     void clearGoods(Integer uid);
+    Cart selectByPrimaryKey(Integer id);
+
 }

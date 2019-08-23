@@ -92,6 +92,11 @@ public class CartServiceImpl implements CartService {
         return cartMapper.updateByPrimaryKey(cart);
     }
 
+    @Override
+    public Cart selectByPrimaryKey(Integer id) {
+        return cartMapper.selectByPrimaryKey(id);
+    }
+
     /*
      * description: 下单后删掉购物车里的商品
      * version: 1.0

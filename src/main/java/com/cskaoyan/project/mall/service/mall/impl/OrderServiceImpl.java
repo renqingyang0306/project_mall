@@ -146,6 +146,7 @@ public class OrderServiceImpl implements OrderService {
         OrderExample.Criteria criteria = orderExample.createCriteria();
         criteria.andDeletedEqualTo(false);
         criteria.andUserIdEqualTo(uid);
+        orderExample.setOrderByClause("add_time desc");
         //101代表未支付的订单
         short status = 101;
         criteria.andOrderStatusEqualTo(status);

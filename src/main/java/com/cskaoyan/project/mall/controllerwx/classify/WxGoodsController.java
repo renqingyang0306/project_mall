@@ -59,18 +59,26 @@ public class WxGoodsController {
             responseUtils.setErrmsg("id 不能为null");
             return responseUtils;
         }
+        //查询该 categoryId 的信息
         Category currentCategory = categoryService.queryCategory(id);
-        List<Category> bortherCategory = new ArrayList<>();
+        //如果 currentCategory 是一级类目，将其第一个二级类目作为 currentCategory
+        if (currentCategory.getPid() == 0) {
+            List<Category> categories = categoryService.queryAllCategoryByPid(id);
+            if (categories.size() > 0) {
+                currentCategory = categories.get(0);
+            }
+        }
+        List<Category> brotherCategory = new ArrayList<>();
         Category parentCategory = null;
         if (currentCategory != null) {
             //查询该 categoryId 的同级 category
-            bortherCategory = categoryService.queryAllCategoryByPid(currentCategory.getPid());
+            brotherCategory = categoryService.queryAllCategoryByPid(currentCategory.getPid());
             //查询该 categoryId 的父级 category
             parentCategory = categoryService.queryCategory(currentCategory.getPid());
         }
 
         Map<String, Object> map = new HashMap();
-        map.put("bortherCategory",bortherCategory);
+        map.put("brotherCategory",brotherCategory);
         map.put("currentCategory",currentCategory);
         map.put("parentCategory",parentCategory);
 
@@ -91,7 +99,7 @@ public class WxGoodsController {
         ResponseUtils responseUtils = new ResponseUtils<>();
         if (categoryId == null) {
             responseUtils.setErrno(401);
-            responseUtils.setErrmsg("categoryId不能为null");
+            responseUtils.setErrmsg("categoryId 不能为 null");
             return responseUtils;
         }
         //用于查询保存关键字查询的 categpryId
