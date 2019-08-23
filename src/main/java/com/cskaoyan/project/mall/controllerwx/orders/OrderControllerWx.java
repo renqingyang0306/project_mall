@@ -8,6 +8,7 @@ import com.cskaoyan.project.mall.controllerwx.orders.vo.OrderMsg;
 import com.cskaoyan.project.mall.controllerwx.orders.vo.RePayVO;
 import com.cskaoyan.project.mall.domain.*;
 import com.cskaoyan.project.mall.service.advertiseService.CouponService;
+import com.cskaoyan.project.mall.service.advertiseService.CouponUserService;
 import com.cskaoyan.project.mall.service.advertiseService.GroupRulesService;
 import com.cskaoyan.project.mall.service.goods.GoodsService;
 import com.cskaoyan.project.mall.service.mall.CategoryService;
@@ -66,6 +67,8 @@ public class OrderControllerWx {
     RegionService regionService;
     @Autowired
     RedisUtil redisUtil;
+    @Autowired
+    CouponUserService couponUserService;
 
 
     /*
@@ -145,6 +148,17 @@ public class OrderControllerWx {
         //string-->int
         int cancel = orderService.cancleOrderByOid(oid);
 
+        CouponUserExample couponUserExample = new CouponUserExample();
+        CouponUserExample.Criteria criteria = couponUserExample.createCriteria();
+        criteria.andOrderIdEqualTo(oid);
+        List<CouponUser> couponUsers = couponUserService.selectByExample(couponUserExample);
+        if(couponUsers.size()!=0){
+            couponUsers.get(0).setStatus((short) 0);
+            couponUserService.updateByPrimaryKey(couponUsers.get(0));
+        }
+
+
+
         if (cancel == 1){
             CreatVO creatVO = new CreatVO(0, "成功");
             return creatVO;
@@ -168,6 +182,18 @@ public class OrderControllerWx {
     public CreatVO refundOrder(@RequestBody String orderId){
         JSONObject jsonObject = JSON.parseObject(orderId);
         Integer oid = jsonObject.getInteger("orderId");
+
+
+        CouponUserExample couponUserExample = new CouponUserExample();
+        CouponUserExample.Criteria criteria = couponUserExample.createCriteria();
+        criteria.andOrderIdEqualTo(oid);
+        List<CouponUser> couponUsers = couponUserService.selectByExample(couponUserExample);
+        if(couponUsers.size()!=0){
+            couponUsers.get(0).setStatus((short) 0);
+            couponUserService.updateByPrimaryKey(couponUsers.get(0));
+        }
+
+
         int refund = orderService.refundByOid(oid);
         if (refund == 1){
             CreatVO creatVO = new CreatVO(0, "成功");
@@ -278,6 +304,8 @@ public class OrderControllerWx {
         String detailedAddress = province + city + area + " " + address.getAddress();
         //detailedAddress 详细地址
         order.setAddress(detailedAddress);
+        //freightPrice运费
+        BigDecimal freightPrice = new BigDecimal(0.00);
 
         //积分金额
         BigDecimal integralPrice = new BigDecimal(0.00);
@@ -318,15 +346,16 @@ public class OrderControllerWx {
         order.setGoodsPrice(goodsTotalPrice);
         //orderTotalPrice 订单总费用
         order.setOrderPrice(orderTotalPrice);
-        //freightPrice运费
-        BigDecimal freightPrice = new BigDecimal(0.00);
-        freightPrice = BigDecimal.valueOf(10);
+        //actualPrice 实付金额
         BigDecimal actualPrice = new BigDecimal(0);
         if (orderTotalPrice != null) {
-            actualPrice = orderTotalPrice.subtract(couponPrice).add(freightPrice);
-            //actualPrice = orderTotalPrice.add(freightPrice);
+            actualPrice = orderTotalPrice.subtract(couponPrice);
         }
+        freightPrice = BigDecimal.valueOf(10);
         order.setFreightPrice(freightPrice);
+        if (orderTotalPrice != null) {
+            actualPrice = orderTotalPrice.add(freightPrice);
+        }
 
         //添加团购金额
         BigDecimal grouponPrice = new BigDecimal(0);
@@ -339,31 +368,27 @@ public class OrderControllerWx {
         order.setDeleted(false);
         Date now = new Date();
         order.setAddTime(now);
-        order.setUpdateTime(now);
         //添加订单表项
         orderService.add(order);
-        //当cartId = 0;orderGoods表添加商品项
-        if (cartId == 0){
-            for (Cart cart : checkedGoodsList) {
-                // 订单商品
-                OrderGoods orderGoods = new OrderGoods();
-                orderGoods.setOrderId(order.getId());
-                orderGoods.setGoodsId(cart.getGoodsId());
-                orderGoods.setGoodsSn(cart.getGoodsSn());
-                orderGoods.setProductId(cart.getProductId());
-                orderGoods.setGoodsName(cart.getGoodsName());
-                orderGoods.setPicUrl(cart.getPicUrl());
-                orderGoods.setPrice(cart.getPrice());
-                orderGoods.setNumber(cart.getNumber());
-                orderGoods.setSpecifications(cart.getSpecifications());
-                orderGoods.setAddTime(now);
-                orderGoods.setUpdateTime(now);
-                orderGoods.setDeleted(false);
-                orderGoodsService.add(orderGoods);
-            }
-            // 删除购物车里面的商品信息
-            cartService.clearGoods(uid);
+        //orderGoods表添加
+        for (Cart cart : checkedGoodsList) {
+            // 订单商品
+            OrderGoods orderGoods = new OrderGoods();
+            orderGoods.setOrderId(order.getId());
+            orderGoods.setGoodsId(cart.getGoodsId());
+            orderGoods.setGoodsSn(cart.getGoodsSn());
+            orderGoods.setProductId(cart.getProductId());
+            orderGoods.setGoodsName(cart.getGoodsName());
+            orderGoods.setPicUrl(cart.getPicUrl());
+            orderGoods.setPrice(cart.getPrice());
+            orderGoods.setNumber(cart.getNumber());
+            orderGoods.setSpecifications(cart.getSpecifications());
+            orderGoods.setAddTime(now);
+            orderGoods.setDeleted(false);
+            orderGoodsService.add(orderGoods);
         }
+        // 删除购物车里面的商品信息
+        cartService.clearGoods(uid);
         //直接购买的
         if (cartId != 0){
             //根据cartId查询出来的商品
@@ -391,6 +416,30 @@ public class OrderControllerWx {
         String str = Integer.toString(orderId);
         Double l = Double.valueOf(System.currentTimeMillis()+20000);
         redisUtil.add("orderId",str,l);
+
+        if(couponId != 0) {
+            CouponUserExample couponUserExample = new CouponUserExample();
+            CouponUserExample.Criteria criteria = couponUserExample.createCriteria();
+            criteria.andUserIdEqualTo(user.getId());
+            criteria.andCouponIdEqualTo(couponId);
+            List<CouponUser> couponUsers1 = couponUserService.selectByExample(couponUserExample);
+            if(couponUsers1.size() !=0){
+                couponUsers1.get(0).setOrderId(orderId);
+                couponUserService.updateByPrimaryKey(couponUsers1.get(0));
+            }
+
+
+            //订单生产，优惠券变已使用。
+            CouponUserExample couponUserExample1 = new CouponUserExample();
+            CouponUserExample.Criteria criteria1 = couponUserExample1.createCriteria();
+            criteria1.andOrderIdEqualTo(orderId);
+
+            List<CouponUser> couponUsers = couponUserService.selectByExample(couponUserExample1);
+            if (couponUsers.size() != 0) {
+                couponUsers.get(0).setStatus((short) 1);
+                couponUserService.updateByPrimaryKey(couponUsers.get(0));
+            }
+        }
         data.put("orderId", orderId);
         ResponseVO responseVO = new ResponseVO(data, "成功", 0);
         return responseVO;

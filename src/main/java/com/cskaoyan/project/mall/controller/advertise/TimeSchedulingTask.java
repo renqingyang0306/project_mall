@@ -39,6 +39,7 @@ CouponUserService couponUserService;
                 if (time >= endTime) {
                     //该条优惠券信息数据库变过期
                     couponUser.setStatus((short) 2);
+                    couponUser.setUpdateTime(new Date());
                     couponUserService.updateByPrimaryKey(couponUser);
                     count ++;
                 }

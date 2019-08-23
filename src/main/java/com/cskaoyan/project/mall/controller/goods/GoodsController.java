@@ -55,7 +55,7 @@ public class GoodsController {
      */
     /*goods/list?page=1&limit=20&goodsSn=31&*/
     @RequestMapping("goods/list")
-    public ResponseVO list(int page, int limit, String goodsSn,String name,String sort, String desc){
+    public ResponseVO list(Integer page, Integer limit, String goodsSn,String name,String sort, String desc){
         //没有goodsSn或者name时的查询
 
         if ((goodsSn == null)&&(name == null)){

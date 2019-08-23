@@ -202,12 +202,19 @@ GroupOnService groupOnService;
         GrouponExample grouponExample1 = new GrouponExample();
         GrouponExample.Criteria criteria1 = grouponExample1.createCriteria();
 
-        //登录用户创建的此条订单
-        criteria1.andCreatorUserIdEqualTo(userId);
-        criteria1.andGrouponIdEqualTo(0);
-        criteria1.andRulesIdEqualTo(rules.getId());
-        List<Groupon> groupons = groupOnService.selectByExample(grouponExample1);
-
+        List<Groupon> groupons = new ArrayList<>();
+        //用户创建的此条订单,或者用户参与的
+        if(groupon.getCreatorUserId() == userId) {
+            criteria1.andCreatorUserIdEqualTo(userId);
+            criteria1.andGrouponIdEqualTo(1);
+            criteria1.andRulesIdEqualTo(rules.getId());
+            groupons = groupOnService.selectByExample(grouponExample1);
+        }else {
+            criteria1.andCreatorUserIdEqualTo(userId);
+            criteria1.andGrouponIdEqualTo(0);
+            criteria1.andRulesIdEqualTo(rules.getId());
+             groupons = groupOnService.selectByExample(grouponExample1);
+        }
             UserVo joiner = new UserVo();
             for (Groupon grouponItem : groupons) {
                 User user1= userService.selectByPrimaryKey(grouponItem.getUserId());

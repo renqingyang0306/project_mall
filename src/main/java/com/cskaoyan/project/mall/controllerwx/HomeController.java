@@ -46,7 +46,7 @@ public class HomeController {
 
         //顶部显示的三张滚动图片
 
-        ObjectMapper objectMapper = new ObjectMapper();
+       /* ObjectMapper objectMapper = new ObjectMapper();
         String o = (String) redisUtil.get("homeList");
         if(!StringUtils.isEmpty(o)){
             try {
@@ -56,7 +56,7 @@ public class HomeController {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
 
 
 
@@ -73,7 +73,7 @@ public class HomeController {
 
         //顶部滚动图片下面显示的9种分类
         CategoryExample categoryExample = new CategoryExample();
-        categoryExample.createCriteria().andPidEqualTo(0);
+        categoryExample.createCriteria().andPidEqualTo(0).andDeletedEqualTo(false);
         List<Category> categoryList = categoryMapper.selectByExample(categoryExample);
         hashMap.put("channel",categoryList);
 
@@ -160,7 +160,7 @@ public class HomeController {
 
 
 
-        String json = null;
+       /* String json = null;
         try {
             json = objectMapper.writeValueAsString(responseUtils);
         } catch (JsonProcessingException e) {
@@ -168,7 +168,7 @@ public class HomeController {
         }
 
 
-        redisUtil.set("homeList",json);
+        redisUtil.set("homeList",json);*/
         return responseUtils;
     }
 }

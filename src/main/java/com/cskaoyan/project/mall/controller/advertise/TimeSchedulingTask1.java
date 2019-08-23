@@ -42,6 +42,15 @@ CartService cartService;
             for (Object id : orderId) {
                 Order order = orderMapper.selectByPrimaryKey(Integer.valueOf(id.toString()));
                 order.setOrderStatus((short) 103);
+                //优惠券返还回来
+                CouponUserExample couponUserExample = new CouponUserExample();
+                CouponUserExample.Criteria criteria = couponUserExample.createCriteria();
+                criteria.andOrderIdEqualTo(Integer.parseInt((String) id));
+                List<CouponUser> couponUsers = couponUserService.selectByExample(couponUserExample);
+                if(couponUsers.size()!=0){
+                    couponUsers.get(0).setStatus((short) 0);
+                    couponUserService.updateByPrimaryKey(couponUsers.get(0));
+                }
                 orderMapper.updateByPrimaryKey(order);
                 System.out.println("订单状态更新了");
             }

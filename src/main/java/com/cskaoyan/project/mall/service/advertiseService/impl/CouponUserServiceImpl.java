@@ -22,6 +22,7 @@ public class CouponUserServiceImpl implements CouponUserService {
         CouponUserExample couponUserExample = new CouponUserExample();
         CouponUserExample.Criteria criteria = couponUserExample.createCriteria();
         criteria.andDeletedEqualTo(false);
+        criteria.andStatusEqualTo((short) 0);
         criteria.andUserIdEqualTo(userId);
         List<CouponUser> couponUsers = couponUserMapper.selectByExample(couponUserExample);
         return couponUsers;
@@ -42,7 +43,7 @@ public class CouponUserServiceImpl implements CouponUserService {
 
     @Override
     public int insert(CouponUser record) {
-        return couponUserMapper.insert(record);
+        return couponUserMapper.insertSelective(record);
     }
 
     @Override
