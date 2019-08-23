@@ -88,6 +88,7 @@
     LEFT JOIN goods g
     ON fp.goods_id = g.id
     where fp.user_id = #{userId}
+    order by add_time desc
   </select>
   <select id="selectByExample" parameterType="com.cskaoyan.project.mall.domain.FootprintExample" resultMap="BaseResultMap">
     select
