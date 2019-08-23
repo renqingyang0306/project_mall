@@ -111,6 +111,7 @@
 	<include refid="Base_Column_List"/>
 		from goods
 		where goods_sn like #{goodsSn} and `name` like #{name}
+        order by add_time desc
 	</select>
 	<!--查询一条goods信息-->
 <select id="queryById" resultMap="ResultMapWithBLOBs">

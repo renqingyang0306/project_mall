@@ -17,7 +17,7 @@ import java.util.List;
 public class GoodsDetail {
     List<GoodsAttribute> attributes;
 
-    int[] categoryIds;
+    Integer[] categoryIds;
 
     Goods goods;
 
@@ -28,7 +28,7 @@ public class GoodsDetail {
     public GoodsDetail() {
     }
 
-    public GoodsDetail(List<GoodsAttribute> attributes, int[] categoryIds, Goods goods, List<GoodsProduct> products, List<GoodsSpecification> specifications) {
+    public GoodsDetail(List<GoodsAttribute> attributes, Integer[] categoryIds, Goods goods, List<GoodsProduct> products, List<GoodsSpecification> specifications) {
         this.attributes = attributes;
         this.categoryIds = categoryIds;
         this.goods = goods;
@@ -44,11 +44,11 @@ public class GoodsDetail {
         this.attributes = attributes;
     }
 
-    public int[] getCategoryIds() {
+    public Integer[] getCategoryIds() {
         return categoryIds;
     }
 
-    public void setCategoryIds(int[] categoryIds) {
+    public void setCategoryIds(Integer[] categoryIds) {
         this.categoryIds = categoryIds;
     }
 
