@@ -200,8 +200,10 @@ public class WxCartController {
         //优惠金额
         BigDecimal couponPrice = new BigDecimal(0);
         if (coupon != null) {
-            BigDecimal discount = coupon.getDiscount();
-            couponPrice = discount;
+            if (orderTotalPrice.doubleValue() >= coupon.getMin().doubleValue()) {
+                BigDecimal discount = coupon.getDiscount();
+                couponPrice = discount;
+            }
         }
         //运费
         BigDecimal freightPrice = new BigDecimal(10);
