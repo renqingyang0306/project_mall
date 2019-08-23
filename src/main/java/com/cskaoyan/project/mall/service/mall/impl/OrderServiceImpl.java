@@ -8,15 +8,18 @@ import com.cskaoyan.project.mall.domain.OrderGoods;
 import com.cskaoyan.project.mall.domain.OrderGoodsExample;
 import com.cskaoyan.project.mall.mapper.OrderGoodsMapper;
 import com.cskaoyan.project.mall.mapper.OrderMapper;
-import com.cskaoyan.project.mall.service.mall.OrderGoodsService;
 import com.cskaoyan.project.mall.service.mall.OrderService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * @author 申涛涛
@@ -53,18 +56,19 @@ public class OrderServiceImpl implements OrderService {
         if (userId != null) {
             criteria.andUserIdEqualTo(userId);
         }
-        if (orderSn != null) {
+        if (orderSn != null && orderSn != "") {
             criteria.andOrderSnEqualTo(orderSn);
         }
         if (orderStatusArray != null) {
-            if (orderStatusArray.length == 1) {
+            /*if (orderStatusArray.length == 1) {
                 criteria.andOrderStatusEqualTo(orderStatusArray[0]);
             } else {
                 for (Short aShort : orderStatusArray) {
                     OrderExample.Criteria criteria1 = orderExample.createCriteria();
                     orderExample.or(criteria1.andOrderStatusEqualTo(aShort));
                 }
-            }
+            }*/
+            criteria.andOrderStatusIn(Arrays.asList(orderStatusArray));
             //orderExample.or().andOrderStatusEqualTo((short) 2).andOrderStatusEqualTo((short) 1);
 
         }
@@ -144,6 +148,7 @@ public class OrderServiceImpl implements OrderService {
         OrderExample.Criteria criteria = orderExample.createCriteria();
         criteria.andDeletedEqualTo(false);
         criteria.andUserIdEqualTo(uid);
+        orderExample.setOrderByClause("add_time desc");
         //101代表未支付的订单
         short status = 101;
         criteria.andOrderStatusEqualTo(status);
@@ -190,7 +195,7 @@ public class OrderServiceImpl implements OrderService {
         OrderExample.Criteria criteria = orderExample.createCriteria();
         criteria.andDeletedEqualTo(false);
         criteria.andUserIdEqualTo(uid);
-        //301代表未发货的订单
+        //301代表未收货的订单
         short status = 301;
         criteria.andOrderStatusEqualTo(status);
         List<Order> orders = orderMapper.selectByExample(orderExample);
@@ -302,6 +307,89 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /*
+     * description: 根据orderId取消订单
+     * version: 1.0
+     * date: 2019/8/22 10:31
+     * author: du
+     * @Param: [oid]
+     * @return: int
+     */
+    @Override
+    public int cancleOrderByOid(int oid) {
+        //把order状态码改为102就是取消订单
+        OrderExample orderExample = new OrderExample();
+        OrderExample.Criteria criteria = orderExample.createCriteria();
+        //找到要改变的订单
+        criteria.andIdEqualTo(oid);
+        //修改状态码
+        Order order = new Order();
+        short status = 102;
+        order.setOrderStatus(status);
+        int i = orderMapper.updateByExampleSelective(order, orderExample);
+        return i;
+    }
+
+    /*
+     * description: refundByOid
+     * version: 1.0
+     * date: 2019/8/22 11:01
+     * author: du
+     * @Param: [oid]
+     * @return: int
+     */
+    @Override
+    public int refundByOid(Integer oid) {
+        //把order状态码改为202就是退款
+        OrderExample orderExample = new OrderExample();
+        OrderExample.Criteria criteria = orderExample.createCriteria();
+        //找到要改变的订单
+        criteria.andIdEqualTo(oid);
+        //修改状态码
+        Order order = new Order();
+        short status = 202;
+        order.setOrderStatus(status);
+        int i = orderMapper.updateByExampleSelective(order, orderExample);
+        return i;
+    }
+
+    /*
+     * description: confrimByOid
+     * version: 1.0
+     * date: 2019/8/22 11:05
+     * author: du
+     * @Param: [oid]
+     * @return: int
+     */
+    @Override
+    public int confrimByOid(Integer oid) {
+        //把order状态码改401就是确认收货
+        OrderExample orderExample = new OrderExample();
+        OrderExample.Criteria criteria = orderExample.createCriteria();
+        //找到要改变的订单
+        criteria.andIdEqualTo(oid);
+        //修改状态码
+        Order order = new Order();
+        short status = 401;
+        order.setOrderStatus(status);
+        int i = orderMapper.updateByExampleSelective(order, orderExample);
+        return i;
+    }
+
+    /*
+     * description: 根据order的id删除order的订单
+     * version: 1.0
+     * date: 2019/8/22 11:14
+     * author: du
+     * @Param: [oid]
+     * @return: int
+     */
+    @Override
+    public int deleteByPrimaryKey(Integer oid) {
+        int i = orderMapper.deleteByPrimaryKey(oid);
+        return i;
+    }
+
+    /*
      * description: 对orderList进行封装
      * version: 1.0
      * date: 2019/8/21 20:36
@@ -382,5 +470,55 @@ public class OrderServiceImpl implements OrderService {
         ResponseVO responseVO = new ResponseVO(responDataVO, "成功", 0);
         return responseVO;
 
+    }
+
+    /*
+     * description: 生成唯一的orderSn
+     * version: 1.0
+     * date: 2019/8/22 17:25
+     * author: du
+     * @Param: [userId]
+     * @return: java.lang.String
+     */
+    @Override
+    public String generateOrderSn(Integer userId) {
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String now = df.format(LocalDate.now());
+        String orderSn = now + getRandomNum(6);
+        while (countByOrderSn(userId, orderSn) != 0) {
+            orderSn = now + getRandomNum(6);
+        }
+        return orderSn;
+    }
+    private String getRandomNum(Integer num) {
+        String base = "0123456789";
+        Random random = new Random();
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < num; i++) {
+            int number = random.nextInt(base.length());
+            sb.append(base.charAt(number));
+        }
+        return sb.toString();
+    }
+
+    public int countByOrderSn(Integer userId, String orderSn) {
+        OrderExample example = new OrderExample();
+        example.or().andUserIdEqualTo(userId).andOrderSnEqualTo(orderSn).andDeletedEqualTo(false);
+        int i = (int) orderMapper.countByExample(example);
+        return i;
+    }
+
+    /*
+     * description: 添加订单项
+     * version: 1.0
+     * date: 2019/8/22 21:47
+     * author: du
+     * @Param: [order]
+     * @return: int
+     */
+    @Override
+    public int add(Order order) {
+        int insert = orderMapper.insert(order);
+        return insert;
     }
 }

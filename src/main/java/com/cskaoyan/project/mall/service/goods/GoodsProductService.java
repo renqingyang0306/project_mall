@@ -18,4 +18,6 @@ public interface GoodsProductService {
     List<GoodsProduct> queryByGoodsId(int id);
 
     int updateByPrimaryKey(GoodsProduct goodsProduct);
+
+    GoodsProduct queryGoodsProductById(Integer id);
 }

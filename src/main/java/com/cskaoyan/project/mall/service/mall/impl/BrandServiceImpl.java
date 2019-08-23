@@ -63,8 +63,10 @@ public class BrandServiceImpl implements BrandService {
         criteria.andIdEqualTo(id);
         //id为主键，结果只有一个
         List<Brand> brands = brandMapper.selectByExample(brandExample);
-        Brand brand = brands.get(0);
-        return brand;
+        if (brands.size() > 0) {
+            return brands.get(0);
+        }
+        return null;
     }
 
     @Override

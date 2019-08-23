@@ -84,8 +84,8 @@
     SELECT
     fp.add_time,g.brief,fp.goods_id,fp.id,g.name,g.pic_url,
     g.retail_price
-    from cskaoyan_mall_footprint fp
-    LEFT JOIN cskaoyan_mall_goods g
+    from footprint fp
+    LEFT JOIN goods g
     ON fp.goods_id = g.id
     where fp.user_id = #{userId}
   </select>

@@ -108,7 +108,11 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.cskaoyan.project.mall.domain.Address">
-    insert into address (id, name, user_id, 
+    <selectKey keyProperty="id" order="AFTER"
+               resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into address (id, name, user_id,
       province_id, city_id, area_id, 
       address, mobile, is_default, 
       add_time, update_time, deleted
@@ -120,6 +124,10 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.cskaoyan.project.mall.domain.Address">
+    <selectKey keyProperty="id" order="AFTER"
+               resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into address
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">

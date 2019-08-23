@@ -102,7 +102,11 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.cskaoyan.project.mall.domain.SearchHistory">
-    insert into search_history (id, user_id, keyword, 
+    <selectKey keyProperty="id" order="AFTER"
+               resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into search_history (id, user_id, keyword,
       from, add_time, update_time, 
       deleted)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{keyword,jdbcType=VARCHAR}, 
@@ -110,6 +114,10 @@
       #{deleted,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="com.cskaoyan.project.mall.domain.SearchHistory">
+    <selectKey keyProperty="id" order="AFTER"
+               resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into search_history
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">

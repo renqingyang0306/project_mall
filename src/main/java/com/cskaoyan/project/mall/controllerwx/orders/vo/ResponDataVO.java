@@ -11,25 +11,27 @@ import java.util.List;
  */
 public class ResponDataVO {
 
-    private long total;
-    private List data;
-    private int pages;
+    Long count;
+
+    List data;
+
+    int totalPages;
 
     public ResponDataVO() {
     }
 
-    public ResponDataVO(long total, List data, int pages) {
-        this.total = total;
+    public ResponDataVO(Long count, List data, int totalPages) {
+        this.count = count;
         this.data = data;
-        this.pages = pages;
+        this.totalPages = totalPages;
     }
 
-    public long getTotal() {
-        return total;
+    public Long getCount() {
+        return count;
     }
 
-    public void setTotal(long total) {
-        this.total = total;
+    public void setCount(Long count) {
+        this.count = count;
     }
 
     public List getData() {
@@ -40,11 +42,11 @@ public class ResponDataVO {
         this.data = data;
     }
 
-    public int getPages() {
-        return pages;
+    public int getTotalPages() {
+        return totalPages;
     }
 
-    public void setPages(int pages) {
-        this.pages = pages;
+    public void setTotalPages(int totalPages) {
+        this.totalPages = totalPages;
     }
 }

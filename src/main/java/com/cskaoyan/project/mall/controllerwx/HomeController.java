@@ -1,14 +1,22 @@
 package com.cskaoyan.project.mall.controllerwx;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cskaoyan.project.mall.domain.*;
 import com.cskaoyan.project.mall.mapper.*;
+import com.cskaoyan.project.mall.utils.RedisUtil;
 import com.cskaoyan.project.mall.utils.ResponseUtils;
 import com.cskaoyan.project.mall.vo.GoodsListBean;
 import com.cskaoyan.project.mall.vo.GrouponListBean;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.io.IOException;
+import java.lang.System;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,11 +40,29 @@ public class HomeController {
     CouponMapper couponMapper;
     @Autowired
     GrouponRulesMapper grouponRulesMapper;
+    @Autowired
+    RedisUtil redisUtil;
 
     @RequestMapping("home/index")
     @ResponseBody
     public ResponseUtils<HashMap> home(){
+
         //顶部显示的三张滚动图片
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String o = (String) redisUtil.get("homeList");
+        if(!StringUtils.isEmpty(o)){
+            try {
+                ResponseUtils responseUtils = objectMapper.readValue(o, ResponseUtils.class);
+                System.out.println("redis");
+                return responseUtils;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
         List<Ad> adList = adMapper.selectByExample(new AdExample());
         HashMap<String, List> hashMap = new HashMap<>();
         hashMap.put("banner",adList);
@@ -93,11 +119,12 @@ public class HomeController {
         List<GrouponListBean> grouponListBeans=new ArrayList<>();
         //获取团购信息表的全部数据
         List<GrouponRules> grouponRules = grouponRulesMapper.selectByExample(new GrouponRulesExample());
-        GoodsExample goodsExample1 = new GoodsExample();
+
         for (GrouponRules grouponRule : grouponRules) {
             GrouponListBean grouponBean = new GrouponListBean();
             //团购人数
             grouponBean.setGroupon_member(grouponRule.getDiscountMember());
+            GoodsExample goodsExample1 = new GoodsExample();
             goodsExample1.createCriteria().andIdEqualTo(grouponRule.getGoodsId());
             List<Goods> goods = goodsMapper.selectByExample(goodsExample1);
             Goods good=goods.get(0);
@@ -107,6 +134,7 @@ public class HomeController {
             grouponBean.setGoods(good);
             grouponListBeans.add(grouponBean);
         }
+
         hashMap.put("grouponList",grouponListBeans);
 
         //人气推荐  数据库goods
@@ -122,11 +150,23 @@ public class HomeController {
 
         //专题精选，随机选取四个  数据库topic
         List<Topic> topicList = topicMapper.selectByExample(new TopicExample());
-        int c = random.nextInt(topicList.size() - 4);
-        List<Topic> topicList1 = topicList.subList(c, c+4);
+        List<Topic> topicList1 = topicList.subList(0, 4);
         hashMap.put("topicList",topicList1);
 
         ResponseUtils<HashMap> responseUtils = new ResponseUtils<>(0, hashMap, "成功");
+
+
+
+
+        String json = null;
+        try {
+            json = objectMapper.writeValueAsString(responseUtils);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+
+        redisUtil.set("homeList",json);
         return responseUtils;
     }
 }
