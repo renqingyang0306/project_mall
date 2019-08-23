@@ -16,6 +16,7 @@ import com.cskaoyan.project.mall.service.mall.OrderService;
 import com.cskaoyan.project.mall.service.mall.RegionService;
 import com.cskaoyan.project.mall.service.userService.AddressService;
 import com.cskaoyan.project.mall.service.userService.CartService;
+import com.cskaoyan.project.mall.utils.RedisUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.apache.tomcat.util.http.ResponseUtil;
@@ -63,6 +64,8 @@ public class OrderControllerWx {
     GoodsService goodsService;
     @Autowired
     RegionService regionService;
+    @Autowired
+    RedisUtil redisUtil;
 
 
     /*
@@ -343,6 +346,11 @@ public class OrderControllerWx {
         //返回成功下单的信息
         Map<String, Object> data = new HashMap<>();
         Integer orderId = order.getId();
+        //放入redis zset队列
+        String str = Integer.toString(orderId);
+        Double l = Double.valueOf(System.currentTimeMillis()+20000);
+        redisUtil.add("orderId",str,l);
+
         data.put("orderId", orderId);
         ResponseVO responseVO = new ResponseVO(data, "成功", 0);
         return responseVO;

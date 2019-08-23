@@ -31,7 +31,7 @@ CartService cartService;
     RedisUtil redisUtil;
 @Autowired
     OrderMapper orderMapper;
-    @Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0/3 * * * * ?")
     public void taskForCoupon(){
 
         double right = System.currentTimeMillis();
