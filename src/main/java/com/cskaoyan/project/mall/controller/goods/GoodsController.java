@@ -153,14 +153,23 @@ public class GoodsController {
     //编辑的回显
     /*admin/goods/detail?id=1006002*/
     @RequestMapping("goods/detail")
-    public ResponseVO echoGood(int id){
+    public ResponseVO echoGood(Integer id){
+        if (id == null) {
+            return new ResponseVO("id 不能为 null",0);
+        }
         Goods goods = goodsService.queryById(id);
+        if (goods == null) {
+            return new ResponseVO("商品不存在",0);
+        }
         //get对应的种类id
-        int categoryId1 = goods.getCategoryId();
+        Integer categoryId1 = goods.getCategoryId();
         //查出category表的pid
-        int categoryId2 = cartAndBrandService.queryPidById(categoryId1);
+        Integer categoryId2 = null;
+        if (categoryId1 != null) {
+            categoryId2 = cartAndBrandService.queryPidById(categoryId1);
+        }
         //把得到的小分类id和大分类id放到一个数组里
-        int[] categoryIds = new int[]{categoryId1,categoryId2};
+        Integer[] categoryIds = new Integer[]{categoryId1,categoryId2};
         //根据id查出对应的goodsAttribute信息
         List<GoodsAttribute> goodsAttributes = goodsAttributeService.queryByGoodsId(id);
         //根据id查出对应的goodsProduct

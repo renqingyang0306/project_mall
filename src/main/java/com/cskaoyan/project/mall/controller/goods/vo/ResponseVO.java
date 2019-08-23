@@ -26,6 +26,11 @@ public class ResponseVO<T> {
         this.errno = errno;
     }
 
+    public ResponseVO(String errmsg, int errno) {
+        this.errmsg = errmsg;
+        this.errno = errno;
+    }
+
     public T getData() {
         return data;
     }
