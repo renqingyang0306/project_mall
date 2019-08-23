@@ -2,9 +2,12 @@ package com.cskaoyan.project.mall.controllerwx.GrouponRulesWx;
 
 import com.cskaoyan.project.mall.domain.*;
 import com.cskaoyan.project.mall.mapper.OrderMapper;
+import com.cskaoyan.project.mall.service.advertiseService.CouponService;
+import com.cskaoyan.project.mall.service.advertiseService.CouponUserService;
 import com.cskaoyan.project.mall.service.advertiseService.GroupOnService;
 import com.cskaoyan.project.mall.service.advertiseService.GroupRulesService;
 import com.cskaoyan.project.mall.service.mall.OrderGoodsService;
+import com.cskaoyan.project.mall.service.userService.CartService;
 import com.cskaoyan.project.mall.service.userService.UserService;
 import com.cskaoyan.project.mall.utils.ResponseUtils;
 import org.apache.shiro.SecurityUtils;
@@ -31,7 +34,12 @@ GroupOnService groupOnService;
     UserService userService;
     @Autowired
     OrderGoodsService orderGoodsService;
-
+    @Autowired
+    CartService cartService;
+    @Autowired
+    CouponUserService couponUserService;
+    @Autowired
+    CouponService couponService;
 @RequestMapping("wx/groupon/my")
 @ResponseBody
     public ResponseUtils<HashMap> groupRules(Integer showType){
@@ -222,4 +230,31 @@ GroupOnService groupOnService;
 
         }
 
-}
+        @RequestMapping("wx/coupon/selectlist")
+    @ResponseBody
+    public ResponseUtils<HashMap> groupRulesIs(Integer cartId,Integer grouponRulesId) {
+            Subject subject = SecurityUtils.getSubject();
+            subject = SecurityUtils.getSubject();
+            //获取认证后的用户信息，通过Realm进行封装的
+            User user = (User) subject.getPrincipal();
+            int userId = user.getId();
+
+        CouponUserExample couponUserExample = new CouponUserExample();
+        CouponUserExample.Criteria criteria = couponUserExample.createCriteria();
+        criteria.andUserIdEqualTo(userId);
+        criteria.andStatusEqualTo((short) 0);
+        List<CouponUser> couponUsers = couponUserService.selectByExample(couponUserExample);
+        List<Coupon> coupons = new ArrayList<>();
+        for (CouponUser couponUser : couponUsers) {
+            Coupon coupon = couponService.selectByPrimaryKey(couponUser.getCouponId());
+            coupons.add(coupon);
+        }
+
+        ResponseUtils pageBeanResponseUtils = new ResponseUtils<>();
+        pageBeanResponseUtils.setData(coupons);
+        pageBeanResponseUtils.setErrno(0);
+        pageBeanResponseUtils.setErrmsg("成功");
+        return pageBeanResponseUtils;
+
+    }
+    }

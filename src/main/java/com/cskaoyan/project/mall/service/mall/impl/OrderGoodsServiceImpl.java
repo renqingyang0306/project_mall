@@ -86,4 +86,19 @@ public class OrderGoodsServiceImpl implements OrderGoodsService {
         int i = orderGoodsMapper.deleteByExample(orderGoodsExample);
         return i;
     }
+
+    /*
+     * description: 添加商品项
+     * version: 1.0
+     * date: 2019/8/22 22:06
+     * author: du
+     * @Param: [orderGoods]
+     * @return: int
+     */
+    @Override
+    public int add(OrderGoods orderGoods) {
+        return orderGoodsMapper.insert(orderGoods);
+    }
+
+
 }

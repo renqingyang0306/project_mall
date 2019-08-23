@@ -96,4 +96,21 @@ public class CartServiceImpl implements CartService {
     public Cart selectByPrimaryKey(Integer id) {
         return cartMapper.selectByPrimaryKey(id);
     }
+
+    /*
+     * description: 下单后删掉购物车里的商品
+     * version: 1.0
+     * date: 2019/8/22 22:09
+     * author: du
+     * @Param: [uid]
+     * @return: void
+     */
+    @Override
+    public void clearGoods(Integer uid) {
+        CartExample example = new CartExample();
+        example.or().andUserIdEqualTo(uid).andCheckedEqualTo(true);
+        Cart cart = new Cart();
+        cart.setDeleted(true);
+        cartMapper.updateByExampleSelective(cart, example);
+    }
 }

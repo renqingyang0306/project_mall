@@ -1,14 +1,22 @@
 package com.cskaoyan.project.mall.controllerwx;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cskaoyan.project.mall.domain.*;
 import com.cskaoyan.project.mall.mapper.*;
+import com.cskaoyan.project.mall.utils.RedisUtil;
 import com.cskaoyan.project.mall.utils.ResponseUtils;
 import com.cskaoyan.project.mall.vo.GoodsListBean;
 import com.cskaoyan.project.mall.vo.GrouponListBean;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.io.IOException;
+import java.lang.System;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,11 +40,29 @@ public class HomeController {
     CouponMapper couponMapper;
     @Autowired
     GrouponRulesMapper grouponRulesMapper;
+    @Autowired
+    RedisUtil redisUtil;
 
     @RequestMapping("home/index")
     @ResponseBody
     public ResponseUtils<HashMap> home(){
+
         //顶部显示的三张滚动图片
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String o = (String) redisUtil.get("homeList");
+        if(!StringUtils.isEmpty(o)){
+            try {
+                ResponseUtils responseUtils = objectMapper.readValue(o, ResponseUtils.class);
+                System.out.println("redis");
+                return responseUtils;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
         List<Ad> adList = adMapper.selectByExample(new AdExample());
         HashMap<String, List> hashMap = new HashMap<>();
         hashMap.put("banner",adList);
@@ -128,6 +154,19 @@ public class HomeController {
         hashMap.put("topicList",topicList1);
 
         ResponseUtils<HashMap> responseUtils = new ResponseUtils<>(0, hashMap, "成功");
+
+
+
+
+        String json = null;
+        try {
+            json = objectMapper.writeValueAsString(responseUtils);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+
+        redisUtil.set("homeList",json);
         return responseUtils;
     }
 }

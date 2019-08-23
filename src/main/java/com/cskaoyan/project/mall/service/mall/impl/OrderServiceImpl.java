@@ -148,6 +148,7 @@ public class OrderServiceImpl implements OrderService {
         OrderExample.Criteria criteria = orderExample.createCriteria();
         criteria.andDeletedEqualTo(false);
         criteria.andUserIdEqualTo(uid);
+        orderExample.setOrderByClause("add_time desc");
         //101代表未支付的订单
         short status = 101;
         criteria.andOrderStatusEqualTo(status);
@@ -505,5 +506,19 @@ public class OrderServiceImpl implements OrderService {
         example.or().andUserIdEqualTo(userId).andOrderSnEqualTo(orderSn).andDeletedEqualTo(false);
         int i = (int) orderMapper.countByExample(example);
         return i;
+    }
+
+    /*
+     * description: 添加订单项
+     * version: 1.0
+     * date: 2019/8/22 21:47
+     * author: du
+     * @Param: [order]
+     * @return: int
+     */
+    @Override
+    public int add(Order order) {
+        int insert = orderMapper.insert(order);
+        return insert;
     }
 }
