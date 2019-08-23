@@ -32,6 +32,9 @@ public class WxGoodsController {
     @Autowired
     KeywordService keywordService;
 
+    //当用户没有登录的时候存储本地搜索历史
+//    List<SearchHistory> cacheHistoryKeywordList = new ArrayList<>();
+
     @RequestMapping("/wx/goods/count")
     @ResponseBody
     public ResponseUtils queryGoodsCount() {
@@ -112,7 +115,7 @@ public class WxGoodsController {
         //将 keyword 保存到搜索历史中
         SearchHistory searchHistory = new SearchHistory();
         int insert = 0;
-        //用户未登录则不记录搜索历史
+        //用户未登录则记录搜索历史到本地缓存 本地缓存未实现
         if (user != null && keyword != null) {
            //查询该 keyword 在数据库中是否存在
             List<SearchHistory> searchHistories = searchHistoryService.queryAllSearchHistoryByUserIdAndKeyword(user.getId(), keyword);
@@ -198,7 +201,6 @@ public class WxGoodsController {
             //查询该用户的商品搜索历史
             historyKeywordList = searchHistoryService.queryAllSearchHistoryByUserId(user.getId());
         }
-
         Map<String, Object> map = new HashMap();
         //只需要一个关键词
         map.put("defaultKeyword",defaultKeywords.get(0));
