@@ -104,7 +104,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public int updateOrderById(Order order) {
-        int update = orderMapper.updateByPrimaryKey(order);
+        int update = orderMapper.updateByPrimaryKeySelective(order);
         return update;
     }
 

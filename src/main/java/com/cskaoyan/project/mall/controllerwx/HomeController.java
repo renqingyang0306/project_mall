@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
 import java.lang.System;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 //首页显示
 @Controller
@@ -87,10 +84,8 @@ public class HomeController {
         hashMap.put("couponList",couponList1);
 
         //随机选取四种分类显示在页面下方 数据库表category goods
-        int g = random.nextInt(categoryList.size() - 4);
-        List<Category> categoryList1 = categoryList.subList(g,g+4);
-        CategoryExample categoryExample1 = new CategoryExample();
-        GoodsExample goodsExample = new GoodsExample();
+//        int g = random.nextInt(categoryList.size() - 4);
+        List<Category> categoryList1 = categoryList.subList(0,4);
         //用于收集遍历出来的所有GoodsListBean集合
         List<GoodsListBean> goodsMergeList=new ArrayList<>();
         for (Category category : categoryList1) {
@@ -98,16 +93,23 @@ public class HomeController {
             //把大标题的Category，id，name,赋值给goodsListBean对应的参数
             goodsListBean.setId(category.getId());
             goodsListBean.setName(category.getName());
+            CategoryExample categoryExample1 = new CategoryExample();
             //通过category表的category.getId()，作为pid查到新的二级categoryList
             categoryExample1.createCriteria().andPidEqualTo(category.getId());
             List<Category> categories = categoryMapper.selectByExample(categoryExample1);
             //然后同通过新的categorylist.id遍历来查找goods表中的页面想要的goodslist
+            //list集合用户收集每个二级分类下的goodsList
+            List<Goods> collectionGoods=new ArrayList<>();
             for (Category category1 : categories) {
+                GoodsExample goodsExample = new GoodsExample();
                 goodsExample.createCriteria().andCategoryIdEqualTo(category1.getId());
                 List<Goods> goodsList = goodsMapper.selectByExample(goodsExample);
                 //查到的goodslist赋值给goodsListBean对应的参数
-                goodsListBean.setGoodsList(goodsList);
+                for (Goods goods : goodsList) {
+                    collectionGoods.add(goods);
+                }
             }
+            goodsListBean.setGoodsList(collectionGoods);
             goodsMergeList.add(goodsListBean);
         }
         hashMap.put("floorGoodsList",goodsMergeList);

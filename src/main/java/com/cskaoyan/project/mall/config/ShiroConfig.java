@@ -34,7 +34,8 @@ public class ShiroConfig {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         //shiroFilterFactoryBean.setLoginUrl("/admin/auth/401");
-        //shiroFilterFactoryBean.setUnauthorizedUrl("/admin/auth/403");
+        //shiroFilterFactoryBean.setUnauthorizedUrl(
+        //        map.put("/wx/home/index", "anon");"/admin/auth/403");
         HashMap<String,String> map=new HashMap<>();
         //可以直接匿名访问
         map.put("/admin/auth/login", "anon");
