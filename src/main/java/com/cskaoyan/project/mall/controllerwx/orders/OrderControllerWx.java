@@ -234,7 +234,7 @@ public class OrderControllerWx {
         Integer uid = user.getId();
         //订单的详情
         Integer addressId = OrderMsg.getAddressId();
-        Integer cartId = OrderMsg.getCarid();
+        Integer cartId = OrderMsg.getCartId();
         Integer couponId = OrderMsg.getCouponId();
         Integer grouponLinkId = OrderMsg.getGrouponLinkId();
         Integer grouponRulesId = OrderMsg.getGrouponRulesId();
@@ -277,7 +277,7 @@ public class OrderControllerWx {
         order.setAddress(detailedAddress);
         //freightPrice运费
         BigDecimal freightPrice = new BigDecimal(0.00);
-        order.setFreightPrice(freightPrice);
+
         //积分金额
         BigDecimal integralPrice = new BigDecimal(0.00);
         order.setIntegralPrice(integralPrice);
@@ -294,13 +294,18 @@ public class OrderControllerWx {
                 }
             }
         }
-        //优惠的金额
+        //如果直接购买，总金额就从cartId里得到
+        if (cartId != 0){
+            Cart cart = cartService.selectByPrimaryKey(cartId);
+            orderTotalPrice = cart.getPrice();
+        }
         //couponPrice优惠金额
         Coupon coupon = null;
         if (couponId != null && couponId > 0) {
             //查询当前优惠券的详情
             coupon = couponService.selectByPrimaryKey(couponId);
         }
+
         BigDecimal couponPrice = new BigDecimal(0);
         if (coupon != null) {
             BigDecimal discount = coupon.getDiscount();
@@ -317,6 +322,12 @@ public class OrderControllerWx {
         if (orderTotalPrice != null) {
             actualPrice = orderTotalPrice.subtract(couponPrice);
         }
+        freightPrice = BigDecimal.valueOf(10);
+        order.setFreightPrice(freightPrice);
+        if (orderTotalPrice != null) {
+            actualPrice = orderTotalPrice.add(freightPrice);
+        }
+
         //添加团购金额
         BigDecimal grouponPrice = new BigDecimal(0);
         order.setGrouponPrice(grouponPrice);
@@ -349,6 +360,26 @@ public class OrderControllerWx {
         }
         // 删除购物车里面的商品信息
         cartService.clearGoods(uid);
+        //直接购买的
+        if (cartId != 0){
+            //根据cartId查询出来的商品
+            Cart cart = cartService.selectByPrimaryKey(cartId);
+            if (cart != null){
+                OrderGoods orderGoods = new OrderGoods();
+                orderGoods.setOrderId(order.getId());
+                orderGoods.setGoodsId(cart.getGoodsId());
+                orderGoods.setGoodsSn(cart.getGoodsSn());
+                orderGoods.setProductId(cart.getProductId());
+                orderGoods.setGoodsName(cart.getGoodsName());
+                orderGoods.setPicUrl(cart.getPicUrl());
+                orderGoods.setPrice(cart.getPrice());
+                orderGoods.setNumber(cart.getNumber());
+                orderGoods.setSpecifications(cart.getSpecifications());
+                orderGoods.setAddTime(now);
+                orderGoods.setDeleted(false);
+                orderGoodsService.add(orderGoods);
+            }
+        }
         //返回成功下单的信息
         Map<String, Object> data = new HashMap<>();
         Integer orderId = order.getId();
