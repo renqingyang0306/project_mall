@@ -109,4 +109,18 @@ public class KeywordServiceImpl implements KeywordService {
         int update = keywordMapper.updateByPrimaryKey(keyword);
         return update;
     }
+
+    @Override
+    public List<Keyword> searchKeywordByIsHotAndKeyword(Boolean isHot, String keyword) {
+        KeywordExample keywordExample = new KeywordExample();
+        KeywordExample.Criteria criteria = keywordExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        criteria.andIsHotEqualTo(isHot);
+        keyword = "%" + keyword + "%";
+        criteria.andKeywordLike(keyword);
+        //按照修改时间降序排序
+        keywordExample.setOrderByClause("update_time desc");
+        List<Keyword> keywords = keywordMapper.selectByExample(keywordExample);
+        return keywords;
+    }
 }

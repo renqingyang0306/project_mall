@@ -1,5 +1,6 @@
 package com.cskaoyan.project.mall.controllerwx.classify;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cskaoyan.project.mall.domain.*;
 import com.cskaoyan.project.mall.service.goods.GoodsService;
 import com.cskaoyan.project.mall.service.mall.CategoryService;
@@ -10,13 +11,11 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author 申涛涛
@@ -28,6 +27,10 @@ public class WxGoodsController {
     GoodsService goodsService;
     @Autowired
     CategoryService categoryService;
+    @Autowired
+    SearchHistoryService searchHistoryService;
+    @Autowired
+    KeywordService keywordService;
 
     @RequestMapping("/wx/goods/count")
     @ResponseBody
@@ -102,6 +105,32 @@ public class WxGoodsController {
             responseUtils.setErrmsg("categoryId 不能为 null");
             return responseUtils;
         }
+        //获取当前登录的用户信息
+        Subject subject = SecurityUtils.getSubject();
+        User user = (User) subject.getPrincipal();
+        List<SearchHistory> historyKeywordList = new ArrayList<>();
+        //将 keyword 保存到搜索历史中
+        SearchHistory searchHistory = new SearchHistory();
+        int insert = 0;
+        //用户未登录则不记录搜索历史
+        if (user != null && keyword != null) {
+           //查询该 keyword 在数据库中是否存在
+            List<SearchHistory> searchHistories = searchHistoryService.queryAllSearchHistoryByUserIdAndKeyword(user.getId(), keyword);
+            if (searchHistories != null && searchHistories.size() > 0) {
+                insert = 2;
+            } else {    // 没有该 keyword 则新增搜索历史
+                Date date = new Date();
+                searchHistory.setUserId(user.getId());
+                searchHistory.setKeyword(keyword);
+                //直接设置搜索来源为 wx
+                searchHistory.setFrom("wx");
+                searchHistory.setAddTime(date);
+                searchHistory.setUpdateTime(date);
+                //默认为未删除状态
+                searchHistory.setDeleted(false);
+                insert = searchHistoryService.insertSearchHistory(searchHistory);
+            }
+        }
         //用于查询保存关键字查询的 categpryId
         List<Goods> tempGoodsList = goodsService.queryPageOrderByExample(keyword, null, page, size, sort, order);
         //通过keyword模糊查询所有商品
@@ -154,18 +183,13 @@ public class WxGoodsController {
         return responseUtils;
     }
 
-    @Autowired
-    KeywordService keywordService;
-    @Autowired
-    SearchHistoryService searchHistoryService;
-
     @RequestMapping("/wx/search/index")
     @ResponseBody
     public ResponseUtils searchGoodsIndex() {
         ResponseUtils responseUtils = new ResponseUtils<>();
         //查询所有默认关键词
         List<Keyword> defaultKeywords = keywordService.queryKeywordByIsDefault(true);
-        List<Keyword> hotKeywords = keywordService.queryKeywordByIsHot(true);
+        List<Keyword> hotKeywordList = keywordService.queryKeywordByIsHot(true);
         //获取当前登录的用户信息
         Subject subject = SecurityUtils.getSubject();
         User user = (User) subject.getPrincipal();
@@ -178,7 +202,7 @@ public class WxGoodsController {
         Map<String, Object> map = new HashMap();
         //只需要一个关键词
         map.put("defaultKeyword",defaultKeywords.get(0));
-        map.put("hotKeywords",hotKeywords);
+        map.put("hotKeywordList",hotKeywordList);
         map.put("historyKeywordList",historyKeywordList);
 
         if ("" == null) {
@@ -192,19 +216,74 @@ public class WxGoodsController {
         return responseUtils;
     }
 
+    /**
+     * @creator shentaotao
+     * @creat date 2019/8/23 11:47
+     * @param keyword   搜索框输入的参数
+     * @return com.cskaoyan.project.mall.utils.ResponseUtils
+     * @throws
+     * @since
+     */
     @RequestMapping("/wx/search/helper")
     @ResponseBody
     public ResponseUtils searchGoodsHelper(String keyword) {
         ResponseUtils responseUtils = new ResponseUtils<>();
+        List<Keyword> keywords = new ArrayList<>();
+        if (keyword != null) {
+            keywords = keywordService.searchKeywordByIsHotAndKeyword(true, keyword);
+        }
+        List<String> list = new ArrayList<>();
+        if (keywords.size() > 0) {
+            for (Keyword keyword1 : keywords) {
+                list.add(keyword1.getKeyword());
+            }
+        }
 
-        String[] strings = new String[] {};
-        if ("" == null) {
+        if (keywords.size() == -1) {
             responseUtils.setErrno(401);
-            responseUtils.setErrmsg("当前 categoryId 不存在");
+            responseUtils.setErrmsg("不可能出错！！！！");
         } else {
             responseUtils.setErrno(0);
             responseUtils.setErrmsg("成功");
-            responseUtils.setData(strings);
+            responseUtils.setData(list);
+        }
+        return responseUtils;
+    }
+
+    /**
+     * @creator shentaotao
+     * @creat date 2019/8/23 11:46
+     * @param jsonObject    我也不知道有什么，反正就是个 {}
+     * @return com.cskaoyan.project.mall.utils.ResponseUtils
+     * @throws
+     * @since
+     */
+    @RequestMapping("/wx/search/clearhistory")
+    @ResponseBody
+    public ResponseUtils clearSearchHistory(@RequestBody JSONObject jsonObject) {
+        ResponseUtils responseUtils = new ResponseUtils<>();
+        //获取当前登录的用户信息
+        Subject subject = SecurityUtils.getSubject();
+        User user = (User) subject.getPrincipal();
+        int delete = 0;
+        if (user != null) {
+            //查询该用户的搜索历史
+            List<SearchHistory> searchHistories = searchHistoryService.queryAllSearchHistoryByUserId(user.getId());
+            if (searchHistories != null) {
+                // 删除该用户的全部搜索历史
+                for (int i = 0; i < searchHistories.size(); i++) {
+                    delete = searchHistoryService.deleteLogicSearchHistoryByDeleted(searchHistories.get(i));
+                }
+            }
+        }
+
+        if (delete == 0) {
+            responseUtils.setErrno(401);
+            responseUtils.setErrmsg("删除搜索历史失败");
+        } else {
+            responseUtils.setErrno(0);
+            responseUtils.setErrmsg("成功");
+            responseUtils.setData(null);
         }
         return responseUtils;
     }

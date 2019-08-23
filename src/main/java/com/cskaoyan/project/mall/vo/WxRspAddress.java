@@ -31,7 +31,7 @@ public class WxRspAddress {
 
     private Boolean deleted;
 
-    private String proviceName;
+    private String provinceName;
 
     private String cityName;
 
@@ -133,12 +133,12 @@ public class WxRspAddress {
         this.deleted = deleted;
     }
 
-    public String getProviceName() {
-        return proviceName;
+    public String getProvinceName() {
+        return provinceName;
     }
 
-    public void setProviceName(String proviceName) {
-        this.proviceName = proviceName;
+    public void setProvinceName(String provinceName) {
+        this.provinceName = provinceName;
     }
 
     public String getCityName() {
