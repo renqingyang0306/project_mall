@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -55,18 +56,19 @@ public class OrderServiceImpl implements OrderService {
         if (userId != null) {
             criteria.andUserIdEqualTo(userId);
         }
-        if (orderSn != null) {
+        if (orderSn != null && orderSn != "") {
             criteria.andOrderSnEqualTo(orderSn);
         }
         if (orderStatusArray != null) {
-            if (orderStatusArray.length == 1) {
+            /*if (orderStatusArray.length == 1) {
                 criteria.andOrderStatusEqualTo(orderStatusArray[0]);
             } else {
                 for (Short aShort : orderStatusArray) {
                     OrderExample.Criteria criteria1 = orderExample.createCriteria();
                     orderExample.or(criteria1.andOrderStatusEqualTo(aShort));
                 }
-            }
+            }*/
+            criteria.andOrderStatusIn(Arrays.asList(orderStatusArray));
             //orderExample.or().andOrderStatusEqualTo((short) 2).andOrderStatusEqualTo((short) 1);
 
         }

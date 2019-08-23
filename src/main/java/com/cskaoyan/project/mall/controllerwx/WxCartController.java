@@ -203,14 +203,13 @@ public class WxCartController {
             BigDecimal discount = coupon.getDiscount();
             couponPrice = discount;
         }
-
+        //运费
+        BigDecimal freightPrice = new BigDecimal(10);
         //实付金额  subtract 是减法
         BigDecimal actualPrice = new BigDecimal(0);
         if (orderTotalPrice != null) {
-            actualPrice = orderTotalPrice.subtract(couponPrice);
+            actualPrice = orderTotalPrice.subtract(couponPrice).subtract(freightPrice);
         }
-        //运费
-        Integer freightPrice = 10;
         //商品总价
         BigDecimal goodsTotalPrice = orderTotalPrice;
         //团购金额
