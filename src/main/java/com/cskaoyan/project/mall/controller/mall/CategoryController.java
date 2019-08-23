@@ -55,11 +55,11 @@ public class CategoryController {
     @ResponseBody
     public ResponseUtils queryAllCategoryL1() {
         List<Category> categories = categoryService.queryAllCategoryLevel1();
-        List<Map<String,String>> list = new ArrayList<>();
+        List<Object> list = new ArrayList<>();
         for (Category category : categories) {
-            Map<String,String> map = new HashMap<>();
-            map.put("value", String.valueOf(category.getId()));
-            map.put("lable",category.getName());
+            Map<String,Object> map = new HashMap<>();
+            map.put("value", category.getId());
+            map.put("label",category.getName());
             list.add(map);
         }
         ResponseUtils responseUtils = new ResponseUtils();
