@@ -107,7 +107,7 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into search_history (id, user_id, keyword,
-      from, add_time, update_time, 
+    search_history.from, add_time, update_time,
       deleted)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{keyword,jdbcType=VARCHAR}, 
       #{from,jdbcType=VARCHAR}, #{addTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
@@ -130,7 +130,7 @@
         keyword,
       </if>
       <if test="from != null">
-        from,
+        search_history.from,
       </if>
       <if test="addTime != null">
         add_time,
@@ -185,7 +185,7 @@
         keyword = #{record.keyword,jdbcType=VARCHAR},
       </if>
       <if test="record.from != null">
-        from = #{record.from,jdbcType=VARCHAR},
+        search_history.from = #{record.from,jdbcType=VARCHAR},
       </if>
       <if test="record.addTime != null">
         add_time = #{record.addTime,jdbcType=TIMESTAMP},
@@ -206,7 +206,7 @@
     set id = #{record.id,jdbcType=INTEGER},
       user_id = #{record.userId,jdbcType=INTEGER},
       keyword = #{record.keyword,jdbcType=VARCHAR},
-      from = #{record.from,jdbcType=VARCHAR},
+    search_history.from = #{record.from,jdbcType=VARCHAR},
       add_time = #{record.addTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       deleted = #{record.deleted,jdbcType=BIT}
@@ -224,7 +224,7 @@
         keyword = #{keyword,jdbcType=VARCHAR},
       </if>
       <if test="from != null">
-        from = #{from,jdbcType=VARCHAR},
+        search_history.from = #{from,jdbcType=VARCHAR},
       </if>
       <if test="addTime != null">
         add_time = #{addTime,jdbcType=TIMESTAMP},
@@ -242,7 +242,7 @@
     update search_history
     set user_id = #{userId,jdbcType=INTEGER},
       keyword = #{keyword,jdbcType=VARCHAR},
-      from = #{from,jdbcType=VARCHAR},
+      search_history.from = #{from,jdbcType=VARCHAR},
       add_time = #{addTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       deleted = #{deleted,jdbcType=BIT}
