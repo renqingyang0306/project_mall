@@ -1,8 +1,6 @@
 package com.cskaoyan.project.mall.controllerwx;
 
-import com.cskaoyan.project.mall.domain.Comment;
-import com.cskaoyan.project.mall.domain.Topic;
-import com.cskaoyan.project.mall.domain.User;
+import com.cskaoyan.project.mall.domain.*;
 import com.cskaoyan.project.mall.service.advertiseService.TopicService;
 import com.cskaoyan.project.mall.service.goods.CommentService;
 import com.cskaoyan.project.mall.service.goods.GoodsService;
@@ -134,9 +132,11 @@ public class WxCommentController {
    //查询专题的详细信息
     @RequestMapping("topic/related")
     public Object queryTopic(int id){
-        Topic topic = topicService.selectByPrimaryKey(id);
-
-        return ResponseUtils.ok(topic);
+        List<Topic> topicList = topicService.selectByExample(new TopicExample());
+        Random random = new Random();
+        int i = random.nextInt(topicList.size() - 4);
+        List<Topic> topics = topicList.subList(i, i + 4);
+        return ResponseUtils.ok(topics);
     }
     @RequestMapping("topic/detail")
     public Object queryDetail(int id){
@@ -144,6 +144,21 @@ public class WxCommentController {
         Topic topic = topicService.selectByPrimaryKey(id);
         map.put("goods",new String[]{});
         map.put("topic",topic);
+        return ResponseUtils.ok(map);
+    }
+
+    //查询全部以及有图评论的数量
+    @RequestMapping("comment/count")
+    public Object count(Byte type, Integer valueId){
+        HashMap<String, Integer> map = new HashMap<>();
+        CommentExample example1 = new CommentExample();
+        example1.createCriteria().andValueIdEqualTo(valueId).andTypeEqualTo(type);
+        int i1 = commentService.countByExample(example1);
+        CommentExample example2 = new CommentExample();
+        example2.createCriteria().andTypeEqualTo(type).andValueIdEqualTo(valueId).andHasPictureEqualTo(true);
+        int i2 = commentService.countByExample(example2);
+        map.put("allCount",i1);
+        map.put("hasPicCount",i2);
         return ResponseUtils.ok(map);
     }
 }

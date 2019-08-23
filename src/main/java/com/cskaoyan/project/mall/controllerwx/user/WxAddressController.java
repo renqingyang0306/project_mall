@@ -120,16 +120,25 @@ public class WxAddressController {
             responseUtils.setErrmsg("id 不能为 null");
         }
         Address address = addressService.queryAddressById(id);
-
-        Region province = regionService.queryRegionById(address.getProvinceId());
-        String provinceName = province.getName();
-        Region city = regionService.queryRegionById(address.getCityId());
-        String cityName = city.getName();
-        Region area = regionService.queryRegionById(address.getAreaId());
-        String areaName = area.getName();
-
+        String provinceName = null;
+        String cityName = null;
+        String areaName = null;
+        if (address != null) {
+            Region province = regionService.queryRegionById(address.getProvinceId());
+            if (province != null) {
+                provinceName = province.getName();
+            }
+            Region city = regionService.queryRegionById(address.getCityId());
+            if (city != null) {
+                cityName = city.getName();
+            }
+            Region area = regionService.queryRegionById(address.getAreaId());
+            if (area != null) {
+                areaName = area.getName();
+            }
+        }
         WxRspAddress wxRspAddress = transfer(address);
-        wxRspAddress.setProviceName(provinceName);
+        wxRspAddress.setProvinceName(provinceName);
         wxRspAddress.setCityName(cityName);
         wxRspAddress.setAreaName(areaName);
 

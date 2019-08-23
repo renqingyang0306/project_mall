@@ -2,6 +2,7 @@ package com.cskaoyan.project.mall.service.goods;
 
 import com.cskaoyan.project.mall.controller.goods.vo.PageVO;
 import com.cskaoyan.project.mall.controller.goods.vo.ResponseVO;
+import com.cskaoyan.project.mall.domain.CategoryExample;
 import com.cskaoyan.project.mall.domain.Comment;
 import com.cskaoyan.project.mall.domain.CommentExample;
 import com.cskaoyan.project.mall.domain.Goods;
@@ -95,4 +96,10 @@ public class CommentServiceImpl implements CommentService{
     public int insertSelective(Comment record) {
         return commentMapper.insertSelective(record);
     }
+
+    @Override
+    public int countByExample(CommentExample example) {
+        return (int) commentMapper.countByExample(example);
+    }
+
 }
