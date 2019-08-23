@@ -278,8 +278,6 @@ public class OrderControllerWx {
         String detailedAddress = province + city + area + " " + address.getAddress();
         //detailedAddress 详细地址
         order.setAddress(detailedAddress);
-        //freightPrice运费
-        BigDecimal freightPrice = new BigDecimal(0.00);
 
         //积分金额
         BigDecimal integralPrice = new BigDecimal(0.00);
@@ -321,15 +319,15 @@ public class OrderControllerWx {
         //orderTotalPrice 订单总费用
         order.setOrderPrice(orderTotalPrice);
         //actualPrice 实付金额
+        //freightPrice运费
+        BigDecimal freightPrice = new BigDecimal(0.00);
+        freightPrice = BigDecimal.valueOf(10);
         BigDecimal actualPrice = new BigDecimal(0);
         if (orderTotalPrice != null) {
-            actualPrice = orderTotalPrice.subtract(couponPrice);
+            actualPrice = orderTotalPrice.subtract(couponPrice).add(freightPrice);
+            //actualPrice = orderTotalPrice.add(freightPrice);
         }
-        freightPrice = BigDecimal.valueOf(10);
         order.setFreightPrice(freightPrice);
-        if (orderTotalPrice != null) {
-            actualPrice = orderTotalPrice.add(freightPrice);
-        }
 
         //添加团购金额
         BigDecimal grouponPrice = new BigDecimal(0);
