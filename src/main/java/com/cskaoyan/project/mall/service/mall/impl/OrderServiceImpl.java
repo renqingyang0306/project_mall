@@ -128,6 +128,7 @@ public class OrderServiceImpl implements OrderService {
         OrderExample.Criteria criteria = orderExample.createCriteria();
         criteria.andDeletedEqualTo(false);
         criteria.andUserIdEqualTo(uid);
+        orderExample.setOrderByClause("add_time desc");
         List<Order> orders = orderMapper.selectByExample(orderExample);
         //放回合适的JavaBean
         ResponseVO responseVO = getResponseVOByOrderList(orders,page,size);
@@ -175,6 +176,7 @@ public class OrderServiceImpl implements OrderService {
         //201代表未发货的订单
         short status = 201;
         criteria.andOrderStatusEqualTo(status);
+        orderExample.setOrderByClause("add_time desc");
         List<Order> orders = orderMapper.selectByExample(orderExample);
         ResponseVO responseVO = getResponseVOByOrderList(orders,page,size);
         return responseVO;
@@ -198,6 +200,7 @@ public class OrderServiceImpl implements OrderService {
         //301代表未收货的订单
         short status = 301;
         criteria.andOrderStatusEqualTo(status);
+        orderExample.setOrderByClause("add_time desc");
         List<Order> orders = orderMapper.selectByExample(orderExample);
         ResponseVO responseVO = getResponseVOByOrderList(orders,page,size);
         return responseVO;
@@ -224,6 +227,7 @@ public class OrderServiceImpl implements OrderService {
         short status1 = 401;
         short status2 = 402;
         criteria.andOrderStatusBetween(status1,status2);
+        orderExample.setOrderByClause("add_time desc");
         List<Order> orders = orderMapper.selectByExample(orderExample);
         ResponseVO responseVO = getResponseVOByOrderList(orders,page,size);
         return responseVO;

@@ -16,7 +16,7 @@ public class OrderMsg {
     message: ""*/
     int addressId;
 
-    int carid;
+    int cartId;
 
     int couponId;
 
@@ -34,12 +34,12 @@ public class OrderMsg {
         this.addressId = addressId;
     }
 
-    public int getCarid() {
-        return carid;
+    public int getCartId() {
+        return cartId;
     }
 
-    public void setCarid(int carid) {
-        this.carid = carid;
+    public void setCartId(int cartId) {
+        this.cartId = cartId;
     }
 
     public int getCouponId() {
