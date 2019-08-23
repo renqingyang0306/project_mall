@@ -72,4 +72,16 @@ public class RegionServiceImpl implements RegionService {
     public Region queryRegionById(Integer id) {
         return regionMapper.selectByPrimaryKey(id);
     }
+
+    @Override
+    public Region queryRegionByCode(Integer id) {
+        RegionExample regionExample = new RegionExample();
+        RegionExample.Criteria criteria = regionExample.createCriteria();
+        criteria.andCodeEqualTo(id);
+        List<Region> regions = regionMapper.selectByExample(regionExample);
+        if (regions != null){
+            return regions.get(0);
+        }
+        return null;
+    }
 }

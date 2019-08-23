@@ -27,4 +27,6 @@ public interface RegionService {
     int updateByPrimaryKey(Region record);
 
     Region queryRegionById(Integer id);
+
+    Region queryRegionByCode(Integer provinceId);
 }

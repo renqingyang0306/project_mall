@@ -2,6 +2,7 @@ package com.cskaoyan.project.mall.service.goods;
 
 import com.cskaoyan.project.mall.controller.goods.vo.PageVO;
 import com.cskaoyan.project.mall.controller.goods.vo.ResponseVO;
+import com.cskaoyan.project.mall.domain.CategoryExample;
 import com.cskaoyan.project.mall.domain.Comment;
 import com.cskaoyan.project.mall.domain.CommentExample;
 import com.cskaoyan.project.mall.domain.Goods;
@@ -29,5 +30,9 @@ public interface CommentService {
     List<Comment> selectByExample(CommentExample example);
 
     List<Comment> query(int page, int size, Byte type, Integer valueId,Integer showType);
+
     int insertSelective(Comment record);
+
+    int countByExample(CommentExample example);
+
 }

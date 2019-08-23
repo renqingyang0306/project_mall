@@ -258,11 +258,20 @@ public class OrderControllerWx {
         //message 用户订单留言
         order.setMessage(message);
         Region region1 = regionService.queryRegionById(address.getProvinceId());
-        String province = region1.getName();
+        String province = null;
+        if (region1 != null){
+            province = region1.getName();
+        }
         Region region2 = regionService.queryRegionById(address.getCityId());
-        String city = region2.getName();
+        String city = null;
+        if (region2 != null){
+            city = region2.getName();
+        }
         Region region3 = regionService.queryRegionById(address.getAreaId());
-        String area = region3.getName();
+        String area = null;
+        if (region3 != null){
+            area = region3.getName();
+        }
         String detailedAddress = province + city + area + " " + address.getAddress();
         //detailedAddress 详细地址
         order.setAddress(detailedAddress);
