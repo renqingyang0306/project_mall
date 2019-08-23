@@ -43,7 +43,7 @@ public class TimeSchedulingTask2 {
     @Autowired
     RedisUtil redisUtil;
     //首页三分钟一更新
-    @Scheduled(cron = "0 0/3 * * * ?")
+    //@Scheduled(cron = "0 0/3 * * * ?")
     public void taskForCoupon(){
 
 
@@ -60,7 +60,7 @@ public class TimeSchedulingTask2 {
 
         //顶部滚动图片下面显示的9种分类
         CategoryExample categoryExample = new CategoryExample();
-        categoryExample.createCriteria().andPidEqualTo(0);
+        categoryExample.createCriteria().andPidEqualTo(0).andDeletedEqualTo(false);
         List<Category> categoryList = categoryMapper.selectByExample(categoryExample);
         hashMap.put("channel",categoryList);
 

@@ -2,6 +2,7 @@ package com.cskaoyan.project.mall.controllerwx.couponWx;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cskaoyan.project.mall.domain.*;
+import com.cskaoyan.project.mall.domain.System;
 import com.cskaoyan.project.mall.service.advertiseService.CouponService;
 import com.cskaoyan.project.mall.service.advertiseService.CouponUserService;
 import com.cskaoyan.project.mall.utils.ResponseUtils;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -61,7 +63,7 @@ public class CouponControllerWx {
 
             Instant instant1 = couponUser.getEndTime().toInstant();
             ZoneId zoneId1 = ZoneId.systemDefault();
-            LocalDateTime localDateTime1 = instant.atZone(zoneId).toLocalDateTime();
+            LocalDateTime localDateTime1 = instant1.atZone(zoneId1).toLocalDateTime();
 
             couponVo.setStartTime(localDateTime);
             couponVo.setEndTime(localDateTime1);
@@ -105,9 +107,24 @@ public class CouponControllerWx {
             couponUser.setStatus((short) 0);
             couponUser.setCouponId(couponId);
             couponUser.setAddTime(new Date());
-            couponUser.setEndTime(coupons.get(0).getEndTime());
-            couponUser.setStartTime(coupons.get(0).getStartTime());
 
+            Date endTime = new Date(new Date().getTime() + 2*60*1000);
+            couponUser.setEndTime(endTime);
+            couponUser.setStartTime(coupons.get(0).getStartTime());
+            couponUser.setUpdateTime(new Date());
+
+            //查看是否已经领取该优惠券
+            CouponUserExample couponExample1 = new CouponUserExample();
+            CouponUserExample.Criteria criteria1 = couponExample1.createCriteria();
+            criteria1.andCouponIdEqualTo(couponId);
+            criteria1.andUserIdEqualTo(user.getId());
+            List<CouponUser> couponUsers = couponUserService.selectByExample(couponExample1);
+            if(couponUsers.size() != 0){
+                ResponseUtils pageBeanResponseUtils = new ResponseUtils<>();
+                pageBeanResponseUtils.setErrno(740);
+                pageBeanResponseUtils.setErrmsg("优惠券已经领取过");
+                return pageBeanResponseUtils;
+            }
             couponUserService.insert(couponUser);
 
         }else {
@@ -116,6 +133,10 @@ public class CouponControllerWx {
             pageBeanResponseUtils.setErrmsg("优惠券领取失败");
             return pageBeanResponseUtils;
         }
+
+
+
+
         ResponseUtils pageBeanResponseUtils = new ResponseUtils<>();
         pageBeanResponseUtils.setErrno(0);
         pageBeanResponseUtils.setErrmsg("优惠券领取成功");
@@ -162,8 +183,10 @@ public class CouponControllerWx {
             couponUser.setStatus((short) 0);
             couponUser.setCouponId(coupon.getId());
             couponUser.setAddTime(new Date());
+
             couponUser.setEndTime(coupon.getEndTime());
             couponUser.setStartTime(coupon.getStartTime());
+            couponUser.setUpdateTime(new Date());
             couponUserService.insert(couponUser);
 
         ResponseUtils pageBeanResponseUtils = new ResponseUtils<>();

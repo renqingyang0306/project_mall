@@ -117,7 +117,8 @@ public class CouponController {
         return pageBeanResponseUtils;
     }
     @ResponseBody
-    @RequestMapping("admin/coupon/update")
+    @RequestMapping("admin/coupon/" +
+            "")
     public ResponseUtils<Coupon>  update(@RequestBody Coupon coupon){
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         coupon.setAddTime(CreateDate.createDate());
