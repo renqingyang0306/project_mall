@@ -208,7 +208,7 @@ public class WxCartController {
         //实付金额  subtract 是减法
         BigDecimal actualPrice = new BigDecimal(0);
         if (orderTotalPrice != null) {
-            actualPrice = orderTotalPrice.subtract(couponPrice).subtract(freightPrice);
+            actualPrice = orderTotalPrice.subtract(couponPrice).add(freightPrice);
         }
         //商品总价
         BigDecimal goodsTotalPrice = orderTotalPrice;
