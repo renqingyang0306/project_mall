@@ -21,4 +21,5 @@ public interface CartService {
     int deleteRealCart(Integer id);
     int deleteLogicCart(Cart cart);
 
+    void clearGoods(Integer uid);
 }

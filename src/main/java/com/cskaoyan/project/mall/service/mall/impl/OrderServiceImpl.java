@@ -504,4 +504,18 @@ public class OrderServiceImpl implements OrderService {
         int i = (int) orderMapper.countByExample(example);
         return i;
     }
+
+    /*
+     * description: 添加订单项
+     * version: 1.0
+     * date: 2019/8/22 21:47
+     * author: du
+     * @Param: [order]
+     * @return: int
+     */
+    @Override
+    public int add(Order order) {
+        int insert = orderMapper.insert(order);
+        return insert;
+    }
 }
