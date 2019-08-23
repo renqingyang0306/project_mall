@@ -318,7 +318,6 @@ public class OrderControllerWx {
         order.setGoodsPrice(goodsTotalPrice);
         //orderTotalPrice 订单总费用
         order.setOrderPrice(orderTotalPrice);
-        //actualPrice 实付金额
         //freightPrice运费
         BigDecimal freightPrice = new BigDecimal(0.00);
         freightPrice = BigDecimal.valueOf(10);
@@ -340,6 +339,7 @@ public class OrderControllerWx {
         order.setDeleted(false);
         Date now = new Date();
         order.setAddTime(now);
+        order.setUpdateTime(now);
         //添加订单表项
         orderService.add(order);
         //orderGoods表添加
@@ -356,6 +356,7 @@ public class OrderControllerWx {
             orderGoods.setNumber(cart.getNumber());
             orderGoods.setSpecifications(cart.getSpecifications());
             orderGoods.setAddTime(now);
+            orderGoods.setUpdateTime(now);
             orderGoods.setDeleted(false);
             orderGoodsService.add(orderGoods);
         }
