@@ -33,7 +33,6 @@ CartService cartService;
     OrderMapper orderMapper;
     @Scheduled(cron = "0/5 * * * * ?")
     public void taskForCoupon(){
-        //每隔5秒刷新，是否有过期的订单
 
         double right = System.currentTimeMillis();
         double min = right - 2500;
